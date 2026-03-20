@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayZ Recipe Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0f14;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Ржавый текстурный фон */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, rgba(101, 67, 33, 0.1) 0px, rgba(101, 67, 33, 0.1) 2px, 
+                                          rgba(70, 40, 20, 0.1) 2px, rgba(70, 40, 20, 0.1) 4px),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" /><path d="M10 10 L 90 10 M10 20 L 90 20 M10 30 L 90 30 M10 40 L 90 40 M10 50 L 90 50 M10 60 L 90 60 M10 70 L 90 70 M10 80 L 90 80 M10 90 L 90 90" stroke="%233d2b1a" stroke-width="0.5" opacity="0.2"/><path d="M10 10 L 10 90 M20 10 L 20 90 M30 10 L 30 90 M40 10 L 40 90 M50 10 L 50 90 M60 10 L 60 90 M70 10 L 70 90 M80 10 L 80 90 M90 10 L 90 90" stroke="%233d2b1a" stroke-width="0.5" opacity="0.2"/></svg>');
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(5px);
+            border: 2px solid #7a5c3a;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(101, 67, 33, 0.3);
+            position: relative;
+        }
+        
+        /* Эффект ржавчины по краям */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid rgba(170, 110, 40, 0.3);
+            border-radius: 10px;
+            pointer-events: none;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        /* Потертости */
+        .container::after {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px dashed rgba(170, 110, 40, 0.2);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+        
+        /* УНИФИЦИРОВАННЫЙ ЗАГОЛОВОК В СТИЛЕ DAYZ */
+        .header {
+            background: #1e2b1e;
+            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
+            color: #c49a6c;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            border: 2px solid #5a4a3a;
+            box-shadow: inset 0 1px 3px rgba(255,215,140,0.2), 0 5px 10px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, transparent 50%, #7a5c3a 50%);
+            opacity: 0.3;
+        }
+        
+        .header h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin: 0;
+            color: #c49a6c;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 #3d2b1a;
+            font-family: 'Segoe UI', monospace;
+        }
+        
+        .header-placeholder {
+            width: 180px;
+            height: 36px;
+            visibility: hidden;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: #1e2b1e;
+            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
+            padding: 15px;
+            border-radius: 5px;
+            flex-shrink: 0;
+            border: 2px solid #5a4a3a;
+            box-shadow: inset 0 1px 3px rgba(255,215,140,0.1), 0 5px 10px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
+            pointer-events: none;
+        }
+        
+        .sidebar h3 {
+            color: #c49a6c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #5a4a3a;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 0 #3d2b1a;
+        }
+        
+        .editor {
+            flex: 1;
+            background: #1e2b1e;
+            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
+            border-radius: 5px;
+            min-width: 0;
+            border: 2px solid #5a4a3a;
+            padding: 15px;
+            box-shadow: inset 0 1px 3px rgba(255,215,140,0.1), 0 5px 10px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        
+        .editor::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
+            pointer-events: none;
+        }
+        
+        /* ========== УНИФИЦИРОВАННЫЕ СТИЛИ ========== */
+        
+        /* Все поля ввода в стиле DayZ */
+        .uniform-input,
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #5a4a3a;
+            border-radius: 3px;
+            font-size: 13px;
+            line-height: normal;
+            box-sizing: border-box;
+            background: #0f1a0f;
+            color: #d4c8b0;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: 'Segoe UI', monospace;
+        }
+        
+        /* Фокус для всех полей */
+        .uniform-input:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #c49a6c;
+            box-shadow: 0 0 0 2px rgba(196, 154, 108, 0.2);
+        }
+        
+        /* Числовые поля - убираем спин-кнопки */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        /* Текстовые поля (textarea) */
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Segoe UI', monospace;
+        }
+        
+        /* Высота для всех полей (кроме textarea) */
+        input[type="text"],
+        input[type="number"],
+        select {
+            height: 32px;
+        }
+        
+        /* Чекбоксы в стиле DayZ */
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: #c49a6c;
+            background: #0f1a0f;
+            border: 1px solid #5a4a3a;
+        }
+        
+        /* Лейблы */
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #b4a68a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Контейнер для полей ввода */
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        /* Ряд с полями */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        /* Чекбокс с лейблом в одной строке */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+        
+        .checkbox-label label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        /* ========== КНОПКИ В СТИЛЕ DAYZ ========== */
+        
+        /* Унифицированные кнопки */
+        .uniform-btn {
+            padding: 8px 12px;
+            border: 2px solid #5a4a3a;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', monospace;
+            background: #1e2b1e;
+            color: #c49a6c;
+            box-shadow: 0 3px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .uniform-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(196,154,108,0.2), transparent);
+            transition: left 0.3s;
+        }
+        
+        .uniform-btn:hover::before {
+            left: 100%;
+        }
+        
+        .uniform-btn:hover {
+            border-color: #c49a6c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.3);
+        }
+        
+        .uniform-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2);
+        }
+        
+        .uniform-btn.block {
+            width: 100%;
+        }
+        
+        /* Цвета кнопок */
+        .uniform-btn.primary {
+            background: #1e3a1e;
+            border-color: #2a6b2a;
+        }
+        
+        .uniform-btn.primary:hover {
+            border-color: #27ae60;
+        }
+        
+        .uniform-btn.secondary {
+            background: #3a2a1e;
+            border-color: #8b5a2a;
+        }
+        
+        .uniform-btn.secondary:hover {
+            border-color: #e67e22;
+        }
+        
+        .uniform-btn.export {
+            background: #1e2a3a;
+            border-color: #2a4a6b;
+        }
+        
+        .uniform-btn.export:hover {
+            border-color: #3498db;
+        }
+        
+        .uniform-btn.import {
+            background: #3a2a1e;
+            border-color: #b87c3a;
+        }
+        
+        .uniform-btn.import:hover {
+            border-color: #f39c12;
+        }
+        
+        .uniform-btn.danger {
+            background: #3a1e1e;
+            border-color: #8b2a2a;
+        }
+        
+        .uniform-btn.danger:hover {
+            border-color: #e74c3c;
+        }
+        
+        .uniform-btn.neutral {
+            background: #2a2a2a;
+            border-color: #5a5a5a;
+        }
+        
+        .uniform-btn.neutral:hover {
+            border-color: #7f8c8d;
+        }
+        
+        /* Группа кнопок */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .btn-group .uniform-btn {
+            flex: 1;
+            margin: 0;
+        }
+        
+        /* ========== ВКЛАДКИ В СТИЛЕ DAYZ ========== */
+        
+        .tab-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #5a4a3a;
+            padding-bottom: 10px;
+        }
+        
+        .tab-btn {
+            padding: 8px 12px;
+            background: #1e2b1e;
+            border: 2px solid #5a4a3a;
+            cursor: pointer;
+            font-size: 13px;
+            color: #b4a68a;
+            border-radius: 3px;
+            transition: all 0.2s;
+            height: 36px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', monospace;
+            font-weight: 600;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .tab-btn:hover {
+            background: #2a3a2a;
+            border-color: #7a5c3a;
+            color: #d4c8b0;
+        }
+        
+        .tab-btn.active {
+            background: #2a3a2a;
+            border-color: #c49a6c;
+            color: #c49a6c;
+            box-shadow: 0 0 10px rgba(196,154,108,0.3);
+        }
+        
+        /* Панели вкладок */
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        /* ========== КАРТОЧКИ В СТИЛЕ DAYZ ========== */
+        
+        .card-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 2px solid #5a4a3a;
+            border-radius: 3px;
+            padding: 15px;
+            background: #0f1a0f;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
+        }
+        
+        .ingredient-card,
+        .case-card,
+        .result-item {
+            background: #1e2b1e;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #5a4a3a;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.5), inset 0 1px 3px rgba(255,215,140,0.1);
+            position: relative;
+        }
+        
+        .ingredient-card::after,
+        .case-card::after,
+        .result-item::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
+            pointer-events: none;
+        }
+        
+        .ingredient-card h4,
+        .case-card h4,
+        .result-item h5 {
+            color: #c49a6c;
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0 #3d2b1a;
+        }
+        
+        .result-item h5 {
+            font-size: 13px;
+        }
+        
+        .case-header {
+            background: #2a3a2a;
+            color: #c49a6c;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border: 1px solid #5a4a3a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: inset 0 1px 3px rgba(255,215,140,0.1);
+        }
+        
+        /* ========== ПРЕДПРОСМОТР ========== */
+        
+        .preview-section {
+            background: #0f1a0f;
+            border-radius: 3px;
+            padding: 15px;
+            border: 1px solid #5a4a3a;
+        }
+        
+        .preview-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #c49a6c;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #5a4a3a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .preview-block {
+            margin-bottom: 15px;
+        }
+        
+        .preview-block h4 {
+            color: #b4a68a;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .preview-ingredient,
+        .preview-case {
+            background: #1e2b1e;
+            border-radius: 3px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid #c49a6c;
+            border-top: 1px solid #5a4a3a;
+            border-right: 1px solid #5a4a3a;
+            border-bottom: 1px solid #5a4a3a;
+        }
+        
+        .preview-case {
+            border-left-color: #e67e22;
+        }
+        
+        .preview-class-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 8px 0;
+        }
+        
+        .preview-class-item {
+            background: #0f1a0f;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 11px;
+            border: 1px solid #5a4a3a;
+            color: #d4c8b0;
+        }
+        
+        .preview-param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #b4a68a;
+        }
+        
+        .preview-param strong {
+            color: #c49a6c;
+        }
+        
+        .preview-result-item {
+            background: #0f1a0f;
+            padding: 8px 10px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            font-size: 11px;
+            border: 1px solid #5a4a3a;
+            color: #d4c8b0;
+        }
+        
+        .preview-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 2px;
+            font-size: 10px;
+            margin-left: 5px;
+            background: #1e3a1e;
+            border: 1px solid #27ae60;
+            color: #27ae60;
+        }
+        
+        .preview-stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #5a4a3a;
+        }
+        
+        .preview-stats .stat-item {
+            background: #1e2b1e;
+            padding: 5px 12px;
+            border-radius: 3px;
+            font-size: 12px;
+            border: 1px solid #5a4a3a;
+            color: #b4a68a;
+        }
+        
+        /* ========== КОД ========== */
+        
+        .code-output {
+            background: #0f1a0f;
+            color: #d4c8b0;
+            padding: 15px;
+            border-radius: 3px;
+            margin-top: 15px;
+            font-family: 'Segoe UI', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.4;
+            border: 2px solid #5a4a3a;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
+        }
+        
+        .registration-code {
+            background: #0f1a0f;
+            color: #d4c8b0;
+            padding: 12px;
+            border-radius: 3px;
+            margin-top: 15px;
+            font-family: 'Segoe UI', monospace;
+            font-size: 12px;
+            border: 1px solid #5a4a3a;
+        }
+        
+        .comment {
+            color: #7a5c3a;
+        }
+        
+        /* Стили для заголовков внутри вкладок */
+        .editor h3 {
+            color: #c49a6c;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #5a4a3a;
+            padding-bottom: 8px;
+        }
+        
+        /* ========== АДАПТИВНОСТЬ ========== */
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-placeholder {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ЗАГОЛОВОК В СТИЛЕ DAYZ -->
+        <div class="header">
+            <h2>RECIPE EDITOR</h2>
+            <div class="header-placeholder"></div>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h3>Параметры рецепта</h3>
+                
+                <div class="form-group">
+                    <label title="Наименование класса рецепта для регистрации. Один рецепт - один класс. Должно быть уникальным в рамках мода.">RecipeclassName:</label>
+                    <input type="text" id="className" value="" placeholder="CraftWeaponCleaner" onchange="updatePreview()">
+                </div>
+                
+                <div class="form-group">
+                    <label title="Наименование рецепта, которое будет отображаться в игре.">recipeName:</label>
+                    <input type="text" id="recipeName" value="" placeholder="Мой рецепт" onchange="updatePreview()">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label title="true - крафт происходит мгновенно без анимации. false - с анимацией крафта.">InstaRecipe:</label>
+                        <select id="isInstaRecipe" onchange="updatePreview()">
+                            <option value="true">true</option>
+                            <option value="false">false</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label title="Длительность анимации в относительных единицах. Реальные секунды = значение * 4 приблизительно.">Animation:</label>
+                        <input type="number" id="animationLength" value="1" step="0.1" min="0" onchange="updatePreview()">
+                    </div>
+                </div>
+                
+                <!-- Группа кнопок действий -->
+                <div class="btn-group">
+                    <button class="uniform-btn primary" onclick="createNewRecipe()" title="Создать новый рецепт со значениями по умолчанию">Новый</button>
+                    <button class="uniform-btn secondary" onclick="clearRecipe()" title="Очистить все поля рецепта">Очистить</button>
+                </div>
+                
+                <!-- Кнопки импорта/экспорта -->
+                <button class="uniform-btn export block" onclick="exportRecipe()" title="Сохранить рецепт в .c файл" style="margin-bottom: 5px;">Сохранить</button>
+                <button class="uniform-btn import block" onclick="importRecipe()" title="Загрузить рецепт из .c файла">Загрузить</button>
+            </div>
+            
+            <div class="editor">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('ingredients')" title="Настройка ингредиентов для крафта">Ингредиенты</button>
+                    <button class="tab-btn" onclick="showTab('results')" title="Настройка результатов крафта">Результаты</button>
+                    <button class="tab-btn" onclick="showTab('preview')" title="Предпросмотр текущего рецепта">Предпросмотр</button>
+                    <button class="tab-btn" onclick="showTab('code')" title="Сгенерированный код рецепта">Код</button>
+                </div>
+                
+                <div id="ingredientsTab" class="tab-pane active">
+                    <h3>Ингредиенты</h3>
+                    <div class="card-container" id="ingredientsContainer">
+                        <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>
+                    </div>
+                    <button class="uniform-btn primary block" onclick="addIngredient()" title="Добавить новый ингредиент">+ Добавить ингредиент</button>
+                </div>
+                
+                <div id="resultsTab" class="tab-pane">
+                    <h3>Варианты результатов</h3>
+                    <div class="card-container" id="casesContainer">
+                        <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>
+                    </div>
+                    <button class="uniform-btn import block" onclick="addCase()" title="Добавить новый вариант результата">+ Добавить вариант</button>
+                </div>
+                
+                <div id="previewTab" class="tab-pane">
+                    <h3>Предпросмотр</h3>
+                    <div class="card-container" style="max-height: 500px;" id="previewContainer">
+                        <!-- Предпросмотр будет генерироваться динамически -->
+                    </div>
+                </div>
+                
+                <div id="codeTab" class="tab-pane">
+                    <h3>Код</h3>
+                    <button class="uniform-btn export block" onclick="generateCode()" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
+                    <button class="uniform-btn neutral block" onclick="copyCode()" title="Копировать код в буфер обмена">Копировать код</button>
+                    <div id="codeOutput" class="code-output">
+                        // Нажмите "Сгенерировать код"
+                    </div>
+                    
+                    <div id="registrationContainer" class="registration-code" style="display: none;">
+                        <!-- Регистрация будет добавляться сюда -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Весь JavaScript код остается без изменений
+        let ingredients = [];
+        let cases = [];
+        
+        function getIngredientTemplate() {
+            return {
+                classList: "",
+                minDamage: -1,
+                maxDamage: 3,
+                minQuantity: 1,
+                maxQuantity: -1,
+                addHealth: 0,
+                setHealth: -1,
+                addQuantity: -1,
+                destroy: false
+            };
+        }
+        
+        function getResultTemplate() {
+            return {
+                type: "",
+                setFullQuantity: false,
+                setQuantity: 1,
+                setHealth: -1,
+                inheritsHealth: -1,
+                inheritsColor: -1,
+                toInventory: -1,
+                replacesIngredient: -1
+            };
+        }
+        
+        function getCaseTemplate() {
+            return {
+                results: [getResultTemplate()]
+            };
+        }
+        
+        function parseClassList(classText) {
+            return classText.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+        }
+        
+        function clearRecipe() {
+            ingredients = [];
+            cases = [];
+            
+            document.getElementById('className').value = '';
+            document.getElementById('recipeName').value = '';
+            document.getElementById('isInstaRecipe').value = 'true';
+            document.getElementById('animationLength').value = '1';
+            
+            renderIngredients();
+            renderCases();
+            updatePreview();
+            
+            document.getElementById('codeOutput').textContent = '// Нажмите "Сгенерировать код"';
+            document.getElementById('registrationContainer').style.display = 'none';
+        }
+        
+        function updatePreview() {
+            const container = document.getElementById('previewContainer');
+            if (!container) return;
+            
+            const className = document.getElementById('className').value || 'Не указано';
+            const recipeName = document.getElementById('recipeName').value || 'Не указано';
+            const isInstaRecipe = document.getElementById('isInstaRecipe').value;
+            const animationLength = document.getElementById('animationLength').value;
+            
+            let html = `
+                <div class="preview-title">${recipeName} (${className})</div>
+                
+                <div class="preview-block">
+                    <h4>Параметры:</h4>
+                    <div class="preview-param-grid">
+                        <span class="preview-param"><strong>InstaRecipe:</strong> ${isInstaRecipe}</span>
+                        <span class="preview-param"><strong>Animation Length:</strong> ${animationLength}</span>
+                    </div>
+                </div>
+            `;
+            
+            html += `<div class="preview-block"><h4>Ингредиенты (${ingredients.length}):</h4>`;
+            
+            if (ingredients.length === 0) {
+                html += `<p style="color: #7a5c3a;">Нет ингредиентов</p>`;
+            } else {
+                ingredients.forEach((ing, index) => {
+                    const classes = parseClassList(ing.classList);
+                    const damageMin = ing.minDamage === -1 ? 'любое' : ing.minDamage;
+                    const damageMax = ing.maxDamage === -1 ? 'любое' : ing.maxDamage;
+                    const quantityMin = ing.minQuantity === -1 ? 'любое' : ing.minQuantity;
+                    const quantityMax = ing.maxQuantity === -1 ? '∞' : ing.maxQuantity;
+                    
+                    html += `
+                        <div class="preview-ingredient">
+                            <strong>Ингредиент #${index + 1}</strong>
+                            <div class="preview-class-list">
+                                ${classes.map(cls => `<span class="preview-class-item">${cls}</span>`).join('')}
+                            </div>
+                            <div class="preview-param-grid">
+                                <span class="preview-param"><strong>Min Damage:</strong> ${damageMin}</span>
+                                <span class="preview-param"><strong>Max Damage:</strong> ${damageMax}</span>
+                                <span class="preview-param"><strong>Min Quantity:</strong> ${quantityMin}</span>
+                                <span class="preview-param"><strong>Max Quantity:</strong> ${quantityMax}</span>
+                                <span class="preview-param"><strong>Add Health:</strong> ${ing.addHealth}</span>
+                                <span class="preview-param"><strong>Set Health:</strong> ${ing.setHealth}</span>
+                                <span class="preview-param"><strong>Add Quantity:</strong> ${ing.addQuantity}</span>
+                            </div>
+                            <div>
+                                ${ing.destroy ? '<span class="preview-badge">Уничтожается</span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += `</div>`;
+            
+            html += `<div class="preview-block"><h4>Варианты результатов (${cases.length}):</h4>`;
+            
+            if (cases.length === 0) {
+                html += `<p style="color: #7a5c3a;">Нет результатов</p>`;
+            } else {
+                cases.forEach((caseItem, caseIndex) => {
+                    html += `
+                        <div class="preview-case">
+                            <strong>Вариант #${caseIndex + 1}</strong>
+                            <div class="preview-results">
+                    `;
+                    
+                    caseItem.results.forEach((result, resultIndex) => {
+                        html += `
+                            <div class="preview-result-item">
+                                <strong>${result.type || 'Не указано'}</strong>
+                                <div class="preview-param-grid">
+                                    <span class="preview-param"><strong>Set Quantity:</strong> ${result.setQuantity}</span>
+                                    <span class="preview-param"><strong>Set Health:</strong> ${result.setHealth === -1 ? 'по умолчанию' : result.setHealth}</span>
+                                    <span class="preview-param"><strong>Inherits Health:</strong> ${result.inheritsHealth}</span>
+                                    <span class="preview-param"><strong>To Inventory:</strong> ${result.toInventory}</span>
+                                    ${result.setFullQuantity ? '<span class="preview-badge">Полный стак</span>' : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `</div></div>`;
+                });
+            }
+            
+            html += `</div>`;
+            
+            const totalClasses = ingredients.reduce((sum, ing) => sum + parseClassList(ing.classList).length, 0);
+            const totalResults = cases.reduce((sum, caseItem) => sum + caseItem.results.length, 0);
+            
+            html += `
+                <div class="preview-stats">
+                    <span class="stat-item">Всего классов: ${totalClasses}</span>
+                    <span class="stat-item">Всего результатов: ${totalResults}</span>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        function createNewRecipe() {
+            ingredients = [];
+            cases = [getCaseTemplate()];
+            
+            document.getElementById('className').value = '';
+            document.getElementById('recipeName').value = '';
+            document.getElementById('isInstaRecipe').value = 'true';
+            document.getElementById('animationLength').value = '1';
+            
+            renderIngredients();
+            renderCases();
+            updatePreview();
+            
+            document.getElementById('codeOutput').textContent = '// Нажмите "Сгенерировать код"';
+            document.getElementById('registrationContainer').style.display = 'none';
+            showTab('ingredients');
+        }
+        
+        function renderIngredients() {
+            const container = document.getElementById('ingredientsContainer');
+            container.innerHTML = '';
+            
+            if (ingredients.length === 0) {
+                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>';
+                return;
+            }
+            
+            ingredients.forEach((ing, index) => {
+                const card = document.createElement('div');
+                card.className = 'ingredient-card';
+                
+                const header = document.createElement('h4');
+                header.innerHTML = `
+                    Ингредиент #${index + 1}
+                    <button class="uniform-btn danger" style="width: 28px; height: 28px; padding: 0;" onclick="removeIngredient(${index})">×</button>
+                `;
+                card.appendChild(header);
+                
+                const classDiv = document.createElement('div');
+                classDiv.className = 'form-group';
+                classDiv.innerHTML = `
+                    <label title="Список классов предметов, которые можно использовать. Каждый класс с новой строки. Например: Apple, Pear, Banana">ItemClassName (с новой строки):</label>
+                    <textarea onchange="updateIngredientParam(${index}, 'classList', this.value)" placeholder="Apple&#10;Pear&#10;Banana">${ing.classList}</textarea>
+                `;
+                card.appendChild(classDiv);
+                
+                const paramsDiv = document.createElement('div');
+                paramsDiv.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Минимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Min Damage:</label>
+                            <input type="number" value="${ing.minDamage}" onchange="updateIngredientParam(${index}, 'minDamage', parseInt(this.value))">
+                        </div>
+                        <div class="form-group">
+                            <label title="Максимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Max Damage:</label>
+                            <input type="number" value="${ing.maxDamage}" onchange="updateIngredientParam(${index}, 'maxDamage', parseInt(this.value))">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Минимальное количество ингредиента. -1 = отключить проверку">Min Quantity:</label>
+                            <input type="number" value="${ing.minQuantity}" onchange="updateIngredientParam(${index}, 'minQuantity', parseInt(this.value))">
+                        </div>
+                        <div class="form-group">
+                            <label title="Максимальное количество ингредиента. -1 = отключить проверку">Max Quantity:</label>
+                            <input type="number" value="${ing.maxQuantity}" onchange="updateIngredientParam(${index}, 'maxQuantity', parseInt(this.value))">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Уменьшение или увеличение ХП после крафта. 0 = ничего не делать, отрицательное = уменьшение, положительное = увеличение">Add Health:</label>
+                            <input type="number" value="${ing.addHealth}" onchange="updateIngredientParam(${index}, 'addHealth', parseInt(this.value))">
+                        </div>
+                        <div class="form-group">
+                            <label title="Установить точное значение ХП после крафта. -1 = ничего не делать, 0-100 = конкретное значение">Set Health:</label>
+                            <input type="number" value="${ing.setHealth}" onchange="updateIngredientParam(${index}, 'setHealth', parseInt(this.value))">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Расход или прибавка количества. 0 = ничего не делать, отрицательное = расход, положительное = прибавка">Add Quantity:</label>
+                            <input type="number" value="${ing.addQuantity}" onchange="updateIngredientParam(${index}, 'addQuantity', parseInt(this.value))">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group checkbox-label">
+                            <input type="checkbox" ${ing.destroy ? 'checked' : ''} onchange="updateIngredientParam(${index}, 'destroy', this.checked)" id="destroy_${index}">
+                            <label for="destroy_${index}" title="true = ингредиент полностью уничтожается после крафта, false = не уничтожается">Destroy</label>
+                        </div>
+                    </div>
+                `;
+                card.appendChild(paramsDiv);
+                
+                container.appendChild(card);
+            });
+            
+            updatePreview();
+        }
+        
+        function renderCases() {
+            const container = document.getElementById('casesContainer');
+            container.innerHTML = '';
+            
+            if (cases.length === 0) {
+                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>';
+                return;
+            }
+            
+            cases.forEach((caseItem, caseIndex) => {
+                const caseCard = document.createElement('div');
+                caseCard.className = 'case-card';
+                
+                const header = document.createElement('div');
+                header.className = 'case-header';
+                header.innerHTML = `
+                    Вариант #${caseIndex + 1}
+                    <button class="uniform-btn danger" style="width: 28px; height: 28px; padding: 0;" onclick="removeCase(${caseIndex})">×</button>
+                `;
+                caseCard.appendChild(header);
+                
+                caseItem.results.forEach((result, resultIndex) => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'result-item';
+                    resultDiv.innerHTML = `
+                        <h5>
+                            Результат #${resultIndex + 1}
+                            <button class="uniform-btn danger" style="width: 24px; height: 24px; padding: 0;" onclick="removeResultFromCase(${caseIndex}, ${resultIndex})">×</button>
+                        </h5>
+                        
+                        <div class="form-group">
+                            <label title="Класс предмета, который будет создан. Например: Apple, WeaponCleaningKit">ItemClassName:</label>
+                            <input type="text" value="${result.type}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'type', this.value)" placeholder="ItemClassName">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group checkbox-label">
+                                <input type="checkbox" ${result.setFullQuantity ? 'checked' : ''} onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'setFullQuantity', this.checked)" id="full_${caseIndex}_${resultIndex}">
+                                <label for="full_${caseIndex}_${resultIndex}" title="true = создать предмет с полным стаком, false = использовать указанное количество">FullQuantity</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label title="Количество создаваемых предметов. -1 = ничего не создавать">Set Quantity:</label>
+                                <input type="number" value="${result.setQuantity}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'setQuantity', parseInt(this.value))">
+                            </div>
+                            <div class="form-group">
+                                <label title="Установить здоровье создаваемого предмета. -1 = здоровье по умолчанию">Set Health:</label>
+                                <input type="number" value="${result.setHealth}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'setHealth', parseInt(this.value))">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label title="Наследование здоровья: -1 = нет, 0/1 = от ингредиента, -2 = среднее от всех">Inherits Health:</label>
+                                <input type="number" value="${result.inheritsHealth}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'inheritsHealth', parseInt(this.value))">
+                            </div>
+                            <div class="form-group">
+                                <label title="Куда поместить результат: -2 = на землю, -1 = в инвентарь, >=0 = заменить ингредиент">To Inventory:</label>
+                                <input type="number" value="${result.toInventory}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'toInventory', parseInt(this.value))">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label title="Заменить ингредиент: -1 = нет, >=0 = перенести свойства из ингредиента">Replaces Ingredient:</label>
+                                <input type="number" value="${result.replacesIngredient}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'replacesIngredient', parseInt(this.value))">
+                            </div>
+                        </div>
+                    `;
+                    caseCard.appendChild(resultDiv);
+                });
+                
+                const addResultBtn = document.createElement('button');
+                addResultBtn.className = 'uniform-btn primary block';
+                addResultBtn.textContent = '+ Добавить результат';
+                addResultBtn.style.marginTop = '10px';
+                addResultBtn.onclick = () => addResultToCase(caseIndex);
+                caseCard.appendChild(addResultBtn);
+                
+                container.appendChild(caseCard);
+            });
+            
+            updatePreview();
+        }
+        
+        function updateIngredientParam(index, field, value) {
+            ingredients[index][field] = value;
+            if (field === 'classList') renderIngredients();
+            updatePreview();
+        }
+        
+        function addIngredient() {
+            ingredients.push(getIngredientTemplate());
+            renderIngredients();
+            updatePreview();
+        }
+        
+        function removeIngredient(index) {
+            ingredients.splice(index, 1);
+            renderIngredients();
+            updatePreview();
+        }
+        
+        function updateResultInCase(caseIndex, resultIndex, field, value) {
+            cases[caseIndex].results[resultIndex][field] = value;
+            updatePreview();
+        }
+        
+        function addCase() {
+            cases.push(getCaseTemplate());
+            renderCases();
+            updatePreview();
+        }
+        
+        function removeCase(index) {
+            cases.splice(index, 1);
+            renderCases();
+            updatePreview();
+        }
+        
+        function addResultToCase(caseIndex) {
+            cases[caseIndex].results.push(getResultTemplate());
+            renderCases();
+            updatePreview();
+        }
+        
+        function removeResultFromCase(caseIndex, resultIndex) {
+            if (cases[caseIndex].results.length > 1) {
+                cases[caseIndex].results.splice(resultIndex, 1);
+            }
+            renderCases();
+            updatePreview();
+        }
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            if (tabName === 'preview') {
+                updatePreview();
+            }
+        }
+        
+        function generateCode() {
+            if (ingredients.length === 0) {
+                alert('Добавьте ингредиенты!');
+                return;
+            }
+            
+            if (cases.length === 0) {
+                alert('Добавьте результаты!');
+                return;
+            }
+            
+            const className = document.getElementById('className').value || 'MyCustomRecipe';
+            const recipeName = document.getElementById('recipeName').value || 'Мой рецепт';
+            const isInstaRecipe = document.getElementById('isInstaRecipe').value;
+            const animationLength = document.getElementById('animationLength').value;
+            
+            let code = `class ${className} extends RecipeBase\n{\n\toverride void Init()\n\t{\n`;
+            code += `\t\tm_Name = "${recipeName}";\n`;
+            code += `\t\tm_IsInstaRecipe = ${isInstaRecipe};\n`;
+            code += `\t\tm_AnimationLength = ${animationLength};\n\n`;
+            
+            ingredients.forEach((ing, index) => {
+                const classes = parseClassList(ing.classList);
+                
+                code += `\t\t//ИНГРИДИЕНТ №${index}\n`;
+                classes.forEach(cls => {
+                    code += `\t\tInsertIngredient(${index},"${cls}");\n`;
+                });
+                code += `\n`;
+                
+                code += `\t\tm_MinDamageIngredient[${index}] = ${ing.minDamage};\n`;
+                code += `\t\tm_MaxDamageIngredient[${index}] = ${ing.maxDamage};\n`;
+                code += `\t\tm_MinQuantityIngredient[${index}] = ${ing.minQuantity};\n`;
+                code += `\t\tm_MaxQuantityIngredient[${index}] = ${ing.maxQuantity};\n`;
+                code += `\t\tm_IngredientAddHealth[${index}] = ${ing.addHealth};\n`;
+                code += `\t\tm_IngredientSetHealth[${index}] = ${ing.setHealth};\n`;
+                code += `\t\tm_IngredientAddQuantity[${index}] = ${ing.addQuantity};\n`;
+                code += `\t\tm_IngredientDestroy[${index}] = ${ing.destroy};\n\n`;
+            });
+            
+            code += `\t}\n\n`;
+            code += `\toverride bool CanDo(ItemBase ingredients[], PlayerBase player)\n\t{\n\t\treturn true;\n\t}\n\n`;
+            code += `\toverride void Do(ItemBase ingredients[], PlayerBase player,array<ItemBase> results, float specialty_weight)\n\t{\n\t\tDebug.Log("Recipe Do method called","recipes");\n\t}\n\n`;
+            code += `\toverride void PerformRecipe(ItemBase item1, ItemBase item2, PlayerBase player)\n\t{\n\t\tsuper.PerformRecipe(item1, item2, player);\n\t}\n\n`;
+            code += `\toverride void SpawnItems(ItemBase ingredients[], PlayerBase player, array<ItemBase> spawned_objects/*out*/)\n\t{\n`;
+            code += `\t\tint ing_count = m_NumberOfResults;\n`;
+            code += `\t\tm_NumberOfResults = 0;\n`;
+            code += `\t\tSpawn_Result();\n`;
+            code += `\t\tsuper.SpawnItems(ingredients, player, spawned_objects);\n\t}\n\n`;
+            code += `\tvoid Spawn_Result()\n\t{\n`;
+            code += `\t\tprivate int random_result_number = Math.RandomIntInclusive(1,${cases.length});\n`;
+            code += `\t\tswitch(random_result_number)\n\t\t{\n`;
+            
+            cases.forEach((caseItem, caseIndex) => {
+                code += `\t\t\tcase ${caseIndex + 1}:\n\t\t\t{\n`;
+                
+                caseItem.results.forEach((result, resultIndex) => {
+                    code += `\t\t\t\tAddResult("${result.type}");\n`;
+                    code += `\t\t\t\tm_ResultSetFullQuantity[${resultIndex}] = ${result.setFullQuantity};\n`;
+                    code += `\t\t\t\tm_ResultSetQuantity[${resultIndex}] = ${result.setQuantity};\n`;
+                    code += `\t\t\t\tm_ResultSetHealth[${resultIndex}] = ${result.setHealth};\n`;
+                    code += `\t\t\t\tm_ResultInheritsHealth[${resultIndex}] = ${result.inheritsHealth};\n`;
+                    code += `\t\t\t\tm_ResultInheritsColor[${resultIndex}] = ${result.inheritsColor || -1};\n`;
+                    code += `\t\t\t\tm_ResultToInventory[${resultIndex}] = ${result.toInventory};\n`;
+                    code += `\t\t\t\tm_ResultReplacesIngredient[${resultIndex}] = ${result.replacesIngredient || -1};\n\n`;
+                });
+                
+                code += `\t\t\t\tbreak;\n\t\t\t}\n\n`;
+            });
+            
+            code += `\t\t}\n\t}\n};`;
+            
+            document.getElementById('codeOutput').textContent = code;
+            
+            const registrationCode = `// RegisterRecipe(new ${className});`;
+            const registrationContainer = document.getElementById('registrationContainer');
+            registrationContainer.innerHTML = `<strong>Регистрация (закомментирована):</strong><br><span class="comment">${registrationCode}</span>`;
+            registrationContainer.style.display = 'block';
+            
+            showTab('code');
+        }
+        
+        function copyCode() {
+            const code = document.getElementById('codeOutput').textContent;
+            if (code === '// Нажмите "Сгенерировать код"' || code === '// Рецепт очищен') {
+                alert('Сначала сгенерируйте код!');
+                return;
+            }
+            
+            const registrationCode = `// RegisterRecipe(new ${document.getElementById('className').value || 'MyCustomRecipe'});`;
+            const fullCode = code + '\n\n' + registrationCode;
+            
+            navigator.clipboard.writeText(fullCode).then(() => {
+                alert('Код скопирован!');
+            });
+        }
+        
+        function exportRecipe() {
+            if (ingredients.length === 0 || cases.length === 0) {
+                alert('Добавьте ингредиенты и результаты!');
+                return;
+            }
+            
+            generateCode();
+            const code = document.getElementById('codeOutput').textContent;
+            const registrationCode = `// RegisterRecipe(new ${document.getElementById('className').value || 'MyCustomRecipe'});`;
+            const fullCode = code + '\n\n' + registrationCode;
+            const className = document.getElementById('className').value || 'MyCustomRecipe';
+            
+            const blob = new Blob([fullCode], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${className}.c`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function importRecipe() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.c,.txt';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const code = e.target.result;
+                    
+                    try {
+                        const classNameMatch = code.match(/class\s+(\w+)\s+extends\s+RecipeBase/);
+                        if (classNameMatch) {
+                            document.getElementById('className').value = classNameMatch[1];
+                        }
+                        
+                        const nameMatch = code.match(/m_Name\s*=\s*"([^"]+)"/);
+                        if (nameMatch) {
+                            document.getElementById('recipeName').value = nameMatch[1];
+                        }
+                        
+                        const instaMatch = code.match(/m_IsInstaRecipe\s*=\s*(true|false)/);
+                        if (instaMatch) document.getElementById('isInstaRecipe').value = instaMatch[1];
+                        
+                        const animMatch = code.match(/m_AnimationLength\s*=\s*([\d.]+)/);
+                        if (animMatch) document.getElementById('animationLength').value = animMatch[1];
+                        
+                        ingredients = [];
+                        const insertMatches = [...code.matchAll(/InsertIngredient\((\d+),\"([^\"]+)\"\)/g)];
+                        const ingredientMap = new Map();
+                        
+                        insertMatches.forEach(match => {
+                            const index = parseInt(match[1]);
+                            const className = match[2];
+                            
+                            if (!ingredientMap.has(index)) {
+                                ingredientMap.set(index, {
+                                    classes: [],
+                                    minDamage: -1,
+                                    maxDamage: 3,
+                                    minQuantity: 1,
+                                    maxQuantity: -1,
+                                    addHealth: 0,
+                                    setHealth: -1,
+                                    addQuantity: -1,
+                                    destroy: false
+                                });
+                            }
+                            ingredientMap.get(index).classes.push(className);
+                        });
+                        
+                        ingredientMap.forEach((value, index) => {
+                            const minDamageMatch = code.match(new RegExp(`m_MinDamageIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            if (minDamageMatch) value.minDamage = parseInt(minDamageMatch[1]);
+                            
+                            const maxDamageMatch = code.match(new RegExp(`m_MaxDamageIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            if (maxDamageMatch) value.maxDamage = parseInt(maxDamageMatch[1]);
+                            
+                            const minQMatch = code.match(new RegExp(`m_MinQuantityIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            if (minQMatch) value.minQuantity = parseInt(minQMatch[1]);
+                            
+                            const maxQMatch = code.match(new RegExp(`m_MaxQuantityIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            if (maxQMatch) value.maxQuantity = parseInt(maxQMatch[1]);
+                            
+                            const addHealthMatch = code.match(new RegExp(`m_IngredientAddHealth\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            if (addHealthMatch) value.addHealth = parseInt(addHealthMatch[1]);
+                            
+                            const setHealthMatch = code.match(new RegExp(`m_IngredientSetHealth\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            if (setHealthMatch) value.setHealth = parseInt(setHealthMatch[1]);
+                            
+                            const addQMatch = code.match(new RegExp(`m_IngredientAddQuantity\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            if (addQMatch) value.addQuantity = parseInt(addQMatch[1]);
+                            
+                            const destroyMatch = code.match(new RegExp(`m_IngredientDestroy\\[${index}\\]\\s*=\\s*(true|false)`));
+                            if (destroyMatch) value.destroy = destroyMatch[1] === 'true';
+                            
+                            value.classList = value.classes.join('\n');
+                            delete value.classes;
+                            
+                            ingredients.push(value);
+                        });
+                        
+                        cases = [];
+                        const caseMatches = code.match(/case\s+\d+:\s*{([^}]+)}/g);
+                        
+                        if (caseMatches) {
+                            caseMatches.forEach(block => {
+                                const caseResults = [];
+                                const resultMatches = [...block.matchAll(/AddResult\(\"([^\"]+)\"\)/g)];
+                                
+                                resultMatches.forEach((resultMatch, idx) => {
+                                    const result = getResultTemplate();
+                                    result.type = resultMatch[1];
+                                    caseResults.push(result);
+                                });
+                                
+                                if (caseResults.length > 0) {
+                                    cases.push({ results: caseResults });
+                                }
+                            });
+                        } else {
+                            const spawnResultMatch = code.match(/void\s+Spawn_Result\(\)\s*{([^}]+)}/);
+                            if (spawnResultMatch) {
+                                const spawnContent = spawnResultMatch[1];
+                                const resultMatches = [...spawnContent.matchAll(/AddResult\(\"([^\"]+)\"\)/g)];
+                                
+                                if (resultMatches.length > 0) {
+                                    const caseResults = [];
+                                    resultMatches.forEach((match) => {
+                                        const result = getResultTemplate();
+                                        result.type = match[1];
+                                        caseResults.push(result);
+                                    });
+                                    cases.push({ results: caseResults });
+                                }
+                            }
+                        }
+                        
+                        renderIngredients();
+                        renderCases();
+                        updatePreview();
+                        
+                        alert('Рецепт загружен!');
+                        
+                    } catch (error) {
+                        alert('Ошибка при загрузке');
+                        console.error(error);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        function initializeEmpty() {
+            ingredients = [];
+            cases = [];
+            
+            document.getElementById('className').value = '';
+            document.getElementById('recipeName').value = '';
+            document.getElementById('isInstaRecipe').value = 'true';
+            document.getElementById('animationLength').value = '1';
+            
+            renderIngredients();
+            renderCases();
+            updatePreview();
+            
+            document.getElementById('codeOutput').textContent = '// Нажмите "Сгенерировать код"';
+            document.getElementById('registrationContainer').style.display = 'none';
+        }
+        
+        window.onload = () => {
+            initializeEmpty();
+        };
+    </script>
+</body>
+</html>
