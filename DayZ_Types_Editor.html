@@ -59,7 +59,7 @@
             display: flex; justify-content: space-between; align-items: center;
             flex-shrink: 0; border: 2px solid #5a4a3a;
             box-shadow: inset 0 1px 3px rgba(255,215,140,0.2), 0 5px 10px rgba(0,0,0,0.5);
-            position: relative; overflow: hidden;
+            position: relative; overflow: hidden; gap: 12px;
         }
         .header::before {
             content: ""; position: absolute; top: 5px; right: 5px;
@@ -72,6 +72,49 @@
             text-transform: uppercase; letter-spacing: 2px;
             text-shadow: 2px 2px 0 #3d2b1a;
             font-family: 'Segoe UI', monospace;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1;
+        }
+
+        .lang-switcher {
+            display: inline-flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .lang-btn {
+            min-width: 44px;
+            height: 30px;
+            padding: 0 10px;
+            border: 1px solid #5a4a3a;
+            border-radius: 4px;
+            background: #0f1a0f;
+            color: #b4a68a;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', monospace;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 1px 3px rgba(255,215,140,0.08);
+        }
+
+        .lang-btn:hover {
+            border-color: #c49a6c;
+            color: #c49a6c;
+            background: #162216;
+        }
+
+        .lang-btn.active {
+            border-color: #c49a6c;
+            color: #c49a6c;
+            background: #1f2f1f;
+            box-shadow: 0 0 10px rgba(196,154,108,0.18), inset 0 1px 3px rgba(255,215,140,0.12);
         }
         
         .load-definitions-btn {
@@ -430,52 +473,58 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>TYPES EDITOR</h2>
-            <button class="load-definitions-btn" id="loadDefinitionsBtn" title="Загрузить cfglimitsdefinition.xml">ЗАГРУЗИТЬ ОПРЕДЕЛЕНИЯ</button>
+            <h2 data-i18n="editorTitle">TYPES EDITOR</h2>
+            <div class="header-right">
+                <button class="load-definitions-btn" id="loadDefinitionsBtn" data-i18n="loadDefinitionsBtn" data-i18n-title="loadDefinitionsTitle" title="Загрузить cfglimitsdefinition.xml">ЗАГРУЗИТЬ ОПРЕДЕЛЕНИЯ</button>
+                <div class="lang-switcher" data-i18n-aria-label="languageSwitcherAria" aria-label="Language switcher">
+                    <button class="lang-btn" type="button" data-lang="ru">RU</button>
+                    <button class="lang-btn" type="button" data-lang="en">EN</button>
+                </div>
+            </div>
         </div>
         <div class="main-content">
             <div class="sidebar">
-                <h3>ПОИСК</h3>
+                <h3 data-i18n="searchTitle">ПОИСК</h3>
                 <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Поиск по параметрам...">
-                    <button class="clear-search-btn" id="clearSearchBtn" title="Очистить поиск" disabled>×</button>
+                    <input type="text" id="searchInput" placeholder="Поиск по параметрам..." data-i18n-placeholder="searchPlaceholder">
+                    <button class="clear-search-btn" id="clearSearchBtn" data-i18n-title="clearSearchTitle" title="Очистить поиск" disabled>×</button>
                 </div>
                 
-                <h3>МАССОВОЕ РЕДАКТИРОВАНИЕ</h3>
+                <h3 data-i18n="massEditTitle">МАССОВОЕ РЕДАКТИРОВАНИЕ</h3>
                 <div class="mass-edit-panel">
-                    <div class="form-group"><label>nominal:</label><input type="text" id="massNominal" placeholder="число или формула"></div>
-                    <div class="form-group"><label>lifetime:</label><input type="text" id="massLifetime" placeholder="число или формула"></div>
-                    <div class="form-group"><label>restock:</label><input type="text" id="massRestock" placeholder="число или формула"></div>
-                    <div class="form-group"><label>min:</label><input type="text" id="massMin" placeholder="число или формула"></div>
-                    <div class="form-group"><label>quantmin:</label><input type="text" id="massQuantmin" placeholder="число или формула"></div>
-                    <div class="form-group"><label>quantmax:</label><input type="text" id="massQuantmax" placeholder="число или формула"></div>
-                    <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула"></div>
+                    <div class="form-group"><label>nominal:</label><input type="text" id="massNominal" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
+                    <div class="form-group"><label>lifetime:</label><input type="text" id="massLifetime" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
+                    <div class="form-group"><label>restock:</label><input type="text" id="massRestock" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
+                    <div class="form-group"><label>min:</label><input type="text" id="massMin" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
+                    <div class="form-group"><label>quantmin:</label><input type="text" id="massQuantmin" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
+                    <div class="form-group"><label>quantmax:</label><input type="text" id="massQuantmax" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
+                    <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
                     <div class="mass-edit-buttons">
-                        <button class="mass-edit-btn primary" id="applyMassEditBtn">ПРИМЕНИТЬ</button>
-                        <button class="mass-edit-btn danger" id="deleteSelectedBtn">УДАЛИТЬ</button>
+                        <button class="mass-edit-btn primary" id="applyMassEditBtn" data-i18n="applyBtn">ПРИМЕНИТЬ</button>
+                        <button class="mass-edit-btn danger" id="deleteSelectedBtn" data-i18n="deleteBtn">УДАЛИТЬ</button>
                     </div>
                 </div>
 
                 <div class="mass-edit-help">
-                    <div class="mass-edit-help-title">ФОРМУЛЫ</div>
+                    <div class="mass-edit-help-title" data-i18n="formulasTitle">ФОРМУЛЫ</div>
                     <div class="mass-edit-help-list">
-                        <div><strong>N</strong> — установить значение</div>
-                        <div><strong>+N</strong> — прибавить</div>
-                        <div><strong>-N</strong> — вычесть</div>
-                        <div><strong>*N</strong> — умножить</div>
-                        <div><strong>/N</strong> — разделить</div>
-                        <div><strong>+N%</strong> — увеличить на процент</div>
-                        <div><strong>-N%</strong> — уменьшить на процент</div>
+                        <div><strong>N</strong> — <span data-i18n="formulaSet">установить значение</span></div>
+                        <div><strong>+N</strong> — <span data-i18n="formulaAdd">прибавить</span></div>
+                        <div><strong>-N</strong> — <span data-i18n="formulaSubtract">вычесть</span></div>
+                        <div><strong>*N</strong> — <span data-i18n="formulaMultiply">умножить</span></div>
+                        <div><strong>/N</strong> — <span data-i18n="formulaDivide">разделить</span></div>
+                        <div><strong>+N%</strong> — <span data-i18n="formulaPercentPlus">увеличить на процент</span></div>
+                        <div><strong>-N%</strong> — <span data-i18n="formulaPercentMinus">уменьшить на процент</span></div>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="add-btn" id="addItemBtn">ДОБАВИТЬ</button>
-                    <button class="clear-btn" id="clearAllBtn">ОЧИСТИТЬ</button>
+                    <button class="add-btn" id="addItemBtn" data-i18n="addBtn">ДОБАВИТЬ</button>
+                    <button class="clear-btn" id="clearAllBtn" data-i18n="clearBtn">ОЧИСТИТЬ</button>
                 </div>
                 <div class="import-export-section">
-                    <button class="export-btn" id="exportBtn">СОХРАНИТЬ</button>
-                    <button class="import-btn" id="importBtn">ЗАГРУЗИТЬ</button>
+                    <button class="export-btn" id="exportBtn" data-i18n="saveBtn">СОХРАНИТЬ</button>
+                    <button class="import-btn" id="importBtn" data-i18n="loadBtn">ЗАГРУЗИТЬ</button>
                 </div>
             </div>
             <div class="editor">
@@ -495,21 +544,21 @@
             </div>
             <div class="selected-values">
                 <div class="selected-values-header">
-                    <span>ВЫБРАНО:</span>
-                    <button class="clear-all-btn" id="clearAllSelectionsBtn">ОЧИСТИТЬ ВСЕ</button>
+                    <span data-i18n="selectedValuesLabel">ВЫБРАНО:</span>
+                    <button class="clear-all-btn" id="clearAllSelectionsBtn" data-i18n="clearAllBtn">ОЧИСТИТЬ ВСЕ</button>
                 </div>
                 <div class="selected-values-list" id="selectedValuesList">
-                    <span class="selected-value-placeholder">ничего не выбрано</span>
+                    <span class="selected-value-placeholder" id="selectedValuesPlaceholder">ничего не выбрано</span>
                 </div>
             </div>
             <div class="modal-list" id="modalList"></div>
             <div class="modal-custom">
-                <input type="text" id="modalCustomValue" placeholder="Свое значение...">
-                <button id="addCustomValueBtn">ДОБАВИТЬ</button>
+                <input type="text" id="modalCustomValue" placeholder="Свое значение..." data-i18n-placeholder="customValuePlaceholder">
+                <button id="addCustomValueBtn" data-i18n="addBtnShort">ДОБАВИТЬ</button>
             </div>
             <div class="modal-buttons">
-                <button class="modal-save" id="saveModalBtn">СОХРАНИТЬ</button>
-                <button class="modal-cancel" id="cancelModalBtn">ОТМЕНА</button>
+                <button class="modal-save" id="saveModalBtn" data-i18n="saveModalBtn">СОХРАНИТЬ</button>
+                <button class="modal-cancel" id="cancelModalBtn" data-i18n="cancelBtn">ОТМЕНА</button>
             </div>
         </div>
     </div>
@@ -517,6 +566,179 @@
     <div class="validation-tooltip" id="validationTooltip" style="display:none;"></div>
 
     <script>
+        const LANG_STORAGE_KEY = 'dayzToolsLang';
+        let currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'ru';
+
+        const translations = {
+            ru: {
+                pageTitle: 'DayZ Types Editor',
+                languageSwitcherAria: 'Переключатель языка',
+
+                editorTitle: 'TYPES EDITOR',
+                loadDefinitionsBtn: 'ЗАГРУЗИТЬ ОПРЕДЕЛЕНИЯ',
+                loadDefinitionsTitle: 'Загрузить cfglimitsdefinition.xml',
+
+                searchTitle: 'ПОИСК',
+                searchPlaceholder: 'Поиск по параметрам...',
+                clearSearchTitle: 'Очистить поиск',
+
+                massEditTitle: 'МАССОВОЕ РЕДАКТИРОВАНИЕ',
+                formulaPlaceholder: 'число или формула',
+                applyBtn: 'ПРИМЕНИТЬ',
+                deleteBtn: 'УДАЛИТЬ',
+
+                formulasTitle: 'ФОРМУЛЫ',
+                formulaSet: 'установить значение',
+                formulaAdd: 'прибавить',
+                formulaSubtract: 'вычесть',
+                formulaMultiply: 'умножить',
+                formulaDivide: 'разделить',
+                formulaPercentPlus: 'увеличить на процент',
+                formulaPercentMinus: 'уменьшить на процент',
+
+                addBtn: 'ДОБАВИТЬ',
+                clearBtn: 'ОЧИСТИТЬ',
+                saveBtn: 'СОХРАНИТЬ',
+                loadBtn: 'ЗАГРУЗИТЬ',
+
+                selectedValuesLabel: 'ВЫБРАНО:',
+                clearAllBtn: 'ОЧИСТИТЬ ВСЕ',
+                customValuePlaceholder: 'Свое значение...',
+                addBtnShort: 'ДОБАВИТЬ',
+                saveModalBtn: 'СОХРАНИТЬ',
+                cancelBtn: 'ОТМЕНА',
+                selectedNothing: 'ничего не выбрано',
+                loadDefinitionsHint: 'Загрузите файл определений',
+
+                modalCategoryTitle: 'ВЫБЕРИТЕ КАТЕГОРИИ',
+                modalUsageTitle: 'ВЫБЕРИТЕ USAGE',
+                modalValueTitle: 'ВЫБЕРИТЕ VALUE',
+                modalTagTitle: 'ВЫБЕРИТЕ ТЕГИ',
+
+                alertSelectItems: 'Выберите предметы',
+                alertFillAtLeastOne: 'Заполните хотя бы одно поле',
+                alertAppliedToItems: 'Применено к {count} предметам',
+                confirmDeleteItems: 'Удалить {count} предметов?',
+                confirmClearAll: 'Очистить все {count} предметов?',
+                alertNothingToSave: 'Нечего сохранять',
+                confirmValidationWarnings: 'Обнаружено {count} предупреждений валидации.\\nВсё равно сохранить?',
+                alertDefinitionsLoaded: 'Загружено {count} определений',
+                alertItemsLoaded: 'Загружено {count} предметов',
+                alertErrorPrefix: 'Ошибка: {message}',
+
+                validationEmptyName: 'Имя пустое',
+                validationDuplicateName: 'Дублирующееся имя',
+                validationFlagMustBeBinary: 'Флаг {flag} должен быть 0 или 1',
+
+                tableColName: 'Имя',
+                tableColNominal: 'nominal',
+                tableColLifetime: 'lifetime',
+                tableColRestock: 'restock',
+                tableColMin: 'min',
+                tableColQuantmin: 'quantmin',
+                tableColQuantmax: 'quantmax',
+                tableColCost: 'cost',
+                tableColCargo: 'cargo',
+                tableColHoarder: 'hoarder',
+                tableColMap: 'map',
+                tableColPlayer: 'player',
+                tableColCrafted: 'crafted',
+                tableColDeloot: 'deloot',
+                tableColCategory: 'category',
+                tableColUsage: 'usage',
+                tableColValue: 'value',
+                tableColTag: 'tag'
+            },
+
+            en: {
+                pageTitle: 'DayZ Types Editor',
+                languageSwitcherAria: 'Language switcher',
+
+                editorTitle: 'TYPES EDITOR',
+                loadDefinitionsBtn: 'LOAD DEFINITIONS',
+                loadDefinitionsTitle: 'Load cfglimitsdefinition.xml',
+
+                searchTitle: 'SEARCH',
+                searchPlaceholder: 'Search parameters...',
+                clearSearchTitle: 'Clear search',
+
+                massEditTitle: 'MASS EDIT',
+                formulaPlaceholder: 'number or formula',
+                applyBtn: 'APPLY',
+                deleteBtn: 'DELETE',
+
+                formulasTitle: 'FORMULAS',
+                formulaSet: 'set value',
+                formulaAdd: 'add',
+                formulaSubtract: 'subtract',
+                formulaMultiply: 'multiply',
+                formulaDivide: 'divide',
+                formulaPercentPlus: 'increase by percent',
+                formulaPercentMinus: 'decrease by percent',
+
+                addBtn: 'ADD',
+                clearBtn: 'CLEAR',
+                saveBtn: 'SAVE',
+                loadBtn: 'LOAD',
+
+                selectedValuesLabel: 'SELECTED:',
+                clearAllBtn: 'CLEAR ALL',
+                customValuePlaceholder: 'Custom value...',
+                addBtnShort: 'ADD',
+                saveModalBtn: 'SAVE',
+                cancelBtn: 'CANCEL',
+                selectedNothing: 'nothing selected',
+                loadDefinitionsHint: 'Load definitions file',
+
+                modalCategoryTitle: 'SELECT CATEGORIES',
+                modalUsageTitle: 'SELECT USAGE',
+                modalValueTitle: 'SELECT VALUE',
+                modalTagTitle: 'SELECT TAGS',
+
+                alertSelectItems: 'Select items',
+                alertFillAtLeastOne: 'Fill at least one field',
+                alertAppliedToItems: 'Applied to {count} items',
+                confirmDeleteItems: 'Delete {count} items?',
+                confirmClearAll: 'Clear all {count} items?',
+                alertNothingToSave: 'Nothing to save',
+                confirmValidationWarnings: '{count} validation warnings detected.\\nSave anyway?',
+                alertDefinitionsLoaded: 'Loaded {count} definitions',
+                alertItemsLoaded: 'Loaded {count} items',
+                alertErrorPrefix: 'Error: {message}',
+
+                validationEmptyName: 'Name is empty',
+                validationDuplicateName: 'Duplicate name',
+                validationFlagMustBeBinary: 'Flag {flag} must be 0 or 1',
+
+                tableColName: 'Name',
+                tableColNominal: 'nominal',
+                tableColLifetime: 'lifetime',
+                tableColRestock: 'restock',
+                tableColMin: 'min',
+                tableColQuantmin: 'quantmin',
+                tableColQuantmax: 'quantmax',
+                tableColCost: 'cost',
+                tableColCargo: 'cargo',
+                tableColHoarder: 'hoarder',
+                tableColMap: 'map',
+                tableColPlayer: 'player',
+                tableColCrafted: 'crafted',
+                tableColDeloot: 'deloot',
+                tableColCategory: 'category',
+                tableColUsage: 'usage',
+                tableColValue: 'value',
+                tableColTag: 'tag'
+            }
+        };
+
+        function t(key, params = {}) {
+            let text = translations[currentLang]?.[key] ?? translations.ru[key] ?? key;
+            for (const [param, value] of Object.entries(params)) {
+                text = text.replaceAll(`{${param}}`, value);
+            }
+            return text;
+        }
+
         const STORAGE_KEY = 'dayzTypesEditorData_v2';
         const DEFINITIONS_STORAGE_KEY = 'dayzTypesEditorDefinitions_v1';
 
@@ -543,24 +765,24 @@
 
         const columns = [
             { id:'col0', title:'', type:'checkbox', width:40 },
-            { id:'col1', title:'Имя', type:'name', field:'name', width:250 },
-            { id:'col2', title:'nominal', type:'number', field:'nominal', width:80 },
-            { id:'col3', title:'lifetime', type:'number', field:'lifetime', width:80 },
-            { id:'col4', title:'restock', type:'number', field:'restock', width:80 },
-            { id:'col5', title:'min', type:'number', field:'min', width:80 },
-            { id:'col6', title:'quantmin', type:'number', field:'quantmin', width:80 },
-            { id:'col7', title:'quantmax', type:'number', field:'quantmax', width:80 },
-            { id:'col8', title:'cost', type:'number', field:'cost', width:80 },
-            { id:'col9', title:'cargo', type:'flag', flag:'count_in_cargo', width:60 },
-            { id:'col10', title:'hoarder', type:'flag', flag:'count_in_hoarder', width:64 },
-            { id:'col11', title:'map', type:'flag', flag:'count_in_map', width:60 },
-            { id:'col12', title:'player', type:'flag', flag:'count_in_player', width:60 },
-            { id:'col13', title:'crafted', type:'flag', flag:'crafted', width:60 },
-            { id:'col14', title:'deloot', type:'flag', flag:'deloot', width:60 },
-            { id:'col15', title:'category', type:'text', field:'category', width:180 },
-            { id:'col16', title:'usage', type:'text', field:'usage', width:180 },
-            { id:'col17', title:'value', type:'text', field:'value', width:180 },
-            { id:'col18', title:'tag', type:'text', field:'tag', width:180 }
+            { id:'col1', titleKey:'tableColName', title:'Имя', type:'name', field:'name', width:250 },
+            { id:'col2', titleKey:'tableColNominal', title:'nominal', type:'number', field:'nominal', width:80 },
+            { id:'col3', titleKey:'tableColLifetime', title:'lifetime', type:'number', field:'lifetime', width:80 },
+            { id:'col4', titleKey:'tableColRestock', title:'restock', type:'number', field:'restock', width:80 },
+            { id:'col5', titleKey:'tableColMin', title:'min', type:'number', field:'min', width:80 },
+            { id:'col6', titleKey:'tableColQuantmin', title:'quantmin', type:'number', field:'quantmin', width:80 },
+            { id:'col7', titleKey:'tableColQuantmax', title:'quantmax', type:'number', field:'quantmax', width:80 },
+            { id:'col8', titleKey:'tableColCost', title:'cost', type:'number', field:'cost', width:80 },
+            { id:'col9', titleKey:'tableColCargo', title:'cargo', type:'flag', flag:'count_in_cargo', width:60 },
+            { id:'col10', titleKey:'tableColHoarder', title:'hoarder', type:'flag', flag:'count_in_hoarder', width:64 },
+            { id:'col11', titleKey:'tableColMap', title:'map', type:'flag', flag:'count_in_map', width:60 },
+            { id:'col12', titleKey:'tableColPlayer', title:'player', type:'flag', flag:'count_in_player', width:60 },
+            { id:'col13', titleKey:'tableColCrafted', title:'crafted', type:'flag', flag:'crafted', width:60 },
+            { id:'col14', titleKey:'tableColDeloot', title:'deloot', type:'flag', flag:'deloot', width:60 },
+            { id:'col15', titleKey:'tableColCategory', title:'category', type:'text', field:'category', width:180 },
+            { id:'col16', titleKey:'tableColUsage', title:'usage', type:'text', field:'usage', width:180 },
+            { id:'col17', titleKey:'tableColValue', title:'value', type:'text', field:'value', width:180 },
+            { id:'col18', titleKey:'tableColTag', title:'tag', type:'text', field:'tag', width:180 }
         ];
 
         const $ = (selector) => document.querySelector(selector);
@@ -661,6 +883,55 @@
             tag: []
         });
 
+        function applyLanguage(lang) {
+            currentLang = translations[lang] ? lang : 'ru';
+            localStorage.setItem(LANG_STORAGE_KEY, currentLang);
+
+            document.documentElement.lang = currentLang;
+            document.title = t('pageTitle');
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                el.textContent = t(key);
+            });
+
+            document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                const key = el.dataset.i18nTitle;
+                el.title = t(key);
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;
+                el.placeholder = t(key);
+            });
+
+            document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+                const key = el.dataset.i18nAriaLabel;
+                el.setAttribute('aria-label', t(key));
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === currentLang);
+            });
+
+            renderHeader();
+            renderTable();
+
+            const placeholder = $('#selectedValuesPlaceholder');
+            if (placeholder) {
+                placeholder.textContent = t('selectedNothing');
+            }
+
+            if ($('#valueModal').classList.contains('active') && state.currentModal.field) {
+                const currentValues = state.currentModal.inputElement
+                    ? parseSpaceList(state.currentModal.inputElement.value)
+                    : [];
+                renderModalList(state.currentModal.allOptions, currentValues);
+                updateSelectedValuesDisplay(currentValues);
+                updateModalTitle(state.currentModal.field);
+            }
+        }
+
         function generateUniqueName(base) {
             const existing = new Set(state.items.map(item => String(item.name || '').trim()));
             if (!existing.has(base)) return base;
@@ -693,8 +964,8 @@
 
             const name = String(item?.name || '').trim();
 
-            if (!name) errors.push('Имя пустое');
-            if (duplicateIndices.has(index)) errors.push('Дублирующееся имя');
+            if (!name) errors.push(t('validationEmptyName'));
+            if (duplicateIndices.has(index)) errors.push(t('validationDuplicateName'));
 
             if (item.nominal < 0) errors.push('nominal < 0');
             if (item.min < 0) errors.push('min < 0');
@@ -712,7 +983,7 @@
             for (const flagName of flagNames) {
                 const value = item.flags?.[flagName];
                 if (![0, 1].includes(value)) {
-                    errors.push(`Флаг ${flagName} должен быть 0 или 1`);
+                    errors.push(t('validationFlagMustBeBinary', { flag: flagName }));
                 }
             }
 
@@ -749,7 +1020,10 @@
 
             const fieldErrors = errors.filter(error =>
                 error.toLowerCase().includes(String(field).toLowerCase()) ||
-                (field === 'name' && error.toLowerCase().includes('имя'))
+                (field === 'name' && (
+                    error.toLowerCase().includes('имя') ||
+                    error.toLowerCase().includes('name')
+                ))
             );
 
             element.classList.toggle('invalid', fieldErrors.length > 0 || (field === 'name' && !String(item.name || '').trim()));
@@ -820,7 +1094,7 @@
                         <th style="width:${column.width}px;">
                             ${column.type === 'checkbox'
                                 ? '<input type="checkbox" id="selectAllCheckbox">'
-                                : escapeHtml(column.title)}
+                                : escapeHtml(column.titleKey ? t(column.titleKey) : column.title)}
                         </th>
                     `).join('')}
                 </tr>
@@ -864,7 +1138,7 @@
             }
 
             if (column.type === 'name') {
-                const invalid = !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя'));
+                const invalid = !String(item.name || '').trim() || errors.some(e => e === t('validationEmptyName') || e === t('validationDuplicateName'));
                 return `
                     <td ${widthStyle}>
                         <input
@@ -971,7 +1245,7 @@
 
             const nameInput = row.querySelector('.name-input');
             if (nameInput) {
-                nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя')));
+                nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e === t('validationEmptyName') || e === t('validationDuplicateName')));
             }
 
             const numberInputs = row.querySelectorAll('.number-input');
@@ -1096,7 +1370,7 @@
 
         function applyMassEdit() {
             if (!state.selectedItems.size) {
-                alert('Выберите предметы');
+                alert(t('alertSelectItems'));
                 return;
             }
 
@@ -1112,7 +1386,7 @@
 
             const hasAnyValue = Object.values(values).some(value => value.trim() !== '');
             if (!hasAnyValue) {
-                alert('Заполните хотя бы одно поле');
+                alert(t('alertFillAtLeastOne'));
                 return;
             }
 
@@ -1132,16 +1406,16 @@
             state.selectedItems.clear();
             saveStateToLocalStorage();
             renderTable();
-            alert(`Применено к ${indices.length} предметам`);
+            alert(t('alertAppliedToItems', { count: indices.length }));
         }
 
         function deleteSelected() {
             if (!state.selectedItems.size) {
-                alert('Выберите предметы');
+                alert(t('alertSelectItems'));
                 return;
             }
 
-            if (!confirm(`Удалить ${state.selectedItems.size} предметов?`)) return;
+            if (!confirm(t('confirmDeleteItems', { count: state.selectedItems.size }))) return;
 
             const indices = [...state.selectedItems].sort((a, b) => b - a);
             indices.forEach(index => state.items.splice(index, 1));
@@ -1164,7 +1438,7 @@
 
         function clearAll() {
             if (!state.items.length) return;
-            if (!confirm(`Очистить все ${state.items.length} предметов?`)) return;
+            if (!confirm(t('confirmClearAll', { count: state.items.length }))) return;
 
             state.items = [];
             state.selectedItems.clear();
@@ -1175,28 +1449,34 @@
             renderTable();
         }
 
+        function updateModalTitle(field) {
+            let key = '';
+            switch (field) {
+                case 'category': key = 'modalCategoryTitle'; break;
+                case 'usage': key = 'modalUsageTitle'; break;
+                case 'value': key = 'modalValueTitle'; break;
+                case 'tag': key = 'modalTagTitle'; break;
+            }
+            $('#modalTitle').textContent = key ? t(key) : '';
+        }
+
         function openModal(index, field) {
             const item = state.items[index];
             if (!item) return;
 
-            let title = '';
             let options = [];
 
             switch (field) {
                 case 'category':
-                    title = 'ВЫБЕРИТЕ КАТЕГОРИИ';
                     options = state.definitions.categories || [];
                     break;
                 case 'usage':
-                    title = 'ВЫБЕРИТЕ USAGE';
                     options = state.definitions.usage || [];
                     break;
                 case 'value':
-                    title = 'ВЫБЕРИТЕ VALUE';
                     options = state.definitions.value || [];
                     break;
                 case 'tag':
-                    title = 'ВЫБЕРИТЕ ТЕГИ';
                     options = state.definitions.tags || [];
                     break;
                 default:
@@ -1210,7 +1490,7 @@
                 allOptions: uniqueArray(options)
             };
 
-            $('#modalTitle').textContent = title;
+            updateModalTitle(field);
 
             const currentValues = state.currentModal.inputElement
                 ? parseSpaceList(state.currentModal.inputElement.value)
@@ -1227,7 +1507,7 @@
             const list = $('#modalList');
 
             if (!options.length) {
-                list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Загрузите файл определений</div>';
+                list.innerHTML = `<div class="modal-item" style="justify-content:center;color:#7a5c3a;">${escapeHtml(t('loadDefinitionsHint'))}</div>`;
                 return;
             }
 
@@ -1247,7 +1527,7 @@
             const container = $('#selectedValuesList');
 
             if (!values.length) {
-                container.innerHTML = '<span class="selected-value-placeholder">ничего не выбрано</span>';
+                container.innerHTML = `<span class="selected-value-placeholder">${escapeHtml(t('selectedNothing'))}</span>`;
                 return;
             }
 
@@ -1359,9 +1639,9 @@
 
                         saveStateToLocalStorage();
 
-                        alert(`Загружено ${categories.length + tags.length + usage.length + value.length} определений`);
+                        alert(t('alertDefinitionsLoaded', { count: categories.length + tags.length + usage.length + value.length }));
                     } catch (error) {
-                        alert(`Ошибка: ${error.message}`);
+                        alert(t('alertErrorPrefix', { message: error.message }));
                         console.error(error);
                     }
                 };
@@ -1374,13 +1654,13 @@
 
         function exportXML() {
             if (!state.items.length) {
-                alert('Нечего сохранять');
+                alert(t('alertNothingToSave'));
                 return;
             }
 
             const totalErrors = state.items.reduce((sum, item, index) => sum + validateItem(item, index).length, 0);
 
-            if (totalErrors > 0 && !confirm(`Обнаружено ${totalErrors} предупреждений валидации.\nВсё равно сохранить?`)) {
+            if (totalErrors > 0 && !confirm(t('confirmValidationWarnings', { count: totalErrors }))) {
                 return;
             }
 
@@ -1481,9 +1761,9 @@
                         saveStateToLocalStorage();
                         renderTable();
 
-                        alert(`Загружено ${state.items.length} предметов`);
+                        alert(t('alertItemsLoaded', { count: state.items.length }));
                     } catch (error) {
-                        alert(`Ошибка: ${error.message}`);
+                        alert(t('alertErrorPrefix', { message: error.message }));
                         console.error(error);
                     }
                 };
@@ -1562,6 +1842,11 @@
 
         function handleDocumentClick(event) {
             const target = event.target;
+
+            if (target.matches('.lang-btn')) {
+                applyLanguage(target.dataset.lang);
+                return;
+            }
 
             if (!target.closest('#validationTooltip')) {
                 $('#validationTooltip').style.display = 'none';
@@ -1709,8 +1994,7 @@
 
         function init() {
             loadStateFromLocalStorage();
-            renderHeader();
-            renderTable();
+            applyLanguage(currentLang);
             setupScrollSync();
             setupKeyboardShortcuts();
             bindEvents();
