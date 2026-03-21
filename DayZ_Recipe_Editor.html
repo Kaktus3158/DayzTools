@@ -20,7 +20,6 @@
             overflow-x: hidden;
         }
         
-        /* Ржавый текстурный фон */
         body::before {
             content: "";
             position: fixed;
@@ -48,7 +47,6 @@
             position: relative;
         }
         
-        /* Эффект ржавчины по краям */
         .container::before {
             content: "";
             position: absolute;
@@ -62,7 +60,6 @@
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
         
-        /* Потертости */
         .container::after {
             content: "";
             position: absolute;
@@ -75,7 +72,6 @@
             pointer-events: none;
         }
         
-        /* УНИФИЦИРОВАННЫЙ ЗАГОЛОВОК В СТИЛЕ DAYZ */
         .header {
             background: #1e2b1e;
             background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
@@ -184,9 +180,6 @@
             pointer-events: none;
         }
         
-        /* ========== УНИФИЦИРОВАННЫЕ СТИЛИ ========== */
-        
-        /* Все поля ввода в стиле DayZ */
         .uniform-input,
         input[type="text"],
         input[type="number"],
@@ -205,7 +198,6 @@
             font-family: 'Segoe UI', monospace;
         }
         
-        /* Фокус для всех полей */
         .uniform-input:focus,
         input[type="text"]:focus,
         input[type="number"]:focus,
@@ -216,7 +208,6 @@
             box-shadow: 0 0 0 2px rgba(196, 154, 108, 0.2);
         }
         
-        /* Числовые поля - убираем спин-кнопки */
         input[type="number"] {
             -moz-appearance: textfield;
         }
@@ -227,21 +218,18 @@
             margin: 0;
         }
         
-        /* Текстовые поля (textarea) */
         textarea {
             resize: vertical;
             min-height: 80px;
             font-family: 'Segoe UI', monospace;
         }
         
-        /* Высота для всех полей (кроме textarea) */
         input[type="text"],
         input[type="number"],
         select {
             height: 32px;
         }
         
-        /* Чекбоксы в стиле DayZ */
         input[type="checkbox"] {
             width: 16px;
             height: 16px;
@@ -252,7 +240,6 @@
             border: 1px solid #5a4a3a;
         }
         
-        /* Лейблы */
         label {
             display: block;
             font-size: 12px;
@@ -263,12 +250,10 @@
             letter-spacing: 1px;
         }
         
-        /* Контейнер для полей ввода */
         .form-group {
             margin-bottom: 12px;
         }
         
-        /* Ряд с полями */
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -276,7 +261,6 @@
             margin-bottom: 8px;
         }
         
-        /* Чекбокс с лейблом в одной строке */
         .checkbox-label {
             display: flex;
             align-items: center;
@@ -289,9 +273,6 @@
             cursor: pointer;
         }
         
-        /* ========== КНОПКИ В СТИЛЕ DAYZ ========== */
-        
-        /* Унифицированные кнопки */
         .uniform-btn {
             padding: 8px 12px;
             border: 2px solid #5a4a3a;
@@ -344,7 +325,6 @@
             width: 100%;
         }
         
-        /* Цвета кнопок */
         .uniform-btn.primary {
             background: #1e3a1e;
             border-color: #2a6b2a;
@@ -399,7 +379,6 @@
             border-color: #7f8c8d;
         }
         
-        /* Группа кнопок */
         .btn-group {
             display: flex;
             gap: 8px;
@@ -410,8 +389,6 @@
             flex: 1;
             margin: 0;
         }
-        
-        /* ========== ВКЛАДКИ В СТИЛЕ DAYZ ========== */
         
         .tab-buttons {
             display: flex;
@@ -451,7 +428,6 @@
             box-shadow: 0 0 10px rgba(196,154,108,0.3);
         }
         
-        /* Панели вкладок */
         .tab-pane {
             display: none;
         }
@@ -459,8 +435,6 @@
         .tab-pane.active {
             display: block;
         }
-        
-        /* ========== КАРТОЧКИ В СТИЛЕ DAYZ ========== */
         
         .card-container {
             max-height: 500px;
@@ -532,8 +506,6 @@
             letter-spacing: 1px;
             box-shadow: inset 0 1px 3px rgba(255,215,140,0.1);
         }
-        
-        /* ========== ПРЕДПРОСМОТР ========== */
         
         .preview-section {
             background: #0f1a0f;
@@ -648,8 +620,6 @@
             color: #b4a68a;
         }
         
-        /* ========== КОД ========== */
-        
         .code-output {
             background: #0f1a0f;
             color: #d4c8b0;
@@ -681,7 +651,6 @@
             color: #7a5c3a;
         }
         
-        /* Стили для заголовков внутри вкладок */
         .editor h3 {
             color: #c49a6c;
             margin-bottom: 15px;
@@ -691,8 +660,6 @@
             border-bottom: 2px solid #5a4a3a;
             padding-bottom: 8px;
         }
-        
-        /* ========== АДАПТИВНОСТЬ ========== */
         
         @media (max-width: 768px) {
             .main-content {
@@ -714,7 +681,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- ЗАГОЛОВОК В СТИЛЕ DAYZ -->
         <div class="header">
             <h2>RECIPE EDITOR</h2>
             <div class="header-placeholder"></div>
@@ -726,18 +692,18 @@
                 
                 <div class="form-group">
                     <label title="Наименование класса рецепта для регистрации. Один рецепт - один класс. Должно быть уникальным в рамках мода.">RecipeclassName:</label>
-                    <input type="text" id="className" value="" placeholder="CraftWeaponCleaner" onchange="updatePreview()">
+                    <input type="text" id="className" value="" placeholder="CraftWeaponCleaner">
                 </div>
                 
                 <div class="form-group">
                     <label title="Наименование рецепта, которое будет отображаться в игре.">recipeName:</label>
-                    <input type="text" id="recipeName" value="" placeholder="Мой рецепт" onchange="updatePreview()">
+                    <input type="text" id="recipeName" value="" placeholder="Мой рецепт">
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label title="true - крафт происходит мгновенно без анимации. false - с анимацией крафта.">InstaRecipe:</label>
-                        <select id="isInstaRecipe" onchange="updatePreview()">
+                        <select id="isInstaRecipe">
                             <option value="true">true</option>
                             <option value="false">false</option>
                         </select>
@@ -745,27 +711,25 @@
                     
                     <div class="form-group">
                         <label title="Длительность анимации в относительных единицах. Реальные секунды = значение * 4 приблизительно.">Animation:</label>
-                        <input type="number" id="animationLength" value="1" step="0.1" min="0" onchange="updatePreview()">
+                        <input type="number" id="animationLength" value="1" step="0.1" min="0">
                     </div>
                 </div>
                 
-                <!-- Группа кнопок действий -->
                 <div class="btn-group">
-                    <button class="uniform-btn primary" onclick="createNewRecipe()" title="Создать новый рецепт со значениями по умолчанию">Новый</button>
-                    <button class="uniform-btn secondary" onclick="clearRecipe()" title="Очистить все поля рецепта">Очистить</button>
+                    <button class="uniform-btn primary" id="newRecipeBtn" title="Создать новый рецепт со значениями по умолчанию">Новый</button>
+                    <button class="uniform-btn secondary" id="clearRecipeBtn" title="Очистить все поля рецепта">Очистить</button>
                 </div>
                 
-                <!-- Кнопки импорта/экспорта -->
-                <button class="uniform-btn export block" onclick="exportRecipe()" title="Сохранить рецепт в .c файл" style="margin-bottom: 5px;">Сохранить</button>
-                <button class="uniform-btn import block" onclick="importRecipe()" title="Загрузить рецепт из .c файла">Загрузить</button>
+                <button class="uniform-btn export block" id="exportBtn" title="Сохранить рецепт в .c файл" style="margin-bottom: 5px;">Сохранить</button>
+                <button class="uniform-btn import block" id="importBtn" title="Загрузить рецепт из .c файла">Загрузить</button>
             </div>
             
             <div class="editor">
                 <div class="tab-buttons">
-                    <button class="tab-btn active" onclick="showTab('ingredients')" title="Настройка ингредиентов для крафта">Ингредиенты</button>
-                    <button class="tab-btn" onclick="showTab('results')" title="Настройка результатов крафта">Результаты</button>
-                    <button class="tab-btn" onclick="showTab('preview')" title="Предпросмотр текущего рецепта">Предпросмотр</button>
-                    <button class="tab-btn" onclick="showTab('code')" title="Сгенерированный код рецепта">Код</button>
+                    <button class="tab-btn active" data-tab="ingredients" title="Настройка ингредиентов для крафта">Ингредиенты</button>
+                    <button class="tab-btn" data-tab="results" title="Настройка результатов крафта">Результаты</button>
+                    <button class="tab-btn" data-tab="preview" title="Предпросмотр текущего рецепта">Предпросмотр</button>
+                    <button class="tab-btn" data-tab="code" title="Сгенерированный код рецепта">Код</button>
                 </div>
                 
                 <div id="ingredientsTab" class="tab-pane active">
@@ -773,7 +737,7 @@
                     <div class="card-container" id="ingredientsContainer">
                         <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>
                     </div>
-                    <button class="uniform-btn primary block" onclick="addIngredient()" title="Добавить новый ингредиент">+ Добавить ингредиент</button>
+                    <button class="uniform-btn primary block" id="addIngredientBtn" title="Добавить новый ингредиент">+ Добавить ингредиент</button>
                 </div>
                 
                 <div id="resultsTab" class="tab-pane">
@@ -781,131 +745,291 @@
                     <div class="card-container" id="casesContainer">
                         <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>
                     </div>
-                    <button class="uniform-btn import block" onclick="addCase()" title="Добавить новый вариант результата">+ Добавить вариант</button>
+                    <button class="uniform-btn import block" id="addCaseBtn" title="Добавить новый вариант результата">+ Добавить вариант</button>
                 </div>
                 
                 <div id="previewTab" class="tab-pane">
                     <h3>Предпросмотр</h3>
-                    <div class="card-container" style="max-height: 500px;" id="previewContainer">
-                        <!-- Предпросмотр будет генерироваться динамически -->
-                    </div>
+                    <div class="card-container" style="max-height: 500px;" id="previewContainer"></div>
                 </div>
                 
                 <div id="codeTab" class="tab-pane">
                     <h3>Код</h3>
-                    <button class="uniform-btn export block" onclick="generateCode()" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
-                    <button class="uniform-btn neutral block" onclick="copyCode()" title="Копировать код в буфер обмена">Копировать код</button>
+                    <button class="uniform-btn export block" id="generateCodeBtn" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
+                    <button class="uniform-btn neutral block" id="copyCodeBtn" title="Копировать код в буфер обмена">Копировать код</button>
                     <div id="codeOutput" class="code-output">
                         // Нажмите "Сгенерировать код"
                     </div>
                     
-                    <div id="registrationContainer" class="registration-code" style="display: none;">
-                        <!-- Регистрация будет добавляться сюда -->
-                    </div>
+                    <div id="registrationContainer" class="registration-code" style="display: none;"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Весь JavaScript код остается без изменений
-        let ingredients = [];
-        let cases = [];
-        
-        function getIngredientTemplate() {
+        const state = {
+            ingredients: [],
+            cases: [],
+            activeTab: 'ingredients'
+        };
+
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+        const escapeHtml = (str) => String(str ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        const getIngredientTemplate = () => ({
+            classList: "",
+            minDamage: -1,
+            maxDamage: 3,
+            minQuantity: 1,
+            maxQuantity: -1,
+            addHealth: 0,
+            setHealth: -1,
+            addQuantity: -1,
+            destroy: false
+        });
+
+        const getResultTemplate = () => ({
+            type: "",
+            setFullQuantity: false,
+            setQuantity: 1,
+            setHealth: -1,
+            inheritsHealth: -1,
+            inheritsColor: -1,
+            toInventory: -1,
+            replacesIngredient: -1
+        });
+
+        const getCaseTemplate = () => ({
+            results: [getResultTemplate()]
+        });
+
+        const parseClassList = (text) => String(text || '')
+            .split('\n')
+            .map(line => line.trim())
+            .filter(Boolean);
+
+        function getFormValues() {
             return {
-                classList: "",
-                minDamage: -1,
-                maxDamage: 3,
-                minQuantity: 1,
-                maxQuantity: -1,
-                addHealth: 0,
-                setHealth: -1,
-                addQuantity: -1,
-                destroy: false
+                className: $('#className').value || '',
+                recipeName: $('#recipeName').value || '',
+                isInstaRecipe: $('#isInstaRecipe').value,
+                animationLength: $('#animationLength').value || '1'
             };
         }
-        
-        function getResultTemplate() {
-            return {
-                type: "",
-                setFullQuantity: false,
-                setQuantity: 1,
-                setHealth: -1,
-                inheritsHealth: -1,
-                inheritsColor: -1,
-                toInventory: -1,
-                replacesIngredient: -1
-            };
+
+        function setFormDefaults() {
+            $('#className').value = '';
+            $('#recipeName').value = '';
+            $('#isInstaRecipe').value = 'true';
+            $('#animationLength').value = '1';
         }
-        
-        function getCaseTemplate() {
-            return {
-                results: [getResultTemplate()]
-            };
-        }
-        
-        function parseClassList(classText) {
-            return classText.split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0);
-        }
-        
+
         function clearRecipe() {
-            ingredients = [];
-            cases = [];
-            
-            document.getElementById('className').value = '';
-            document.getElementById('recipeName').value = '';
-            document.getElementById('isInstaRecipe').value = 'true';
-            document.getElementById('animationLength').value = '1';
-            
-            renderIngredients();
-            renderCases();
-            updatePreview();
-            
-            document.getElementById('codeOutput').textContent = '// Нажмите "Сгенерировать код"';
-            document.getElementById('registrationContainer').style.display = 'none';
+            state.ingredients = [];
+            state.cases = [];
+            setFormDefaults();
+            renderAll();
+            $('#codeOutput').textContent = '// Нажмите "Сгенерировать код"';
+            $('#registrationContainer').style.display = 'none';
         }
-        
+
+        function createNewRecipe() {
+            state.ingredients = [];
+            state.cases = [getCaseTemplate()];
+            setFormDefaults();
+            renderAll();
+            $('#codeOutput').textContent = '// Нажмите "Сгенерировать код"';
+            $('#registrationContainer').style.display = 'none';
+            showTab('ingredients');
+        }
+
+        function renderIngredients() {
+            const container = $('#ingredientsContainer');
+            container.innerHTML = '';
+
+            if (!state.ingredients.length) {
+                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>';
+                return;
+            }
+
+            container.innerHTML = state.ingredients.map((ing, index) => `
+                <div class="ingredient-card">
+                    <h4>
+                        Ингредиент #${index + 1}
+                        <button class="uniform-btn danger remove-ingredient-btn" data-index="${index}" style="width: 28px; height: 28px; padding: 0;">×</button>
+                    </h4>
+
+                    <div class="form-group">
+                        <label title="Список классов предметов, которые можно использовать. Каждый класс с новой строки. Например: Apple, Pear, Banana">ItemClassName (с новой строки):</label>
+                        <textarea class="ingredient-input" data-index="${index}" data-field="classList" placeholder="Apple&#10;Pear&#10;Banana">${escapeHtml(ing.classList)}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Минимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Min Damage:</label>
+                            <input type="number" class="ingredient-input" data-index="${index}" data-field="minDamage" value="${ing.minDamage}">
+                        </div>
+                        <div class="form-group">
+                            <label title="Максимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Max Damage:</label>
+                            <input type="number" class="ingredient-input" data-index="${index}" data-field="maxDamage" value="${ing.maxDamage}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Минимальное количество ингредиента. -1 = отключить проверку">Min Quantity:</label>
+                            <input type="number" class="ingredient-input" data-index="${index}" data-field="minQuantity" value="${ing.minQuantity}">
+                        </div>
+                        <div class="form-group">
+                            <label title="Максимальное количество ингредиента. -1 = отключить проверку">Max Quantity:</label>
+                            <input type="number" class="ingredient-input" data-index="${index}" data-field="maxQuantity" value="${ing.maxQuantity}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Уменьшение или увеличение ХП после крафта. 0 = ничего не делать, отрицательное = уменьшение, положительное = увеличение">Add Health:</label>
+                            <input type="number" class="ingredient-input" data-index="${index}" data-field="addHealth" value="${ing.addHealth}">
+                        </div>
+                        <div class="form-group">
+                            <label title="Установить точное значение ХП после крафта. -1 = ничего не делать, 0-100 = конкретное значение">Set Health:</label>
+                            <input type="number" class="ingredient-input" data-index="${index}" data-field="setHealth" value="${ing.setHealth}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label title="Расход или прибавка количества. 0 = ничего не делать, отрицательное = расход, положительное = прибавка">Add Quantity:</label>
+                            <input type="number" class="ingredient-input" data-index="${index}" data-field="addQuantity" value="${ing.addQuantity}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group checkbox-label">
+                            <input type="checkbox" class="ingredient-checkbox" data-index="${index}" data-field="destroy" id="destroy_${index}" ${ing.destroy ? 'checked' : ''}>
+                            <label for="destroy_${index}" title="true = ингредиент полностью уничтожается после крафта, false = не уничтожается">Destroy</label>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCases() {
+            const container = $('#casesContainer');
+            container.innerHTML = '';
+
+            if (!state.cases.length) {
+                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>';
+                return;
+            }
+
+            container.innerHTML = state.cases.map((caseItem, caseIndex) => `
+                <div class="case-card">
+                    <div class="case-header">
+                        Вариант #${caseIndex + 1}
+                        <button class="uniform-btn danger remove-case-btn" data-case-index="${caseIndex}" style="width: 28px; height: 28px; padding: 0;">×</button>
+                    </div>
+
+                    ${caseItem.results.map((result, resultIndex) => `
+                        <div class="result-item">
+                            <h5>
+                                Результат #${resultIndex + 1}
+                                <button class="uniform-btn danger remove-result-btn" data-case-index="${caseIndex}" data-result-index="${resultIndex}" style="width: 24px; height: 24px; padding: 0;">×</button>
+                            </h5>
+
+                            <div class="form-group">
+                                <label title="Класс предмета, который будет создан. Например: Apple, WeaponCleaningKit">ItemClassName:</label>
+                                <input type="text" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="type" value="${escapeHtml(result.type)}" placeholder="ItemClassName">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group checkbox-label">
+                                    <input type="checkbox" class="result-checkbox" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setFullQuantity" id="full_${caseIndex}_${resultIndex}" ${result.setFullQuantity ? 'checked' : ''}>
+                                    <label for="full_${caseIndex}_${resultIndex}" title="true = создать предмет с полным стаком, false = использовать указанное количество">FullQuantity</label>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label title="Количество создаваемых предметов. -1 = ничего не создавать">Set Quantity:</label>
+                                    <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setQuantity" value="${result.setQuantity}">
+                                </div>
+                                <div class="form-group">
+                                    <label title="Установить здоровье создаваемого предмета. -1 = здоровье по умолчанию">Set Health:</label>
+                                    <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setHealth" value="${result.setHealth}">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label title="Наследование здоровья: -1 = нет, 0/1 = от ингредиента, -2 = среднее от всех">Inherits Health:</label>
+                                    <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="inheritsHealth" value="${result.inheritsHealth}">
+                                </div>
+                                <div class="form-group">
+                                    <label title="Куда поместить результат: -2 = на землю, -1 = в инвентарь, >=0 = заменить ингредиент">To Inventory:</label>
+                                    <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="toInventory" value="${result.toInventory}">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label title="Заменить ингредиент: -1 = нет, >=0 = перенести свойства из ингредиента">Replaces Ingredient:</label>
+                                    <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="replacesIngredient" value="${result.replacesIngredient}">
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+
+                    <button class="uniform-btn primary block add-result-btn" data-case-index="${caseIndex}" style="margin-top: 10px;">+ Добавить результат</button>
+                </div>
+            `).join('');
+        }
+
         function updatePreview() {
-            const container = document.getElementById('previewContainer');
+            const container = $('#previewContainer');
             if (!container) return;
-            
-            const className = document.getElementById('className').value || 'Не указано';
-            const recipeName = document.getElementById('recipeName').value || 'Не указано';
-            const isInstaRecipe = document.getElementById('isInstaRecipe').value;
-            const animationLength = document.getElementById('animationLength').value;
-            
+
+            const form = getFormValues();
+            const className = form.className || 'Не указано';
+            const recipeName = form.recipeName || 'Не указано';
+
             let html = `
-                <div class="preview-title">${recipeName} (${className})</div>
+                <div class="preview-title">${escapeHtml(recipeName)} (${escapeHtml(className)})</div>
                 
                 <div class="preview-block">
                     <h4>Параметры:</h4>
                     <div class="preview-param-grid">
-                        <span class="preview-param"><strong>InstaRecipe:</strong> ${isInstaRecipe}</span>
-                        <span class="preview-param"><strong>Animation Length:</strong> ${animationLength}</span>
+                        <span class="preview-param"><strong>InstaRecipe:</strong> ${escapeHtml(form.isInstaRecipe)}</span>
+                        <span class="preview-param"><strong>Animation Length:</strong> ${escapeHtml(form.animationLength)}</span>
                     </div>
                 </div>
             `;
-            
-            html += `<div class="preview-block"><h4>Ингредиенты (${ingredients.length}):</h4>`;
-            
-            if (ingredients.length === 0) {
+
+            html += `<div class="preview-block"><h4>Ингредиенты (${state.ingredients.length}):</h4>`;
+
+            if (!state.ingredients.length) {
                 html += `<p style="color: #7a5c3a;">Нет ингредиентов</p>`;
             } else {
-                ingredients.forEach((ing, index) => {
+                state.ingredients.forEach((ing, index) => {
                     const classes = parseClassList(ing.classList);
                     const damageMin = ing.minDamage === -1 ? 'любое' : ing.minDamage;
                     const damageMax = ing.maxDamage === -1 ? 'любое' : ing.maxDamage;
                     const quantityMin = ing.minQuantity === -1 ? 'любое' : ing.minQuantity;
                     const quantityMax = ing.maxQuantity === -1 ? '∞' : ing.maxQuantity;
-                    
+
                     html += `
                         <div class="preview-ingredient">
                             <strong>Ингредиент #${index + 1}</strong>
                             <div class="preview-class-list">
-                                ${classes.map(cls => `<span class="preview-class-item">${cls}</span>`).join('')}
+                                ${classes.map(cls => `<span class="preview-class-item">${escapeHtml(cls)}</span>`).join('')}
                             </div>
                             <div class="preview-param-grid">
                                 <span class="preview-param"><strong>Min Damage:</strong> ${damageMin}</span>
@@ -923,25 +1047,24 @@
                     `;
                 });
             }
-            
+
             html += `</div>`;
-            
-            html += `<div class="preview-block"><h4>Варианты результатов (${cases.length}):</h4>`;
-            
-            if (cases.length === 0) {
+            html += `<div class="preview-block"><h4>Варианты результатов (${state.cases.length}):</h4>`;
+
+            if (!state.cases.length) {
                 html += `<p style="color: #7a5c3a;">Нет результатов</p>`;
             } else {
-                cases.forEach((caseItem, caseIndex) => {
+                state.cases.forEach((caseItem, caseIndex) => {
                     html += `
                         <div class="preview-case">
                             <strong>Вариант #${caseIndex + 1}</strong>
                             <div class="preview-results">
                     `;
-                    
-                    caseItem.results.forEach((result, resultIndex) => {
+
+                    caseItem.results.forEach((result) => {
                         html += `
                             <div class="preview-result-item">
-                                <strong>${result.type || 'Не указано'}</strong>
+                                <strong>${escapeHtml(result.type || 'Не указано')}</strong>
                                 <div class="preview-param-grid">
                                     <span class="preview-param"><strong>Set Quantity:</strong> ${result.setQuantity}</span>
                                     <span class="preview-param"><strong>Set Health:</strong> ${result.setHealth === -1 ? 'по умолчанию' : result.setHealth}</span>
@@ -952,306 +1075,135 @@
                             </div>
                         `;
                     });
-                    
+
                     html += `</div></div>`;
                 });
             }
-            
+
             html += `</div>`;
-            
-            const totalClasses = ingredients.reduce((sum, ing) => sum + parseClassList(ing.classList).length, 0);
-            const totalResults = cases.reduce((sum, caseItem) => sum + caseItem.results.length, 0);
-            
+
+            const totalClasses = state.ingredients.reduce((sum, ing) => sum + parseClassList(ing.classList).length, 0);
+            const totalResults = state.cases.reduce((sum, caseItem) => sum + caseItem.results.length, 0);
+
             html += `
                 <div class="preview-stats">
                     <span class="stat-item">Всего классов: ${totalClasses}</span>
                     <span class="stat-item">Всего результатов: ${totalResults}</span>
                 </div>
             `;
-            
+
             container.innerHTML = html;
         }
-        
-        function createNewRecipe() {
-            ingredients = [];
-            cases = [getCaseTemplate()];
-            
-            document.getElementById('className').value = '';
-            document.getElementById('recipeName').value = '';
-            document.getElementById('isInstaRecipe').value = 'true';
-            document.getElementById('animationLength').value = '1';
-            
-            renderIngredients();
-            renderCases();
-            updatePreview();
-            
-            document.getElementById('codeOutput').textContent = '// Нажмите "Сгенерировать код"';
-            document.getElementById('registrationContainer').style.display = 'none';
-            showTab('ingredients');
-        }
-        
-        function renderIngredients() {
-            const container = document.getElementById('ingredientsContainer');
-            container.innerHTML = '';
-            
-            if (ingredients.length === 0) {
-                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>';
-                return;
-            }
-            
-            ingredients.forEach((ing, index) => {
-                const card = document.createElement('div');
-                card.className = 'ingredient-card';
-                
-                const header = document.createElement('h4');
-                header.innerHTML = `
-                    Ингредиент #${index + 1}
-                    <button class="uniform-btn danger" style="width: 28px; height: 28px; padding: 0;" onclick="removeIngredient(${index})">×</button>
-                `;
-                card.appendChild(header);
-                
-                const classDiv = document.createElement('div');
-                classDiv.className = 'form-group';
-                classDiv.innerHTML = `
-                    <label title="Список классов предметов, которые можно использовать. Каждый класс с новой строки. Например: Apple, Pear, Banana">ItemClassName (с новой строки):</label>
-                    <textarea onchange="updateIngredientParam(${index}, 'classList', this.value)" placeholder="Apple&#10;Pear&#10;Banana">${ing.classList}</textarea>
-                `;
-                card.appendChild(classDiv);
-                
-                const paramsDiv = document.createElement('div');
-                paramsDiv.innerHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label title="Минимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Min Damage:</label>
-                            <input type="number" value="${ing.minDamage}" onchange="updateIngredientParam(${index}, 'minDamage', parseInt(this.value))">
-                        </div>
-                        <div class="form-group">
-                            <label title="Максимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Max Damage:</label>
-                            <input type="number" value="${ing.maxDamage}" onchange="updateIngredientParam(${index}, 'maxDamage', parseInt(this.value))">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label title="Минимальное количество ингредиента. -1 = отключить проверку">Min Quantity:</label>
-                            <input type="number" value="${ing.minQuantity}" onchange="updateIngredientParam(${index}, 'minQuantity', parseInt(this.value))">
-                        </div>
-                        <div class="form-group">
-                            <label title="Максимальное количество ингредиента. -1 = отключить проверку">Max Quantity:</label>
-                            <input type="number" value="${ing.maxQuantity}" onchange="updateIngredientParam(${index}, 'maxQuantity', parseInt(this.value))">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label title="Уменьшение или увеличение ХП после крафта. 0 = ничего не делать, отрицательное = уменьшение, положительное = увеличение">Add Health:</label>
-                            <input type="number" value="${ing.addHealth}" onchange="updateIngredientParam(${index}, 'addHealth', parseInt(this.value))">
-                        </div>
-                        <div class="form-group">
-                            <label title="Установить точное значение ХП после крафта. -1 = ничего не делать, 0-100 = конкретное значение">Set Health:</label>
-                            <input type="number" value="${ing.setHealth}" onchange="updateIngredientParam(${index}, 'setHealth', parseInt(this.value))">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label title="Расход или прибавка количества. 0 = ничего не делать, отрицательное = расход, положительное = прибавка">Add Quantity:</label>
-                            <input type="number" value="${ing.addQuantity}" onchange="updateIngredientParam(${index}, 'addQuantity', parseInt(this.value))">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group checkbox-label">
-                            <input type="checkbox" ${ing.destroy ? 'checked' : ''} onchange="updateIngredientParam(${index}, 'destroy', this.checked)" id="destroy_${index}">
-                            <label for="destroy_${index}" title="true = ингредиент полностью уничтожается после крафта, false = не уничтожается">Destroy</label>
-                        </div>
-                    </div>
-                `;
-                card.appendChild(paramsDiv);
-                
-                container.appendChild(card);
-            });
-            
-            updatePreview();
-        }
-        
-        function renderCases() {
-            const container = document.getElementById('casesContainer');
-            container.innerHTML = '';
-            
-            if (cases.length === 0) {
-                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>';
-                return;
-            }
-            
-            cases.forEach((caseItem, caseIndex) => {
-                const caseCard = document.createElement('div');
-                caseCard.className = 'case-card';
-                
-                const header = document.createElement('div');
-                header.className = 'case-header';
-                header.innerHTML = `
-                    Вариант #${caseIndex + 1}
-                    <button class="uniform-btn danger" style="width: 28px; height: 28px; padding: 0;" onclick="removeCase(${caseIndex})">×</button>
-                `;
-                caseCard.appendChild(header);
-                
-                caseItem.results.forEach((result, resultIndex) => {
-                    const resultDiv = document.createElement('div');
-                    resultDiv.className = 'result-item';
-                    resultDiv.innerHTML = `
-                        <h5>
-                            Результат #${resultIndex + 1}
-                            <button class="uniform-btn danger" style="width: 24px; height: 24px; padding: 0;" onclick="removeResultFromCase(${caseIndex}, ${resultIndex})">×</button>
-                        </h5>
-                        
-                        <div class="form-group">
-                            <label title="Класс предмета, который будет создан. Например: Apple, WeaponCleaningKit">ItemClassName:</label>
-                            <input type="text" value="${result.type}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'type', this.value)" placeholder="ItemClassName">
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group checkbox-label">
-                                <input type="checkbox" ${result.setFullQuantity ? 'checked' : ''} onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'setFullQuantity', this.checked)" id="full_${caseIndex}_${resultIndex}">
-                                <label for="full_${caseIndex}_${resultIndex}" title="true = создать предмет с полным стаком, false = использовать указанное количество">FullQuantity</label>
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label title="Количество создаваемых предметов. -1 = ничего не создавать">Set Quantity:</label>
-                                <input type="number" value="${result.setQuantity}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'setQuantity', parseInt(this.value))">
-                            </div>
-                            <div class="form-group">
-                                <label title="Установить здоровье создаваемого предмета. -1 = здоровье по умолчанию">Set Health:</label>
-                                <input type="number" value="${result.setHealth}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'setHealth', parseInt(this.value))">
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label title="Наследование здоровья: -1 = нет, 0/1 = от ингредиента, -2 = среднее от всех">Inherits Health:</label>
-                                <input type="number" value="${result.inheritsHealth}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'inheritsHealth', parseInt(this.value))">
-                            </div>
-                            <div class="form-group">
-                                <label title="Куда поместить результат: -2 = на землю, -1 = в инвентарь, >=0 = заменить ингредиент">To Inventory:</label>
-                                <input type="number" value="${result.toInventory}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'toInventory', parseInt(this.value))">
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label title="Заменить ингредиент: -1 = нет, >=0 = перенести свойства из ингредиента">Replaces Ingredient:</label>
-                                <input type="number" value="${result.replacesIngredient}" onchange="updateResultInCase(${caseIndex}, ${resultIndex}, 'replacesIngredient', parseInt(this.value))">
-                            </div>
-                        </div>
-                    `;
-                    caseCard.appendChild(resultDiv);
-                });
-                
-                const addResultBtn = document.createElement('button');
-                addResultBtn.className = 'uniform-btn primary block';
-                addResultBtn.textContent = '+ Добавить результат';
-                addResultBtn.style.marginTop = '10px';
-                addResultBtn.onclick = () => addResultToCase(caseIndex);
-                caseCard.appendChild(addResultBtn);
-                
-                container.appendChild(caseCard);
-            });
-            
-            updatePreview();
-        }
-        
-        function updateIngredientParam(index, field, value) {
-            ingredients[index][field] = value;
-            if (field === 'classList') renderIngredients();
-            updatePreview();
-        }
-        
-        function addIngredient() {
-            ingredients.push(getIngredientTemplate());
-            renderIngredients();
-            updatePreview();
-        }
-        
-        function removeIngredient(index) {
-            ingredients.splice(index, 1);
-            renderIngredients();
-            updatePreview();
-        }
-        
-        function updateResultInCase(caseIndex, resultIndex, field, value) {
-            cases[caseIndex].results[resultIndex][field] = value;
-            updatePreview();
-        }
-        
-        function addCase() {
-            cases.push(getCaseTemplate());
-            renderCases();
-            updatePreview();
-        }
-        
-        function removeCase(index) {
-            cases.splice(index, 1);
-            renderCases();
-            updatePreview();
-        }
-        
-        function addResultToCase(caseIndex) {
-            cases[caseIndex].results.push(getResultTemplate());
-            renderCases();
-            updatePreview();
-        }
-        
-        function removeResultFromCase(caseIndex, resultIndex) {
-            if (cases[caseIndex].results.length > 1) {
-                cases[caseIndex].results.splice(resultIndex, 1);
-            }
-            renderCases();
-            updatePreview();
-        }
-        
+
         function showTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            
-            if (tabName === 'preview') {
-                updatePreview();
-            }
+            state.activeTab = tabName;
+            $$('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
+            $$('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            $(`#${tabName}Tab`).classList.add('active');
+
+            if (tabName === 'preview') updatePreview();
         }
-        
+
+        function updateIngredientField(index, field, value) {
+            if (!state.ingredients[index]) return;
+            if (field === 'destroy') {
+                state.ingredients[index][field] = value;
+            } else if (field === 'classList') {
+                state.ingredients[index][field] = value;
+            } else {
+                const parsed = Number.parseInt(value, 10);
+                state.ingredients[index][field] = Number.isNaN(parsed) ? 0 : parsed;
+            }
+            renderIngredients();
+            updatePreview();
+        }
+
+        function updateResultField(caseIndex, resultIndex, field, value) {
+            const result = state.cases[caseIndex]?.results?.[resultIndex];
+            if (!result) return;
+
+            if (field === 'type') {
+                result[field] = value;
+            } else if (field === 'setFullQuantity') {
+                result[field] = value;
+            } else {
+                const parsed = Number.parseInt(value, 10);
+                result[field] = Number.isNaN(parsed) ? 0 : parsed;
+            }
+
+            renderCases();
+            updatePreview();
+        }
+
+        function addIngredient() {
+            state.ingredients.push(getIngredientTemplate());
+            renderIngredients();
+            updatePreview();
+        }
+
+        function removeIngredient(index) {
+            state.ingredients.splice(index, 1);
+            renderIngredients();
+            updatePreview();
+        }
+
+        function addCase() {
+            state.cases.push(getCaseTemplate());
+            renderCases();
+            updatePreview();
+        }
+
+        function removeCase(index) {
+            state.cases.splice(index, 1);
+            renderCases();
+            updatePreview();
+        }
+
+        function addResultToCase(caseIndex) {
+            state.cases[caseIndex].results.push(getResultTemplate());
+            renderCases();
+            updatePreview();
+        }
+
+        function removeResultFromCase(caseIndex, resultIndex) {
+            if (state.cases[caseIndex].results.length > 1) {
+                state.cases[caseIndex].results.splice(resultIndex, 1);
+            }
+            renderCases();
+            updatePreview();
+        }
+
         function generateCode() {
-            if (ingredients.length === 0) {
+            if (!state.ingredients.length) {
                 alert('Добавьте ингредиенты!');
                 return;
             }
-            
-            if (cases.length === 0) {
+
+            if (!state.cases.length) {
                 alert('Добавьте результаты!');
                 return;
             }
-            
-            const className = document.getElementById('className').value || 'MyCustomRecipe';
-            const recipeName = document.getElementById('recipeName').value || 'Мой рецепт';
-            const isInstaRecipe = document.getElementById('isInstaRecipe').value;
-            const animationLength = document.getElementById('animationLength').value;
-            
+
+            const form = getFormValues();
+            const className = form.className || 'MyCustomRecipe';
+            const recipeName = form.recipeName || 'Мой рецепт';
+            const isInstaRecipe = form.isInstaRecipe;
+            const animationLength = form.animationLength;
+
             let code = `class ${className} extends RecipeBase\n{\n\toverride void Init()\n\t{\n`;
             code += `\t\tm_Name = "${recipeName}";\n`;
             code += `\t\tm_IsInstaRecipe = ${isInstaRecipe};\n`;
             code += `\t\tm_AnimationLength = ${animationLength};\n\n`;
-            
-            ingredients.forEach((ing, index) => {
+
+            state.ingredients.forEach((ing, index) => {
                 const classes = parseClassList(ing.classList);
-                
+
                 code += `\t\t//ИНГРИДИЕНТ №${index}\n`;
                 classes.forEach(cls => {
                     code += `\t\tInsertIngredient(${index},"${cls}");\n`;
                 });
                 code += `\n`;
-                
+
                 code += `\t\tm_MinDamageIngredient[${index}] = ${ing.minDamage};\n`;
                 code += `\t\tm_MaxDamageIngredient[${index}] = ${ing.maxDamage};\n`;
                 code += `\t\tm_MinQuantityIngredient[${index}] = ${ing.minQuantity};\n`;
@@ -1261,7 +1213,7 @@
                 code += `\t\tm_IngredientAddQuantity[${index}] = ${ing.addQuantity};\n`;
                 code += `\t\tm_IngredientDestroy[${index}] = ${ing.destroy};\n\n`;
             });
-            
+
             code += `\t}\n\n`;
             code += `\toverride bool CanDo(ItemBase ingredients[], PlayerBase player)\n\t{\n\t\treturn true;\n\t}\n\n`;
             code += `\toverride void Do(ItemBase ingredients[], PlayerBase player,array<ItemBase> results, float specialty_weight)\n\t{\n\t\tDebug.Log("Recipe Do method called","recipes");\n\t}\n\n`;
@@ -1272,12 +1224,12 @@
             code += `\t\tSpawn_Result();\n`;
             code += `\t\tsuper.SpawnItems(ingredients, player, spawned_objects);\n\t}\n\n`;
             code += `\tvoid Spawn_Result()\n\t{\n`;
-            code += `\t\tprivate int random_result_number = Math.RandomIntInclusive(1,${cases.length});\n`;
+            code += `\t\tprivate int random_result_number = Math.RandomIntInclusive(1,${state.cases.length});\n`;
             code += `\t\tswitch(random_result_number)\n\t\t{\n`;
-            
-            cases.forEach((caseItem, caseIndex) => {
+
+            state.cases.forEach((caseItem, caseIndex) => {
                 code += `\t\t\tcase ${caseIndex + 1}:\n\t\t\t{\n`;
-                
+
                 caseItem.results.forEach((result, resultIndex) => {
                     code += `\t\t\t\tAddResult("${result.type}");\n`;
                     code += `\t\t\t\tm_ResultSetFullQuantity[${resultIndex}] = ${result.setFullQuantity};\n`;
@@ -1288,49 +1240,49 @@
                     code += `\t\t\t\tm_ResultToInventory[${resultIndex}] = ${result.toInventory};\n`;
                     code += `\t\t\t\tm_ResultReplacesIngredient[${resultIndex}] = ${result.replacesIngredient || -1};\n\n`;
                 });
-                
+
                 code += `\t\t\t\tbreak;\n\t\t\t}\n\n`;
             });
-            
+
             code += `\t\t}\n\t}\n};`;
-            
-            document.getElementById('codeOutput').textContent = code;
-            
+
+            $('#codeOutput').textContent = code;
+
             const registrationCode = `// RegisterRecipe(new ${className});`;
-            const registrationContainer = document.getElementById('registrationContainer');
+            const registrationContainer = $('#registrationContainer');
             registrationContainer.innerHTML = `<strong>Регистрация (закомментирована):</strong><br><span class="comment">${registrationCode}</span>`;
             registrationContainer.style.display = 'block';
-            
+
             showTab('code');
         }
-        
+
         function copyCode() {
-            const code = document.getElementById('codeOutput').textContent;
+            const code = $('#codeOutput').textContent;
             if (code === '// Нажмите "Сгенерировать код"' || code === '// Рецепт очищен') {
                 alert('Сначала сгенерируйте код!');
                 return;
             }
-            
-            const registrationCode = `// RegisterRecipe(new ${document.getElementById('className').value || 'MyCustomRecipe'});`;
+
+            const registrationCode = `// RegisterRecipe(new ${$('#className').value || 'MyCustomRecipe'});`;
             const fullCode = code + '\n\n' + registrationCode;
-            
+
             navigator.clipboard.writeText(fullCode).then(() => {
                 alert('Код скопирован!');
             });
         }
-        
+
         function exportRecipe() {
-            if (ingredients.length === 0 || cases.length === 0) {
+            if (!state.ingredients.length || !state.cases.length) {
                 alert('Добавьте ингредиенты и результаты!');
                 return;
             }
-            
+
             generateCode();
-            const code = document.getElementById('codeOutput').textContent;
-            const registrationCode = `// RegisterRecipe(new ${document.getElementById('className').value || 'MyCustomRecipe'});`;
+            const code = $('#codeOutput').textContent;
+            const registrationCode = `// RegisterRecipe(new ${$('#className').value || 'MyCustomRecipe'});`;
             const fullCode = code + '\n\n' + registrationCode;
-            const className = document.getElementById('className').value || 'MyCustomRecipe';
-            
+            const className = $('#className').value || 'MyCustomRecipe';
+
             const blob = new Blob([fullCode], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1339,44 +1291,42 @@
             a.click();
             URL.revokeObjectURL(url);
         }
-        
+
         function importRecipe() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.c,.txt';
-            
-            input.onchange = function(e) {
+
+            input.addEventListener('change', (e) => {
                 const file = e.target.files[0];
+                if (!file) return;
+
                 const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const code = e.target.result;
-                    
+
+                reader.onload = (event) => {
+                    const code = event.target.result;
+
                     try {
                         const classNameMatch = code.match(/class\s+(\w+)\s+extends\s+RecipeBase/);
-                        if (classNameMatch) {
-                            document.getElementById('className').value = classNameMatch[1];
-                        }
-                        
+                        if (classNameMatch) $('#className').value = classNameMatch[1];
+
                         const nameMatch = code.match(/m_Name\s*=\s*"([^"]+)"/);
-                        if (nameMatch) {
-                            document.getElementById('recipeName').value = nameMatch[1];
-                        }
-                        
+                        if (nameMatch) $('#recipeName').value = nameMatch[1];
+
                         const instaMatch = code.match(/m_IsInstaRecipe\s*=\s*(true|false)/);
-                        if (instaMatch) document.getElementById('isInstaRecipe').value = instaMatch[1];
-                        
+                        if (instaMatch) $('#isInstaRecipe').value = instaMatch[1];
+
                         const animMatch = code.match(/m_AnimationLength\s*=\s*([\d.]+)/);
-                        if (animMatch) document.getElementById('animationLength').value = animMatch[1];
-                        
-                        ingredients = [];
+                        if (animMatch) $('#animationLength').value = animMatch[1];
+
+                        state.ingredients = [];
                         const insertMatches = [...code.matchAll(/InsertIngredient\((\d+),\"([^\"]+)\"\)/g)];
                         const ingredientMap = new Map();
-                        
+
                         insertMatches.forEach(match => {
-                            const index = parseInt(match[1]);
+                            const index = parseInt(match[1], 10);
                             const className = match[2];
-                            
+
                             if (!ingredientMap.has(index)) {
                                 ingredientMap.set(index, {
                                     classes: [],
@@ -1392,54 +1342,54 @@
                             }
                             ingredientMap.get(index).classes.push(className);
                         });
-                        
+
                         ingredientMap.forEach((value, index) => {
                             const minDamageMatch = code.match(new RegExp(`m_MinDamageIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
-                            if (minDamageMatch) value.minDamage = parseInt(minDamageMatch[1]);
-                            
+                            if (minDamageMatch) value.minDamage = parseInt(minDamageMatch[1], 10);
+
                             const maxDamageMatch = code.match(new RegExp(`m_MaxDamageIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
-                            if (maxDamageMatch) value.maxDamage = parseInt(maxDamageMatch[1]);
-                            
+                            if (maxDamageMatch) value.maxDamage = parseInt(maxDamageMatch[1], 10);
+
                             const minQMatch = code.match(new RegExp(`m_MinQuantityIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
-                            if (minQMatch) value.minQuantity = parseInt(minQMatch[1]);
-                            
+                            if (minQMatch) value.minQuantity = parseInt(minQMatch[1], 10);
+
                             const maxQMatch = code.match(new RegExp(`m_MaxQuantityIngredient\\[${index}\\]\\s*=\\s*(-?\\d+)`));
-                            if (maxQMatch) value.maxQuantity = parseInt(maxQMatch[1]);
-                            
+                            if (maxQMatch) value.maxQuantity = parseInt(maxQMatch[1], 10);
+
                             const addHealthMatch = code.match(new RegExp(`m_IngredientAddHealth\\[${index}\\]\\s*=\\s*(-?\\d+)`));
-                            if (addHealthMatch) value.addHealth = parseInt(addHealthMatch[1]);
-                            
+                            if (addHealthMatch) value.addHealth = parseInt(addHealthMatch[1], 10);
+
                             const setHealthMatch = code.match(new RegExp(`m_IngredientSetHealth\\[${index}\\]\\s*=\\s*(-?\\d+)`));
-                            if (setHealthMatch) value.setHealth = parseInt(setHealthMatch[1]);
-                            
+                            if (setHealthMatch) value.setHealth = parseInt(setHealthMatch[1], 10);
+
                             const addQMatch = code.match(new RegExp(`m_IngredientAddQuantity\\[${index}\\]\\s*=\\s*(-?\\d+)`));
-                            if (addQMatch) value.addQuantity = parseInt(addQMatch[1]);
-                            
+                            if (addQMatch) value.addQuantity = parseInt(addQMatch[1], 10);
+
                             const destroyMatch = code.match(new RegExp(`m_IngredientDestroy\\[${index}\\]\\s*=\\s*(true|false)`));
                             if (destroyMatch) value.destroy = destroyMatch[1] === 'true';
-                            
+
                             value.classList = value.classes.join('\n');
                             delete value.classes;
-                            
-                            ingredients.push(value);
+
+                            state.ingredients.push(value);
                         });
-                        
-                        cases = [];
+
+                        state.cases = [];
                         const caseMatches = code.match(/case\s+\d+:\s*{([^}]+)}/g);
-                        
+
                         if (caseMatches) {
                             caseMatches.forEach(block => {
                                 const caseResults = [];
                                 const resultMatches = [...block.matchAll(/AddResult\(\"([^\"]+)\"\)/g)];
-                                
-                                resultMatches.forEach((resultMatch, idx) => {
+
+                                resultMatches.forEach(match => {
                                     const result = getResultTemplate();
-                                    result.type = resultMatch[1];
+                                    result.type = match[1];
                                     caseResults.push(result);
                                 });
-                                
-                                if (caseResults.length > 0) {
-                                    cases.push({ results: caseResults });
+
+                                if (caseResults.length) {
+                                    state.cases.push({ results: caseResults });
                                 }
                             });
                         } else {
@@ -1447,57 +1397,115 @@
                             if (spawnResultMatch) {
                                 const spawnContent = spawnResultMatch[1];
                                 const resultMatches = [...spawnContent.matchAll(/AddResult\(\"([^\"]+)\"\)/g)];
-                                
-                                if (resultMatches.length > 0) {
+
+                                if (resultMatches.length) {
                                     const caseResults = [];
-                                    resultMatches.forEach((match) => {
+                                    resultMatches.forEach(match => {
                                         const result = getResultTemplate();
                                         result.type = match[1];
                                         caseResults.push(result);
                                     });
-                                    cases.push({ results: caseResults });
+                                    state.cases.push({ results: caseResults });
                                 }
                             }
                         }
-                        
-                        renderIngredients();
-                        renderCases();
-                        updatePreview();
-                        
+
+                        renderAll();
                         alert('Рецепт загружен!');
-                        
                     } catch (error) {
                         alert('Ошибка при загрузке');
                         console.error(error);
                     }
                 };
-                
+
                 reader.readAsText(file);
-            };
-            
+            });
+
             input.click();
         }
-        
-        function initializeEmpty() {
-            ingredients = [];
-            cases = [];
-            
-            document.getElementById('className').value = '';
-            document.getElementById('recipeName').value = '';
-            document.getElementById('isInstaRecipe').value = 'true';
-            document.getElementById('animationLength').value = '1';
-            
+
+        function renderAll() {
             renderIngredients();
             renderCases();
             updatePreview();
-            
-            document.getElementById('codeOutput').textContent = '// Нажмите "Сгенерировать код"';
-            document.getElementById('registrationContainer').style.display = 'none';
         }
-        
-        window.onload = () => {
-            initializeEmpty();
-        };
+
+        function bindEvents() {
+            document.addEventListener('click', (event) => {
+                const target = event.target;
+
+                if (target.matches('#newRecipeBtn')) createNewRecipe();
+                if (target.matches('#clearRecipeBtn')) clearRecipe();
+                if (target.matches('#exportBtn')) exportRecipe();
+                if (target.matches('#importBtn')) importRecipe();
+                if (target.matches('#addIngredientBtn')) addIngredient();
+                if (target.matches('#addCaseBtn')) addCase();
+                if (target.matches('#generateCodeBtn')) generateCode();
+                if (target.matches('#copyCodeBtn')) copyCode();
+
+                if (target.matches('.tab-btn')) {
+                    showTab(target.dataset.tab);
+                }
+
+                if (target.matches('.remove-ingredient-btn')) {
+                    removeIngredient(Number.parseInt(target.dataset.index, 10));
+                }
+
+                if (target.matches('.remove-case-btn')) {
+                    removeCase(Number.parseInt(target.dataset.caseIndex, 10));
+                }
+
+                if (target.matches('.add-result-btn')) {
+                    addResultToCase(Number.parseInt(target.dataset.caseIndex, 10));
+                }
+
+                if (target.matches('.remove-result-btn')) {
+                    removeResultFromCase(
+                        Number.parseInt(target.dataset.caseIndex, 10),
+                        Number.parseInt(target.dataset.resultIndex, 10)
+                    );
+                }
+            });
+
+            document.addEventListener('input', (event) => {
+                const target = event.target;
+
+                if (target.matches('#className, #recipeName, #isInstaRecipe, #animationLength')) {
+                    updatePreview();
+                }
+
+                if (target.matches('.ingredient-input')) {
+                    const index = Number.parseInt(target.dataset.index, 10);
+                    const field = target.dataset.field;
+                    updateIngredientField(index, field, target.value);
+                }
+
+                if (target.matches('.ingredient-checkbox')) {
+                    const index = Number.parseInt(target.dataset.index, 10);
+                    const field = target.dataset.field;
+                    updateIngredientField(index, field, target.checked);
+                }
+
+                if (target.matches('.result-input')) {
+                    const caseIndex = Number.parseInt(target.dataset.caseIndex, 10);
+                    const resultIndex = Number.parseInt(target.dataset.resultIndex, 10);
+                    const field = target.dataset.field;
+                    updateResultField(caseIndex, resultIndex, field, target.value);
+                }
+
+                if (target.matches('.result-checkbox')) {
+                    const caseIndex = Number.parseInt(target.dataset.caseIndex, 10);
+                    const resultIndex = Number.parseInt(target.dataset.resultIndex, 10);
+                    const field = target.dataset.field;
+                    updateResultField(caseIndex, resultIndex, field, target.checked);
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            clearRecipe();
+            bindEvents();
+        });
     </script>
 </body>
 </html>
