@@ -87,7 +87,6 @@
             box-shadow: inset 0 1px 3px rgba(255,215,140,0.2), 0 5px 10px rgba(0,0,0,0.5);
             position: relative;
             overflow: hidden;
-            gap: 12px;
         }
         
         .header::before {
@@ -111,48 +110,11 @@
             text-shadow: 2px 2px 0 #3d2b1a;
             font-family: 'Segoe UI', monospace;
         }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1;
-        }
-
-        .lang-switcher {
-            display: inline-flex;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        .lang-btn {
-            min-width: 44px;
-            height: 30px;
-            padding: 0 10px;
-            border: 1px solid #5a4a3a;
-            border-radius: 4px;
-            background: #0f1a0f;
-            color: #b4a68a;
-            cursor: pointer;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace;
-            transition: all 0.2s ease;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.08);
-        }
-
-        .lang-btn:hover {
-            border-color: #c49a6c;
-            color: #c49a6c;
-            background: #162216;
-        }
-
-        .lang-btn.active {
-            border-color: #c49a6c;
-            color: #c49a6c;
-            background: #1f2f1f;
-            box-shadow: 0 0 10px rgba(196,154,108,0.18), inset 0 1px 3px rgba(255,215,140,0.12);
+        
+        .header-placeholder {
+            width: 180px;
+            height: 36px;
+            visibility: hidden;
         }
         
         .main-content {
@@ -349,7 +311,6 @@
         }
         
         .uniform-btn:hover {
-            border-color: #c49a6c;
             transform: translateY(-2px);
             box-shadow: 0 5px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.3);
         }
@@ -479,7 +440,7 @@
             overflow-y: auto;
             border: 2px solid #5a4a3a;
             border-radius: 3px;
-            padding: 15px;
+            padding: 12px;
             background: #0f1a0f;
             margin-bottom: 15px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
@@ -490,8 +451,8 @@
         .result-item {
             background: #1e2b1e;
             border-radius: 3px;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 12px;
             border: 1px solid #5a4a3a;
             box-shadow: 0 3px 5px rgba(0,0,0,0.5), inset 0 1px 3px rgba(255,215,140,0.1);
             position: relative;
@@ -514,7 +475,7 @@
         .case-card h4,
         .result-item h5 {
             color: #c49a6c;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-size: 14px;
             display: flex;
             justify-content: space-between;
@@ -523,6 +484,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow: 1px 1px 0 #3d2b1a;
+            gap: 10px;
         }
         
         .result-item h5 {
@@ -532,9 +494,9 @@
         .case-header {
             background: #2a3a2a;
             color: #c49a6c;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 3px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -543,6 +505,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             box-shadow: inset 0 1px 3px rgba(255,215,140,0.1);
+            gap: 10px;
         }
         
         .preview-section {
@@ -647,7 +610,6 @@
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid #5a4a3a;
-            flex-wrap: wrap;
         }
         
         .preview-stats .stat-item {
@@ -700,6 +662,22 @@
             padding-bottom: 8px;
         }
         
+        .card-container .uniform-btn,
+        .ingredient-card .uniform-btn,
+        .case-card .uniform-btn,
+        .result-item .uniform-btn {
+            height: 30px;
+            font-size: 12px;
+            padding: 6px 10px;
+            box-shadow: 0 2px 0 #3d2b1a, inset 0 1px 2px rgba(255,215,140,0.18);
+        }
+
+        .ingredient-card .uniform-btn:hover,
+        .case-card .uniform-btn:hover,
+        .result-item .uniform-btn:hover {
+            box-shadow: 0 4px 0 #3d2b1a, inset 0 1px 2px rgba(255,215,140,0.25);
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -711,10 +689,9 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
-
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
+            
+            .header-placeholder {
+                display: none;
             }
         }
     </style>
@@ -722,44 +699,27 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2 data-i18n="editorTitle">RECIPE EDITOR</h2>
-            <div class="header-right">
-                <div class="lang-switcher" data-i18n-aria-label="languageSwitcherAria" aria-label="Language switcher">
-                    <button class="lang-btn" type="button" data-lang="ru">RU</button>
-                    <button class="lang-btn" type="button" data-lang="en">EN</button>
-                </div>
-            </div>
+            <h2>RECIPE EDITOR</h2>
+            <div class="header-placeholder"></div>
         </div>
         
         <div class="main-content">
             <div class="sidebar">
-                <h3 data-i18n="recipeParamsTitle">Параметры рецепта</h3>
+                <h3>Параметры рецепта</h3>
                 
                 <div class="form-group">
-                    <label
-                        data-i18n="labelClassName"
-                        data-i18n-title="titleClassName"
-                        title="Наименование класса рецепта для регистрации. Один рецепт - один класс. Должно быть уникальным в рамках мода."
-                    >RecipeclassName:</label>
-                    <input type="text" id="className" value="" placeholder="CraftWeaponCleaner" data-i18n-placeholder="placeholderClassName">
+                    <label title="Наименование класса рецепта для регистрации. Один рецепт - один класс. Должно быть уникальным в рамках мода.">RecipeclassName:</label>
+                    <input type="text" id="className" value="" placeholder="CraftWeaponCleaner">
                 </div>
                 
                 <div class="form-group">
-                    <label
-                        data-i18n="labelRecipeName"
-                        data-i18n-title="titleRecipeName"
-                        title="Наименование рецепта, которое будет отображаться в игре."
-                    >recipeName:</label>
-                    <input type="text" id="recipeName" value="" placeholder="Мой рецепт" data-i18n-placeholder="placeholderRecipeName">
+                    <label title="Наименование рецепта, которое будет отображаться в игре.">recipeName:</label>
+                    <input type="text" id="recipeName" value="" placeholder="Мой рецепт">
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label
-                            data-i18n="labelInstaRecipe"
-                            data-i18n-title="titleInstaRecipe"
-                            title="true - крафт происходит мгновенно без анимации. false - с анимацией крафта."
-                        >InstaRecipe:</label>
+                        <label title="true - крафт происходит мгновенно без анимации. false - с анимацией крафта.">InstaRecipe:</label>
                         <select id="isInstaRecipe">
                             <option value="true">true</option>
                             <option value="false">false</option>
@@ -767,57 +727,53 @@
                     </div>
                     
                     <div class="form-group">
-                        <label
-                            data-i18n="labelAnimation"
-                            data-i18n-title="titleAnimation"
-                            title="Длительность анимации в относительных единицах. Реальные секунды = значение * 4 приблизительно."
-                        >Animation:</label>
+                        <label title="Длительность анимации в относительных единицах. Реальные секунды = значение * 4 приблизительно.">Animation:</label>
                         <input type="number" id="animationLength" value="1" step="0.1" min="0">
                     </div>
                 </div>
                 
                 <div class="btn-group">
-                    <button class="uniform-btn primary" id="newRecipeBtn" data-i18n="btnNew" data-i18n-title="titleNewRecipe" title="Создать новый рецепт со значениями по умолчанию">Новый</button>
-                    <button class="uniform-btn secondary" id="clearRecipeBtn" data-i18n="btnClear" data-i18n-title="titleClearRecipe" title="Очистить все поля рецепта">Очистить</button>
+                    <button class="uniform-btn primary" id="newRecipeBtn" title="Создать новый рецепт со значениями по умолчанию">Новый</button>
+                    <button class="uniform-btn secondary" id="clearRecipeBtn" title="Очистить все поля рецепта">Очистить</button>
                 </div>
                 
-                <button class="uniform-btn export block" id="exportBtn" data-i18n="btnSave" data-i18n-title="titleSaveRecipe" title="Сохранить рецепт в .c файл" style="margin-bottom: 5px;">Сохранить</button>
-                <button class="uniform-btn import block" id="importBtn" data-i18n="btnLoad" data-i18n-title="titleLoadRecipe" title="Загрузить рецепт из .c файла">Загрузить</button>
+                <button class="uniform-btn export block" id="exportBtn" title="Сохранить рецепт в .c файл" style="margin-bottom: 5px;">Сохранить</button>
+                <button class="uniform-btn import block" id="importBtn" title="Загрузить рецепт из .c файла">Загрузить</button>
             </div>
             
             <div class="editor">
                 <div class="tab-buttons">
-                    <button class="tab-btn active" data-tab="ingredients" data-i18n="tabIngredients" data-i18n-title="tabIngredientsTitle" title="Настройка ингредиентов для крафта">Ингредиенты</button>
-                    <button class="tab-btn" data-tab="results" data-i18n="tabResults" data-i18n-title="tabResultsTitle" title="Настройка результатов крафта">Результаты</button>
-                    <button class="tab-btn" data-tab="preview" data-i18n="tabPreview" data-i18n-title="tabPreviewTitle" title="Предпросмотр текущего рецепта">Предпросмотр</button>
-                    <button class="tab-btn" data-tab="code" data-i18n="tabCode" data-i18n-title="tabCodeTitle" title="Сгенерированный код рецепта">Код</button>
+                    <button class="tab-btn active" data-tab="ingredients" title="Настройка ингредиентов для крафта">Ингредиенты</button>
+                    <button class="tab-btn" data-tab="results" title="Настройка результатов крафта">Результаты</button>
+                    <button class="tab-btn" data-tab="preview" title="Предпросмотр текущего рецепта">Предпросмотр</button>
+                    <button class="tab-btn" data-tab="code" title="Сгенерированный код рецепта">Код</button>
                 </div>
                 
                 <div id="ingredientsTab" class="tab-pane active">
-                    <h3 data-i18n="ingredientsSectionTitle">Ингредиенты</h3>
+                    <h3>Ингредиенты</h3>
                     <div class="card-container" id="ingredientsContainer">
-                        <p style="color: #7a5c3a; text-align: center; padding: 20px;" data-i18n="emptyIngredients">Нет ингредиентов</p>
+                        <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>
                     </div>
-                    <button class="uniform-btn primary block" id="addIngredientBtn" data-i18n="btnAddIngredient" data-i18n-title="titleAddIngredient" title="Добавить новый ингредиент">+ Добавить ингредиент</button>
+                    <button class="uniform-btn primary block" id="addIngredientBtn" title="Добавить новый ингредиент">+ Добавить ингредиент</button>
                 </div>
                 
                 <div id="resultsTab" class="tab-pane">
-                    <h3 data-i18n="resultsSectionTitle">Варианты результатов</h3>
+                    <h3>Варианты результатов</h3>
                     <div class="card-container" id="casesContainer">
-                        <p style="color: #7a5c3a; text-align: center; padding: 20px;" data-i18n="emptyCases">Нет вариантов</p>
+                        <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>
                     </div>
-                    <button class="uniform-btn import block" id="addCaseBtn" data-i18n="btnAddCase" data-i18n-title="titleAddCase" title="Добавить новый вариант результата">+ Добавить вариант</button>
+                    <button class="uniform-btn import block" id="addCaseBtn" title="Добавить новый вариант результата">+ Добавить вариант</button>
                 </div>
                 
                 <div id="previewTab" class="tab-pane">
-                    <h3 data-i18n="previewSectionTitle">Предпросмотр</h3>
+                    <h3>Предпросмотр</h3>
                     <div class="card-container" style="max-height: 500px;" id="previewContainer"></div>
                 </div>
                 
                 <div id="codeTab" class="tab-pane">
-                    <h3 data-i18n="codeSectionTitle">Код</h3>
-                    <button class="uniform-btn export block" id="generateCodeBtn" data-i18n="btnGenerateCode" data-i18n-title="titleGenerateCode" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
-                    <button class="uniform-btn neutral block" id="copyCodeBtn" data-i18n="btnCopyCode" data-i18n-title="titleCopyCode" title="Копировать код в буфер обмена">Копировать код</button>
+                    <h3>Код</h3>
+                    <button class="uniform-btn export block" id="generateCodeBtn" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
+                    <button class="uniform-btn neutral block" id="copyCodeBtn" title="Копировать код в буфер обмена">Копировать код</button>
                     <div id="codeOutput" class="code-output">
                         // Нажмите "Сгенерировать код"
                     </div>
@@ -829,265 +785,6 @@
     </div>
 
     <script>
-        const LANG_STORAGE_KEY = 'dayzToolsLang';
-        let currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'ru';
-
-        const translations = {
-            ru: {
-                pageTitle: 'DayZ Recipe Editor',
-                languageSwitcherAria: 'Переключатель языка',
-
-                editorTitle: 'RECIPE EDITOR',
-                recipeParamsTitle: 'Параметры рецепта',
-
-                labelClassName: 'RecipeclassName:',
-                titleClassName: 'Наименование класса рецепта для регистрации. Один рецепт - один класс. Должно быть уникальным в рамках мода.',
-                placeholderClassName: 'CraftWeaponCleaner',
-
-                labelRecipeName: 'recipeName:',
-                titleRecipeName: 'Наименование рецепта, которое будет отображаться в игре.',
-                placeholderRecipeName: 'Мой рецепт',
-
-                labelInstaRecipe: 'InstaRecipe:',
-                titleInstaRecipe: 'true - крафт происходит мгновенно без анимации. false - с анимацией крафта.',
-
-                labelAnimation: 'Animation:',
-                titleAnimation: 'Длительность анимации в относительных единицах. Реальные секунды = значение * 4 приблизительно.',
-
-                btnNew: 'Новый',
-                titleNewRecipe: 'Создать новый рецепт со значениями по умолчанию',
-                btnClear: 'Очистить',
-                titleClearRecipe: 'Очистить все поля рецепта',
-                btnSave: 'Сохранить',
-                titleSaveRecipe: 'Сохранить рецепт в .c файл',
-                btnLoad: 'Загрузить',
-                titleLoadRecipe: 'Загрузить рецепт из .c файла',
-
-                tabIngredients: 'Ингредиенты',
-                tabIngredientsTitle: 'Настройка ингредиентов для крафта',
-                tabResults: 'Результаты',
-                tabResultsTitle: 'Настройка результатов крафта',
-                tabPreview: 'Предпросмотр',
-                tabPreviewTitle: 'Предпросмотр текущего рецепта',
-                tabCode: 'Код',
-                tabCodeTitle: 'Сгенерированный код рецепта',
-
-                ingredientsSectionTitle: 'Ингредиенты',
-                emptyIngredients: 'Нет ингредиентов',
-                btnAddIngredient: '+ Добавить ингредиент',
-                titleAddIngredient: 'Добавить новый ингредиент',
-
-                resultsSectionTitle: 'Варианты результатов',
-                emptyCases: 'Нет вариантов',
-                btnAddCase: '+ Добавить вариант',
-                titleAddCase: 'Добавить новый вариант результата',
-
-                previewSectionTitle: 'Предпросмотр',
-
-                codeSectionTitle: 'Код',
-                btnGenerateCode: 'Сгенерировать код',
-                titleGenerateCode: 'Сгенерировать код рецепта',
-                btnCopyCode: 'Копировать код',
-                titleCopyCode: 'Копировать код в буфер обмена',
-                codePlaceholder: '// Нажмите "Сгенерировать код"',
-                codeCleared: '// Рецепт очищен',
-
-                ingredientCardTitle: 'Ингредиент',
-                resultCaseTitle: 'Вариант',
-                resultTitle: 'Результат',
-                btnAddResult: '+ Добавить результат',
-
-                labelIngredientClassList: 'ItemClassName (с новой строки):',
-                titleIngredientClassList: 'Список классов предметов, которые можно использовать. Каждый класс с новой строки. Например: Apple, Pear, Banana',
-                placeholderIngredientClassList: 'Apple\nPear\nBanana',
-
-                labelMinDamage: 'Min Damage:',
-                titleMinDamage: 'Минимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ',
-                labelMaxDamage: 'Max Damage:',
-                titleMaxDamage: 'Максимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ',
-                labelMinQuantity: 'Min Quantity:',
-                titleMinQuantity: 'Минимальное количество ингредиента. -1 = отключить проверку',
-                labelMaxQuantity: 'Max Quantity:',
-                titleMaxQuantity: 'Максимальное количество ингредиента. -1 = отключить проверку',
-                labelAddHealth: 'Add Health:',
-                titleAddHealth: 'Уменьшение или увеличение ХП после крафта. 0 = ничего не делать, отрицательное = уменьшение, положительное = увеличение',
-                labelSetHealth: 'Set Health:',
-                titleSetHealth: 'Установить точное значение ХП после крафта. -1 = ничего не делать, 0-100 = конкретное значение',
-                labelAddQuantity: 'Add Quantity:',
-                titleAddQuantity: 'Расход или прибавка количества. 0 = ничего не делать, отрицательное = расход, положительное = прибавка',
-                labelDestroy: 'Destroy',
-                titleDestroy: 'true = ингредиент полностью уничтожается после крафта, false = не уничтожается',
-
-                labelResultType: 'ItemClassName:',
-                titleResultType: 'Класс предмета, который будет создан. Например: Apple, WeaponCleaningKit',
-                placeholderResultType: 'ItemClassName',
-                labelFullQuantity: 'FullQuantity',
-                titleFullQuantity: 'true = создать предмет с полным стаком, false = использовать указанное количество',
-                labelSetQuantity: 'Set Quantity:',
-                titleSetQuantity: 'Количество создаваемых предметов. -1 = ничего не создавать',
-                titleResultSetHealth: 'Установить здоровье создаваемого предмета. -1 = здоровье по умолчанию',
-                labelInheritsHealth: 'Inherits Health:',
-                titleInheritsHealth: 'Наследование здоровья: -1 = нет, 0/1 = от ингредиента, -2 = среднее от всех',
-                labelToInventory: 'To Inventory:',
-                titleToInventory: 'Куда поместить результат: -2 = на землю, -1 = в инвентарь, >=0 = заменить ингредиент',
-                labelReplacesIngredient: 'Replaces Ingredient:',
-                titleReplacesIngredient: 'Заменить ингредиент: -1 = нет, >=0 = перенести свойства из ингредиента',
-
-                previewNotSpecified: 'Не указано',
-                previewParameters: 'Параметры:',
-                previewInstaRecipe: 'InstaRecipe:',
-                previewAnimationLength: 'Animation Length:',
-                previewIngredients: 'Ингредиенты',
-                previewNoIngredients: 'Нет ингредиентов',
-                previewCases: 'Варианты результатов',
-                previewNoResults: 'Нет результатов',
-                previewDamageAny: 'любое',
-                previewQuantityAny: 'любое',
-                previewInfinity: '∞',
-                previewDestroyed: 'Уничтожается',
-                previewDefault: 'по умолчанию',
-                previewTotalClasses: 'Всего классов:',
-                previewTotalResults: 'Всего результатов:',
-
-                alertAddIngredients: 'Добавьте ингредиенты!',
-                alertAddResults: 'Добавьте результаты!',
-                alertGenerateFirst: 'Сначала сгенерируйте код!',
-                alertCodeCopied: 'Код скопирован!',
-                alertAddIngredientsAndResults: 'Добавьте ингредиенты и результаты!',
-                alertRecipeLoaded: 'Рецепт загружен!',
-                alertImportError: 'Ошибка при загрузке',
-
-                registrationLabel: 'Регистрация (закомментирована):'
-            },
-
-            en: {
-                pageTitle: 'DayZ Recipe Editor',
-                languageSwitcherAria: 'Language switcher',
-
-                editorTitle: 'RECIPE EDITOR',
-                recipeParamsTitle: 'Recipe Parameters',
-
-                labelClassName: 'RecipeClassName:',
-                titleClassName: 'Recipe class name used for registration. One recipe equals one class. Must be unique within the mod.',
-                placeholderClassName: 'CraftWeaponCleaner',
-
-                labelRecipeName: 'Recipe Name:',
-                titleRecipeName: 'Recipe name displayed in game.',
-                placeholderRecipeName: 'My Recipe',
-
-                labelInstaRecipe: 'InstaRecipe:',
-                titleInstaRecipe: 'true = crafting happens instantly without animation. false = with crafting animation.',
-
-                labelAnimation: 'Animation:',
-                titleAnimation: 'Animation length in relative units. Real seconds are approximately value * 4.',
-
-                btnNew: 'New',
-                titleNewRecipe: 'Create a new recipe with default values',
-                btnClear: 'Clear',
-                titleClearRecipe: 'Clear all recipe fields',
-                btnSave: 'Save',
-                titleSaveRecipe: 'Save recipe to a .c file',
-                btnLoad: 'Load',
-                titleLoadRecipe: 'Load recipe from a .c file',
-
-                tabIngredients: 'Ingredients',
-                tabIngredientsTitle: 'Configure crafting ingredients',
-                tabResults: 'Results',
-                tabResultsTitle: 'Configure crafting results',
-                tabPreview: 'Preview',
-                tabPreviewTitle: 'Preview current recipe',
-                tabCode: 'Code',
-                tabCodeTitle: 'Generated recipe code',
-
-                ingredientsSectionTitle: 'Ingredients',
-                emptyIngredients: 'No ingredients',
-                btnAddIngredient: '+ Add Ingredient',
-                titleAddIngredient: 'Add a new ingredient',
-
-                resultsSectionTitle: 'Result Variants',
-                emptyCases: 'No variants',
-                btnAddCase: '+ Add Variant',
-                titleAddCase: 'Add a new result variant',
-
-                previewSectionTitle: 'Preview',
-
-                codeSectionTitle: 'Code',
-                btnGenerateCode: 'Generate Code',
-                titleGenerateCode: 'Generate recipe code',
-                btnCopyCode: 'Copy Code',
-                titleCopyCode: 'Copy code to clipboard',
-                codePlaceholder: '// Click "Generate Code"',
-                codeCleared: '// Recipe cleared',
-
-                ingredientCardTitle: 'Ingredient',
-                resultCaseTitle: 'Variant',
-                resultTitle: 'Result',
-                btnAddResult: '+ Add Result',
-
-                labelIngredientClassList: 'ItemClassName (one per line):',
-                titleIngredientClassList: 'List of item classes that can be used. One class per line. Example: Apple, Pear, Banana',
-                placeholderIngredientClassList: 'Apple\nPear\nBanana',
-
-                labelMinDamage: 'Min Damage:',
-                titleMinDamage: 'Minimum allowed damage. -1 = disable check, 0 = pristine, 1-3 = damaged, 4 = ruined',
-                labelMaxDamage: 'Max Damage:',
-                titleMaxDamage: 'Maximum allowed damage. -1 = disable check, 0 = pristine, 1-3 = damaged, 4 = ruined',
-                labelMinQuantity: 'Min Quantity:',
-                titleMinQuantity: 'Minimum ingredient quantity. -1 = disable check',
-                labelMaxQuantity: 'Max Quantity:',
-                titleMaxQuantity: 'Maximum ingredient quantity. -1 = disable check',
-                labelAddHealth: 'Add Health:',
-                titleAddHealth: 'Decrease or increase health after crafting. 0 = do nothing, negative = decrease, positive = increase',
-                labelSetHealth: 'Set Health:',
-                titleSetHealth: 'Set exact health value after crafting. -1 = do nothing, 0-100 = specific value',
-                labelAddQuantity: 'Add Quantity:',
-                titleAddQuantity: 'Quantity consumption or increase. 0 = do nothing, negative = consume, positive = add',
-                labelDestroy: 'Destroy',
-                titleDestroy: 'true = ingredient is fully destroyed after crafting, false = not destroyed',
-
-                labelResultType: 'ItemClassName:',
-                titleResultType: 'Class of the item to be created. Example: Apple, WeaponCleaningKit',
-                placeholderResultType: 'ItemClassName',
-                labelFullQuantity: 'FullQuantity',
-                titleFullQuantity: 'true = create item with full stack, false = use specified quantity',
-                labelSetQuantity: 'Set Quantity:',
-                titleSetQuantity: 'Number of created items. -1 = create nothing',
-                titleResultSetHealth: 'Set health of the created item. -1 = default health',
-                labelInheritsHealth: 'Inherits Health:',
-                titleInheritsHealth: 'Health inheritance: -1 = none, 0/1 = from ingredient, -2 = average from all',
-                labelToInventory: 'To Inventory:',
-                titleToInventory: 'Where to place result: -2 = on ground, -1 = in inventory, >=0 = replace ingredient',
-                labelReplacesIngredient: 'Replaces Ingredient:',
-                titleReplacesIngredient: 'Replace ingredient: -1 = no, >=0 = transfer properties from ingredient',
-
-                previewNotSpecified: 'Not specified',
-                previewParameters: 'Parameters:',
-                previewInstaRecipe: 'InstaRecipe:',
-                previewAnimationLength: 'Animation Length:',
-                previewIngredients: 'Ingredients',
-                previewNoIngredients: 'No ingredients',
-                previewCases: 'Result Variants',
-                previewNoResults: 'No results',
-                previewDamageAny: 'any',
-                previewQuantityAny: 'any',
-                previewInfinity: '∞',
-                previewDestroyed: 'Destroyed',
-                previewDefault: 'default',
-                previewTotalClasses: 'Total classes:',
-                previewTotalResults: 'Total results:',
-
-                alertAddIngredients: 'Add ingredients!',
-                alertAddResults: 'Add results!',
-                alertGenerateFirst: 'Generate the code first!',
-                alertCodeCopied: 'Code copied!',
-                alertAddIngredientsAndResults: 'Add ingredients and results!',
-                alertRecipeLoaded: 'Recipe loaded!',
-                alertImportError: 'Error while loading',
-
-                registrationLabel: 'Registration (commented out):'
-            }
-        };
-
         const state = {
             ingredients: [],
             cases: [],
@@ -1096,8 +793,6 @@
 
         const $ = (selector) => document.querySelector(selector);
         const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
-        const t = (key) => translations[currentLang]?.[key] ?? translations.ru[key] ?? key;
 
         const escapeHtml = (str) => String(str ?? '')
             .replace(/&/g, '&amp;')
@@ -1138,53 +833,6 @@
             .map(line => line.trim())
             .filter(Boolean);
 
-        function applyLanguage(lang) {
-            currentLang = translations[lang] ? lang : 'ru';
-            localStorage.setItem(LANG_STORAGE_KEY, currentLang);
-
-            document.documentElement.lang = currentLang;
-            document.title = t('pageTitle');
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.dataset.i18n;
-                el.textContent = t(key);
-            });
-
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.dataset.i18nTitle;
-                el.title = t(key);
-            });
-
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.dataset.i18nPlaceholder;
-                el.placeholder = t(key);
-            });
-
-            document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
-                const key = el.dataset.i18nAriaLabel;
-                el.setAttribute('aria-label', t(key));
-            });
-
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === currentLang);
-            });
-
-            if ($('#codeOutput').textContent.trim() === '// Нажмите "Сгенерировать код"' || $('#codeOutput').textContent.trim() === '// Click "Generate Code"') {
-                $('#codeOutput').textContent = t('codePlaceholder');
-            }
-
-            if ($('#codeOutput').textContent.trim() === '// Рецепт очищен' || $('#codeOutput').textContent.trim() === '// Recipe cleared') {
-                $('#codeOutput').textContent = t('codeCleared');
-            }
-
-            renderAll();
-
-            if ($('#registrationContainer').style.display !== 'none' && $('#className').value) {
-                const registrationCode = `// RegisterRecipe(new ${$('#className').value || 'MyCustomRecipe'});`;
-                $('#registrationContainer').innerHTML = `<strong>${t('registrationLabel')}</strong><br><span class="comment">${registrationCode}</span>`;
-            }
-        }
-
         function getFormValues() {
             return {
                 className: $('#className').value || '',
@@ -1206,7 +854,7 @@
             state.cases = [];
             setFormDefaults();
             renderAll();
-            $('#codeOutput').textContent = t('codePlaceholder');
+            $('#codeOutput').textContent = '// Нажмите "Сгенерировать код"';
             $('#registrationContainer').style.display = 'none';
         }
 
@@ -1215,7 +863,7 @@
             state.cases = [getCaseTemplate()];
             setFormDefaults();
             renderAll();
-            $('#codeOutput').textContent = t('codePlaceholder');
+            $('#codeOutput').textContent = '// Нажмите "Сгенерировать код"';
             $('#registrationContainer').style.display = 'none';
             showTab('ingredients');
         }
@@ -1225,58 +873,58 @@
             container.innerHTML = '';
 
             if (!state.ingredients.length) {
-                container.innerHTML = `<p style="color: #7a5c3a; text-align: center; padding: 20px;">${escapeHtml(t('emptyIngredients'))}</p>`;
+                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>';
                 return;
             }
 
             container.innerHTML = state.ingredients.map((ing, index) => `
                 <div class="ingredient-card">
                     <h4>
-                        ${escapeHtml(t('ingredientCardTitle'))} #${index + 1}
+                        Ингредиент #${index + 1}
                         <button class="uniform-btn danger remove-ingredient-btn" data-index="${index}" style="width: 28px; height: 28px; padding: 0;">×</button>
                     </h4>
 
                     <div class="form-group">
-                        <label title="${escapeHtml(t('titleIngredientClassList'))}">${escapeHtml(t('labelIngredientClassList'))}</label>
-                        <textarea class="ingredient-input" data-index="${index}" data-field="classList" placeholder="${escapeHtml(t('placeholderIngredientClassList'))}">${escapeHtml(ing.classList)}</textarea>
+                        <label title="Список классов предметов, которые можно использовать. Каждый класс с новой строки. Например: Apple, Pear, Banana">ItemClassName (с новой строки):</label>
+                        <textarea class="ingredient-input" data-index="${index}" data-field="classList" placeholder="Apple&#10;Pear&#10;Banana">${escapeHtml(ing.classList)}</textarea>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label title="${escapeHtml(t('titleMinDamage'))}">${escapeHtml(t('labelMinDamage'))}</label>
+                            <label title="Минимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Min Damage:</label>
                             <input type="number" class="ingredient-input" data-index="${index}" data-field="minDamage" value="${ing.minDamage}">
                         </div>
                         <div class="form-group">
-                            <label title="${escapeHtml(t('titleMaxDamage'))}">${escapeHtml(t('labelMaxDamage'))}</label>
+                            <label title="Максимально допустимое повреждение. -1 = отключить проверку, 0 = НЕТРОНУТЫЙ, 1-3 = поврежден, 4 = РАЗРУШЕННЫЙ">Max Damage:</label>
                             <input type="number" class="ingredient-input" data-index="${index}" data-field="maxDamage" value="${ing.maxDamage}">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label title="${escapeHtml(t('titleMinQuantity'))}">${escapeHtml(t('labelMinQuantity'))}</label>
+                            <label title="Минимальное количество ингредиента. -1 = отключить проверку">Min Quantity:</label>
                             <input type="number" class="ingredient-input" data-index="${index}" data-field="minQuantity" value="${ing.minQuantity}">
                         </div>
                         <div class="form-group">
-                            <label title="${escapeHtml(t('titleMaxQuantity'))}">${escapeHtml(t('labelMaxQuantity'))}</label>
+                            <label title="Максимальное количество ингредиента. -1 = отключить проверку">Max Quantity:</label>
                             <input type="number" class="ingredient-input" data-index="${index}" data-field="maxQuantity" value="${ing.maxQuantity}">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label title="${escapeHtml(t('titleAddHealth'))}">${escapeHtml(t('labelAddHealth'))}</label>
+                            <label title="Уменьшение или увеличение ХП после крафта. 0 = ничего не делать, отрицательное = уменьшение, положительное = увеличение">Add Health:</label>
                             <input type="number" class="ingredient-input" data-index="${index}" data-field="addHealth" value="${ing.addHealth}">
                         </div>
                         <div class="form-group">
-                            <label title="${escapeHtml(t('titleSetHealth'))}">${escapeHtml(t('labelSetHealth'))}</label>
+                            <label title="Установить точное значение ХП после крафта. -1 = ничего не делать, 0-100 = конкретное значение">Set Health:</label>
                             <input type="number" class="ingredient-input" data-index="${index}" data-field="setHealth" value="${ing.setHealth}">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label title="${escapeHtml(t('titleAddQuantity'))}">${escapeHtml(t('labelAddQuantity'))}</label>
+                            <label title="Расход или прибавка количества. 0 = ничего не делать, отрицательное = расход, положительное = прибавка">Add Quantity:</label>
                             <input type="number" class="ingredient-input" data-index="${index}" data-field="addQuantity" value="${ing.addQuantity}">
                         </div>
                     </div>
@@ -1284,7 +932,7 @@
                     <div class="form-row">
                         <div class="form-group checkbox-label">
                             <input type="checkbox" class="ingredient-checkbox" data-index="${index}" data-field="destroy" id="destroy_${index}" ${ing.destroy ? 'checked' : ''}>
-                            <label for="destroy_${index}" title="${escapeHtml(t('titleDestroy'))}">${escapeHtml(t('labelDestroy'))}</label>
+                            <label for="destroy_${index}" title="true = ингредиент полностью уничтожается после крафта, false = не уничтожается">Destroy</label>
                         </div>
                     </div>
                 </div>
@@ -1296,68 +944,68 @@
             container.innerHTML = '';
 
             if (!state.cases.length) {
-                container.innerHTML = `<p style="color: #7a5c3a; text-align: center; padding: 20px;">${escapeHtml(t('emptyCases'))}</p>`;
+                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>';
                 return;
             }
 
             container.innerHTML = state.cases.map((caseItem, caseIndex) => `
                 <div class="case-card">
                     <div class="case-header">
-                        ${escapeHtml(t('resultCaseTitle'))} #${caseIndex + 1}
+                        Вариант #${caseIndex + 1}
                         <button class="uniform-btn danger remove-case-btn" data-case-index="${caseIndex}" style="width: 28px; height: 28px; padding: 0;">×</button>
                     </div>
 
                     ${caseItem.results.map((result, resultIndex) => `
                         <div class="result-item">
                             <h5>
-                                ${escapeHtml(t('resultTitle'))} #${resultIndex + 1}
+                                Результат #${resultIndex + 1}
                                 <button class="uniform-btn danger remove-result-btn" data-case-index="${caseIndex}" data-result-index="${resultIndex}" style="width: 24px; height: 24px; padding: 0;">×</button>
                             </h5>
 
                             <div class="form-group">
-                                <label title="${escapeHtml(t('titleResultType'))}">${escapeHtml(t('labelResultType'))}</label>
-                                <input type="text" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="type" value="${escapeHtml(result.type)}" placeholder="${escapeHtml(t('placeholderResultType'))}">
+                                <label title="Класс предмета, который будет создан. Например: Apple, WeaponCleaningKit">ItemClassName:</label>
+                                <input type="text" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="type" value="${escapeHtml(result.type)}" placeholder="ItemClassName">
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group checkbox-label">
                                     <input type="checkbox" class="result-checkbox" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setFullQuantity" id="full_${caseIndex}_${resultIndex}" ${result.setFullQuantity ? 'checked' : ''}>
-                                    <label for="full_${caseIndex}_${resultIndex}" title="${escapeHtml(t('titleFullQuantity'))}">${escapeHtml(t('labelFullQuantity'))}</label>
+                                    <label for="full_${caseIndex}_${resultIndex}" title="true = создать предмет с полным стаком, false = использовать указанное количество">FullQuantity</label>
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label title="${escapeHtml(t('titleSetQuantity'))}">${escapeHtml(t('labelSetQuantity'))}</label>
+                                    <label title="Количество создаваемых предметов. -1 = ничего не создавать">Set Quantity:</label>
                                     <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setQuantity" value="${result.setQuantity}">
                                 </div>
                                 <div class="form-group">
-                                    <label title="${escapeHtml(t('titleResultSetHealth'))}">${escapeHtml(t('labelSetHealth'))}</label>
+                                    <label title="Установить здоровье создаваемого предмета. -1 = здоровье по умолчанию">Set Health:</label>
                                     <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setHealth" value="${result.setHealth}">
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label title="${escapeHtml(t('titleInheritsHealth'))}">${escapeHtml(t('labelInheritsHealth'))}</label>
+                                    <label title="Наследование здоровья: -1 = нет, 0/1 = от ингредиента, -2 = среднее от всех">Inherits Health:</label>
                                     <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="inheritsHealth" value="${result.inheritsHealth}">
                                 </div>
                                 <div class="form-group">
-                                    <label title="${escapeHtml(t('titleToInventory'))}">${escapeHtml(t('labelToInventory'))}</label>
+                                    <label title="Куда поместить результат: -2 = на землю, -1 = в инвентарь, >=0 = заменить ингредиент">To Inventory:</label>
                                     <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="toInventory" value="${result.toInventory}">
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label title="${escapeHtml(t('titleReplacesIngredient'))}">${escapeHtml(t('labelReplacesIngredient'))}</label>
+                                    <label title="Заменить ингредиент: -1 = нет, >=0 = перенести свойства из ингредиента">Replaces Ingredient:</label>
                                     <input type="number" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="replacesIngredient" value="${result.replacesIngredient}">
                                 </div>
                             </div>
                         </div>
                     `).join('')}
 
-                    <button class="uniform-btn primary block add-result-btn" data-case-index="${caseIndex}" style="margin-top: 10px;">${escapeHtml(t('btnAddResult'))}</button>
+                    <button class="uniform-btn primary block add-result-btn" data-case-index="${caseIndex}" style="margin-top: 10px;">+ Добавить результат</button>
                 </div>
             `).join('');
         }
@@ -1367,50 +1015,50 @@
             if (!container) return;
 
             const form = getFormValues();
-            const className = form.className || t('previewNotSpecified');
-            const recipeName = form.recipeName || t('previewNotSpecified');
+            const className = form.className || 'Не указано';
+            const recipeName = form.recipeName || 'Не указано';
 
             let html = `
                 <div class="preview-title">${escapeHtml(recipeName)} (${escapeHtml(className)})</div>
                 
                 <div class="preview-block">
-                    <h4>${escapeHtml(t('previewParameters'))}</h4>
+                    <h4>Параметры:</h4>
                     <div class="preview-param-grid">
-                        <span class="preview-param"><strong>${escapeHtml(t('previewInstaRecipe'))}</strong> ${escapeHtml(form.isInstaRecipe)}</span>
-                        <span class="preview-param"><strong>${escapeHtml(t('previewAnimationLength'))}</strong> ${escapeHtml(form.animationLength)}</span>
+                        <span class="preview-param"><strong>InstaRecipe:</strong> ${escapeHtml(form.isInstaRecipe)}</span>
+                        <span class="preview-param"><strong>Animation Length:</strong> ${escapeHtml(form.animationLength)}</span>
                     </div>
                 </div>
             `;
 
-            html += `<div class="preview-block"><h4>${escapeHtml(t('previewIngredients'))} (${state.ingredients.length}):</h4>`;
+            html += `<div class="preview-block"><h4>Ингредиенты (${state.ingredients.length}):</h4>`;
 
             if (!state.ingredients.length) {
-                html += `<p style="color: #7a5c3a;">${escapeHtml(t('previewNoIngredients'))}</p>`;
+                html += `<p style="color: #7a5c3a;">Нет ингредиентов</p>`;
             } else {
                 state.ingredients.forEach((ing, index) => {
                     const classes = parseClassList(ing.classList);
-                    const damageMin = ing.minDamage === -1 ? t('previewDamageAny') : ing.minDamage;
-                    const damageMax = ing.maxDamage === -1 ? t('previewDamageAny') : ing.maxDamage;
-                    const quantityMin = ing.minQuantity === -1 ? t('previewQuantityAny') : ing.minQuantity;
-                    const quantityMax = ing.maxQuantity === -1 ? t('previewInfinity') : ing.maxQuantity;
+                    const damageMin = ing.minDamage === -1 ? 'любое' : ing.minDamage;
+                    const damageMax = ing.maxDamage === -1 ? 'любое' : ing.maxDamage;
+                    const quantityMin = ing.minQuantity === -1 ? 'любое' : ing.minQuantity;
+                    const quantityMax = ing.maxQuantity === -1 ? '∞' : ing.maxQuantity;
 
                     html += `
                         <div class="preview-ingredient">
-                            <strong>${escapeHtml(t('ingredientCardTitle'))} #${index + 1}</strong>
+                            <strong>Ингредиент #${index + 1}</strong>
                             <div class="preview-class-list">
                                 ${classes.map(cls => `<span class="preview-class-item">${escapeHtml(cls)}</span>`).join('')}
                             </div>
                             <div class="preview-param-grid">
-                                <span class="preview-param"><strong>${escapeHtml(t('labelMinDamage'))}</strong> ${damageMin}</span>
-                                <span class="preview-param"><strong>${escapeHtml(t('labelMaxDamage'))}</strong> ${damageMax}</span>
-                                <span class="preview-param"><strong>${escapeHtml(t('labelMinQuantity'))}</strong> ${quantityMin}</span>
-                                <span class="preview-param"><strong>${escapeHtml(t('labelMaxQuantity'))}</strong> ${quantityMax}</span>
-                                <span class="preview-param"><strong>${escapeHtml(t('labelAddHealth'))}</strong> ${ing.addHealth}</span>
-                                <span class="preview-param"><strong>${escapeHtml(t('labelSetHealth'))}</strong> ${ing.setHealth}</span>
-                                <span class="preview-param"><strong>${escapeHtml(t('labelAddQuantity'))}</strong> ${ing.addQuantity}</span>
+                                <span class="preview-param"><strong>Min Damage:</strong> ${damageMin}</span>
+                                <span class="preview-param"><strong>Max Damage:</strong> ${damageMax}</span>
+                                <span class="preview-param"><strong>Min Quantity:</strong> ${quantityMin}</span>
+                                <span class="preview-param"><strong>Max Quantity:</strong> ${quantityMax}</span>
+                                <span class="preview-param"><strong>Add Health:</strong> ${ing.addHealth}</span>
+                                <span class="preview-param"><strong>Set Health:</strong> ${ing.setHealth}</span>
+                                <span class="preview-param"><strong>Add Quantity:</strong> ${ing.addQuantity}</span>
                             </div>
                             <div>
-                                ${ing.destroy ? `<span class="preview-badge">${escapeHtml(t('previewDestroyed'))}</span>` : ''}
+                                ${ing.destroy ? '<span class="preview-badge">Уничтожается</span>' : ''}
                             </div>
                         </div>
                     `;
@@ -1418,28 +1066,28 @@
             }
 
             html += `</div>`;
-            html += `<div class="preview-block"><h4>${escapeHtml(t('previewCases'))} (${state.cases.length}):</h4>`;
+            html += `<div class="preview-block"><h4>Варианты результатов (${state.cases.length}):</h4>`;
 
             if (!state.cases.length) {
-                html += `<p style="color: #7a5c3a;">${escapeHtml(t('previewNoResults'))}</p>`;
+                html += `<p style="color: #7a5c3a;">Нет результатов</p>`;
             } else {
                 state.cases.forEach((caseItem, caseIndex) => {
                     html += `
                         <div class="preview-case">
-                            <strong>${escapeHtml(t('resultCaseTitle'))} #${caseIndex + 1}</strong>
+                            <strong>Вариант #${caseIndex + 1}</strong>
                             <div class="preview-results">
                     `;
 
                     caseItem.results.forEach((result) => {
                         html += `
                             <div class="preview-result-item">
-                                <strong>${escapeHtml(result.type || t('previewNotSpecified'))}</strong>
+                                <strong>${escapeHtml(result.type || 'Не указано')}</strong>
                                 <div class="preview-param-grid">
-                                    <span class="preview-param"><strong>${escapeHtml(t('labelSetQuantity'))}</strong> ${result.setQuantity}</span>
-                                    <span class="preview-param"><strong>${escapeHtml(t('labelSetHealth'))}</strong> ${result.setHealth === -1 ? t('previewDefault') : result.setHealth}</span>
-                                    <span class="preview-param"><strong>${escapeHtml(t('labelInheritsHealth'))}</strong> ${result.inheritsHealth}</span>
-                                    <span class="preview-param"><strong>${escapeHtml(t('labelToInventory'))}</strong> ${result.toInventory}</span>
-                                    ${result.setFullQuantity ? `<span class="preview-badge">${escapeHtml(t('labelFullQuantity'))}</span>` : ''}
+                                    <span class="preview-param"><strong>Set Quantity:</strong> ${result.setQuantity}</span>
+                                    <span class="preview-param"><strong>Set Health:</strong> ${result.setHealth === -1 ? 'по умолчанию' : result.setHealth}</span>
+                                    <span class="preview-param"><strong>Inherits Health:</strong> ${result.inheritsHealth}</span>
+                                    <span class="preview-param"><strong>To Inventory:</strong> ${result.toInventory}</span>
+                                    ${result.setFullQuantity ? '<span class="preview-badge">Полный стак</span>' : ''}
                                 </div>
                             </div>
                         `;
@@ -1456,8 +1104,8 @@
 
             html += `
                 <div class="preview-stats">
-                    <span class="stat-item">${escapeHtml(t('previewTotalClasses'))} ${totalClasses}</span>
-                    <span class="stat-item">${escapeHtml(t('previewTotalResults'))} ${totalResults}</span>
+                    <span class="stat-item">Всего классов: ${totalClasses}</span>
+                    <span class="stat-item">Всего результатов: ${totalResults}</span>
                 </div>
             `;
 
@@ -1544,18 +1192,18 @@
 
         function generateCode() {
             if (!state.ingredients.length) {
-                alert(t('alertAddIngredients'));
+                alert('Добавьте ингредиенты!');
                 return;
             }
 
             if (!state.cases.length) {
-                alert(t('alertAddResults'));
+                alert('Добавьте результаты!');
                 return;
             }
 
             const form = getFormValues();
             const className = form.className || 'MyCustomRecipe';
-            const recipeName = form.recipeName || (currentLang === 'ru' ? 'Мой рецепт' : 'My Recipe');
+            const recipeName = form.recipeName || 'Мой рецепт';
             const isInstaRecipe = form.isInstaRecipe;
             const animationLength = form.animationLength;
 
@@ -1567,7 +1215,7 @@
             state.ingredients.forEach((ing, index) => {
                 const classes = parseClassList(ing.classList);
 
-                code += `\t\t//INGREDIENT #${index}\n`;
+                code += `\t\t//ИНГРИДИЕНТ №${index}\n`;
                 classes.forEach(cls => {
                     code += `\t\tInsertIngredient(${index},"${cls}");\n`;
                 });
@@ -1619,7 +1267,7 @@
 
             const registrationCode = `// RegisterRecipe(new ${className});`;
             const registrationContainer = $('#registrationContainer');
-            registrationContainer.innerHTML = `<strong>${t('registrationLabel')}</strong><br><span class="comment">${registrationCode}</span>`;
+            registrationContainer.innerHTML = `<strong>Регистрация (закомментирована):</strong><br><span class="comment">${registrationCode}</span>`;
             registrationContainer.style.display = 'block';
 
             showTab('code');
@@ -1627,8 +1275,8 @@
 
         function copyCode() {
             const code = $('#codeOutput').textContent;
-            if (code === t('codePlaceholder') || code === t('codeCleared')) {
-                alert(t('alertGenerateFirst'));
+            if (code === '// Нажмите "Сгенерировать код"' || code === '// Рецепт очищен') {
+                alert('Сначала сгенерируйте код!');
                 return;
             }
 
@@ -1636,13 +1284,13 @@
             const fullCode = code + '\n\n' + registrationCode;
 
             navigator.clipboard.writeText(fullCode).then(() => {
-                alert(t('alertCodeCopied'));
+                alert('Код скопирован!');
             });
         }
 
         function exportRecipe() {
             if (!state.ingredients.length || !state.cases.length) {
-                alert(t('alertAddIngredientsAndResults'));
+                alert('Добавьте ингредиенты и результаты!');
                 return;
             }
 
@@ -1780,9 +1428,9 @@
                         }
 
                         renderAll();
-                        alert(t('alertRecipeLoaded'));
+                        alert('Рецепт загружен!');
                     } catch (error) {
-                        alert(t('alertImportError'));
+                        alert('Ошибка при загрузке');
                         console.error(error);
                     }
                 };
@@ -1802,10 +1450,6 @@
         function bindEvents() {
             document.addEventListener('click', (event) => {
                 const target = event.target;
-
-                if (target.matches('.lang-btn')) {
-                    applyLanguage(target.dataset.lang);
-                }
 
                 if (target.matches('#newRecipeBtn')) createNewRecipe();
                 if (target.matches('#clearRecipeBtn')) clearRecipe();
@@ -1878,7 +1522,6 @@
         window.addEventListener('load', () => {
             clearRecipe();
             bindEvents();
-            applyLanguage(currentLang);
         });
     </script>
 </body>
