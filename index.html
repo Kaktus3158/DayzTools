@@ -26,8 +26,6 @@
             --green: #27ae60;
             --orange: #e67e22;
             --blue: #3498db;
-            --purple: #9b59b6;
-            --teal: #16a085;
             --shadow: rgba(0,0,0,0.8);
         }
 
@@ -97,9 +95,13 @@
             pointer-events: none;
         }
 
-        .brand {
+        .brand,
+        .sidebar-section {
             position: relative;
             z-index: 1;
+        }
+
+        .brand {
             padding-bottom: 15px;
             border-bottom: 2px solid var(--border);
         }
@@ -120,11 +122,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             line-height: 1.5;
-        }
-
-        .sidebar-section {
-            position: relative;
-            z-index: 1;
         }
 
         .sidebar-section h3 {
@@ -202,6 +199,10 @@
             margin-bottom: 0;
         }
 
+        .accent-text {
+            color: var(--accent);
+        }
+
         .main {
             flex: 1;
             min-width: 0;
@@ -258,6 +259,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
+            align-items: stretch;
         }
 
         .tool-card {
@@ -272,6 +274,7 @@
             transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
+            min-height: 100%;
         }
 
         .tool-card::before {
@@ -307,16 +310,6 @@
         .tool-card.recipe:hover {
             border-color: var(--orange);
             box-shadow: 0 15px 30px rgba(0,0,0,0.9), 0 0 20px rgba(230,126,34,0.2);
-        }
-
-        .tool-card.presets:hover {
-            border-color: var(--purple);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.9), 0 0 20px rgba(155,89,182,0.2);
-        }
-
-        .tool-card.spawnables:hover {
-            border-color: var(--teal);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.9), 0 0 20px rgba(22,160,133,0.2);
         }
 
         .tool-card.coming:hover {
@@ -510,27 +503,15 @@
                             <span>Recipe Editor</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="quick-link" href="DayZ_RandomPresets_Editor.html">
-                            <span class="quick-icon">📦</span>
-                            <span>RandomPresets Editor</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="quick-link" href="DayZ_CfgSpawnableTypes_Editor.html">
-                            <span class="quick-icon">🗂</span>
-                            <span>SpawnableTypes Editor</span>
-                        </a>
-                    </li>
                 </ul>
             </section>
 
             <section class="sidebar-section">
                 <h3>Информация</h3>
                 <div class="info-box">
-                    <p><strong style="color:#c49a6c;">Статус набора:</strong> активная разработка</p>
-                    <p><strong style="color:#c49a6c;">Формат:</strong> локальные HTML-инструменты</p>
-                    <p><strong style="color:#c49a6c;">Назначение:</strong> экономика лута, random presets, spawnable types, рецепты и подготовка данных для DayZ-модов</p>
+                    <p><strong class="accent-text">Статус набора:</strong> активная разработка</p>
+                    <p><strong class="accent-text">Формат:</strong> локальные HTML-инструменты</p>
+                    <p><strong class="accent-text">Назначение:</strong> экономика лута, рецепты и подготовка данных для DayZ-модов</p>
                 </div>
             </section>
         </aside>
@@ -582,46 +563,6 @@
                             </div>
                         </a>
 
-                        <a class="tool-card presets" href="DayZ_RandomPresets_Editor.html">
-                            <div class="tool-card-content">
-                                <div class="tool-top">
-                                    <div class="tool-icon">📦</div>
-                                    <span class="tool-status ready">готово</span>
-                                </div>
-                                <h3>RandomPresets Editor</h3>
-                                <p>Редактор randompresets.xml для управления cargo и attachments пресетами, шансами и item-списками.</p>
-                                <div class="tool-features">
-                                    <ul>
-                                        <li>Импорт и экспорт XML</li>
-                                        <li>Cargo и attachments блоки</li>
-                                        <li>Редактирование item chance</li>
-                                        <li>Preview итогового XML</li>
-                                    </ul>
-                                </div>
-                                <div class="filename">DayZ_RandomPresets_Editor.html</div>
-                            </div>
-                        </a>
-
-                        <a class="tool-card spawnables" href="DayZ_CfgSpawnableTypes_Editor.html">
-                            <div class="tool-card-content">
-                                <div class="tool-top">
-                                    <div class="tool-icon">🗂</div>
-                                    <span class="tool-status ready">готово</span>
-                                </div>
-                                <h3>SpawnableTypes Editor</h3>
-                                <p>Редактор cfgspawnabletypes.xml с поддержкой cfgrandompresets, preset-ссылок, cargo и attachments блоков.</p>
-                                <div class="tool-features">
-                                    <ul>
-                                        <li>Импорт cfgspawnabletypes.xml</li>
-                                        <li>Загрузка cfgrandompresets.xml</li>
-                                        <li>Preset selector и validation</li>
-                                        <li>Редактирование cargo / attachments / tags / damage</li>
-                                    </ul>
-                                </div>
-                                <div class="filename">DayZ_CfgSpawnableTypes_Editor.html</div>
-                            </div>
-                        </a>
-
                         <div class="tool-card coming">
                             <div class="tool-card-content">
                                 <div class="tool-top">
@@ -646,7 +587,7 @@
             </section>
 
             <div class="footer">
-                DayZ Tools Control Panel • Types • Recipes • RandomPresets • SpawnableTypes
+                DayZ Tools Control Panel • Expandable Local Toolkit
             </div>
         </main>
     </div>
