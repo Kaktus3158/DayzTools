@@ -6,9 +6,7 @@
 
 Открыть панель инструментов:
 
-[➡ DayZ Tools Control Panel](https://YOURNAME.github.io/dayz-tools/)
-
-> Замени `YOURNAME` на свой GitHub username.
+[➡ DayZ Tools Control Panel](https://kaktus3158.github.io/DayzTools/)
 
 ---
 
@@ -95,7 +93,7 @@
 
 Все инструменты можно:
 - запускать локально через `index.html`
-- публиковать через GitHub Pages
+- использовать онлайн через GitHub Pages
 
 ---
 
