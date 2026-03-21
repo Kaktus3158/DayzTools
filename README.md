@@ -44,38 +44,11 @@
 
 ---
 
-### 📦 RandomPresets Editor
-Редактор `cfgrandompresets.xml`.
-
-**Возможности:**
-- создание и редактирование `cargo` и `attachments` presets
-- управление шансами выпадения
-- редактирование item-списков
-- импорт и экспорт XML
-- preview итогового XML
-
----
-
-### 🗂 SpawnableTypes Editor
-Редактор `cfgspawnabletypes.xml` с поддержкой `cfgrandompresets`.
-
-**Возможности:**
-- редактирование `type`, `damage`, `hoarder`, `tag`
-- работа с `cargo` и `attachments`
-- поддержка `preset` и inline item-блоков
-- загрузка `cfgrandompresets.xml`
-- проверка существования preset-ссылок
-- импорт и экспорт XML
-
----
-
 ## 🎯 Назначение проекта
 
 Этот набор инструментов помогает работать с конфигами DayZ:
 
 - экономика и лут
-- random presets
-- spawnable types
 - рецепты крафта
 - подготовка данных для DayZ-модов
 
@@ -103,6 +76,4 @@
 index.html
 DayZ_Types_Editor.html
 DayZ_Recipe_Editor.html
-DayZ_RandomPresets_Editor.html
-DayZ_CfgSpawnableTypes_Editor.html
 README.md
