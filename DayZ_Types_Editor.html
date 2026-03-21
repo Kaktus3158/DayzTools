@@ -159,6 +159,41 @@
         .mass-edit-panel label { font-size: 11px; color: #b4a68a; margin-bottom: 2px; }
         .mass-edit-panel input { background: #0f1a0f; border-color: #5a4a3a; color: #d4c8b0; }
         .mass-edit-buttons { display: flex; gap: 8px; margin-top: 12px; }
+
+        .mass-edit-help {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #0f1a0f;
+            border: 1px solid #5a4a3a;
+            border-radius: 3px;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .mass-edit-help-title {
+            color: #c49a6c;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', monospace;
+        }
+
+        .mass-edit-help-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 11px;
+            color: #b4a68a;
+            line-height: 1.4;
+            font-family: 'Segoe UI', monospace;
+        }
+
+        .mass-edit-help-list strong {
+            color: #d4c8b0;
+        }
         
         .mass-edit-btn {
             flex: 1; padding: 0 3px; border: 2px solid #5a4a3a; border-radius: 3px;
@@ -408,18 +443,32 @@
                 
                 <h3>МАССОВОЕ РЕДАКТИРОВАНИЕ</h3>
                 <div class="mass-edit-panel">
-                    <div class="form-group"><label>nominal:</label><input type="number" id="massNominal" placeholder="Оставить пустым"></div>
-                    <div class="form-group"><label>lifetime:</label><input type="number" id="massLifetime" placeholder="Оставить пустым"></div>
-                    <div class="form-group"><label>restock:</label><input type="number" id="massRestock" placeholder="Оставить пустым"></div>
-                    <div class="form-group"><label>min:</label><input type="number" id="massMin" placeholder="Оставить пустым"></div>
-                    <div class="form-group"><label>quantmin:</label><input type="number" id="massQuantmin" placeholder="Оставить пустым"></div>
-                    <div class="form-group"><label>quantmax:</label><input type="number" id="massQuantmax" placeholder="Оставить пустым"></div>
-                    <div class="form-group"><label>cost:</label><input type="number" id="massCost" placeholder="Оставить пустым"></div>
+                    <div class="form-group"><label>nominal:</label><input type="text" id="massNominal" placeholder="число или формула"></div>
+                    <div class="form-group"><label>lifetime:</label><input type="text" id="massLifetime" placeholder="число или формула"></div>
+                    <div class="form-group"><label>restock:</label><input type="text" id="massRestock" placeholder="число или формула"></div>
+                    <div class="form-group"><label>min:</label><input type="text" id="massMin" placeholder="число или формула"></div>
+                    <div class="form-group"><label>quantmin:</label><input type="text" id="massQuantmin" placeholder="число или формула"></div>
+                    <div class="form-group"><label>quantmax:</label><input type="text" id="massQuantmax" placeholder="число или формула"></div>
+                    <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула"></div>
                     <div class="mass-edit-buttons">
                         <button class="mass-edit-btn primary" id="applyMassEditBtn">ПРИМЕНИТЬ</button>
                         <button class="mass-edit-btn danger" id="deleteSelectedBtn">УДАЛИТЬ</button>
                     </div>
                 </div>
+
+                <div class="mass-edit-help">
+                    <div class="mass-edit-help-title">ФОРМУЛЫ</div>
+                    <div class="mass-edit-help-list">
+                        <div><strong>N</strong> — установить значение</div>
+                        <div><strong>+N</strong> — прибавить</div>
+                        <div><strong>-N</strong> — вычесть</div>
+                        <div><strong>*N</strong> — умножить</div>
+                        <div><strong>/N</strong> — разделить</div>
+                        <div><strong>+N%</strong> — увеличить на процент</div>
+                        <div><strong>-N%</strong> — уменьшить на процент</div>
+                    </div>
+                </div>
+
                 <div class="action-buttons">
                     <button class="add-btn" id="addItemBtn">ДОБАВИТЬ</button>
                     <button class="clear-btn" id="clearAllBtn">ОЧИСТИТЬ</button>
@@ -547,6 +596,47 @@
             return Number.isNaN(parsed) ? fallback : parsed;
         };
 
+        const applyNumericOperation = (currentValue, expression, fallback = 0) => {
+            const raw = String(expression ?? '').trim();
+            if (!raw) return currentValue;
+
+            const current = normalizeNumber(currentValue, fallback);
+
+            if (/^\d+$/.test(raw)) {
+                return normalizeNumber(raw, fallback);
+            }
+
+            const percentMatch = raw.match(/^([+-])\s*(\d+(?:\.\d+)?)%$/);
+            if (percentMatch) {
+                const operator = percentMatch[1];
+                const percent = Number.parseFloat(percentMatch[2]);
+                if (Number.isNaN(percent)) return current;
+
+                const delta = current * (percent / 100);
+                const result = operator === '+' ? current + delta : current - delta;
+                return Math.trunc(result);
+            }
+
+            const operator = raw.charAt(0);
+            const operandText = raw.slice(1).trim();
+            const operand = Number.parseFloat(operandText);
+
+            if (Number.isNaN(operand)) return current;
+
+            switch (operator) {
+                case '+':
+                    return Math.trunc(current + operand);
+                case '-':
+                    return Math.trunc(current - operand);
+                case '*':
+                    return Math.trunc(current * operand);
+                case '/':
+                    return operand === 0 ? current : Math.trunc(current / operand);
+                default:
+                    return current;
+            }
+        };
+
         const getItemTemplate = () => ({
             id: crypto?.randomUUID ? crypto.randomUUID() : `item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
             name: generateUniqueName('NewItem'),
@@ -657,7 +747,10 @@
                 row.title = errors.join('; ');
             }
 
-            const fieldErrors = errors.filter(error => error.toLowerCase().includes(String(field).toLowerCase()) || (field === 'name' && error.toLowerCase().includes('имя')));
+            const fieldErrors = errors.filter(error =>
+                error.toLowerCase().includes(String(field).toLowerCase()) ||
+                (field === 'name' && error.toLowerCase().includes('имя'))
+            );
 
             element.classList.toggle('invalid', fieldErrors.length > 0 || (field === 'name' && !String(item.name || '').trim()));
 
@@ -836,6 +929,59 @@
             return `<td ${widthStyle}></td>`;
         }
 
+        function updateItemField(index, field, value) {
+            if (!state.items[index]) return;
+            state.items[index][field] = value;
+            saveStateToLocalStorage();
+        }
+
+        function updateNumberField(index, field, value) {
+            if (!state.items[index]) return;
+
+            const fallback = field.includes('quant') ? -1 : 0;
+            state.items[index][field] = normalizeNumber(value, fallback);
+
+            saveStateToLocalStorage();
+            updateRowValidation(index);
+        }
+
+        function updateFlag(index, flag, checked) {
+            if (!state.items[index]) return;
+            state.items[index].flags[flag] = checked ? 1 : 0;
+            saveStateToLocalStorage();
+            updateRowValidation(index);
+        }
+
+        function updateTextField(index, field, value) {
+            if (!state.items[index]) return;
+            state.items[index][field] = parseSpaceList(value);
+            saveStateToLocalStorage();
+
+            if (state.currentSearchTerm) applySearchFilter();
+        }
+
+        function updateRowValidation(index) {
+            const row = $(`#tableBodyRows tr[data-index="${index}"]`);
+            const item = state.items[index];
+            if (!row || !item) return;
+
+            const errors = validateItem(item, index);
+            row.classList.toggle('validation-error', errors.length > 0);
+            row.title = errors.join('; ');
+
+            const nameInput = row.querySelector('.name-input');
+            if (nameInput) {
+                nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя')));
+            }
+
+            const numberInputs = row.querySelectorAll('.number-input');
+            numberInputs.forEach(input => {
+                const field = input.dataset.field;
+                const invalid = errors.some(e => e.toLowerCase().includes(String(field).toLowerCase()));
+                input.classList.toggle('invalid', invalid);
+            });
+        }
+
         function itemMatchesSearch(item, searchTerm) {
             if (!searchTerm) return true;
 
@@ -948,59 +1094,6 @@
             checkbox.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < visibleRows.length;
         }
 
-        function updateItemField(index, field, value) {
-            if (!state.items[index]) return;
-            state.items[index][field] = value;
-            saveStateToLocalStorage();
-        }
-
-        function updateNumberField(index, field, value) {
-            if (!state.items[index]) return;
-
-            const fallback = field.includes('quant') ? -1 : 0;
-            state.items[index][field] = normalizeNumber(value, fallback);
-
-            saveStateToLocalStorage();
-            updateRowValidation(index);
-        }
-
-        function updateFlag(index, flag, checked) {
-            if (!state.items[index]) return;
-            state.items[index].flags[flag] = checked ? 1 : 0;
-            saveStateToLocalStorage();
-            updateRowValidation(index);
-        }
-
-        function updateTextField(index, field, value) {
-            if (!state.items[index]) return;
-            state.items[index][field] = parseSpaceList(value);
-            saveStateToLocalStorage();
-
-            if (state.currentSearchTerm) applySearchFilter();
-        }
-
-        function updateRowValidation(index) {
-            const row = $(`#tableBodyRows tr[data-index="${index}"]`);
-            const item = state.items[index];
-            if (!row || !item) return;
-
-            const errors = validateItem(item, index);
-            row.classList.toggle('validation-error', errors.length > 0);
-            row.title = errors.join('; ');
-
-            const nameInput = row.querySelector('.name-input');
-            if (nameInput) {
-                nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя')));
-            }
-
-            const numberInputs = row.querySelectorAll('.number-input');
-            numberInputs.forEach(input => {
-                const field = input.dataset.field;
-                const invalid = errors.some(e => e.toLowerCase().includes(String(field).toLowerCase()));
-                input.classList.toggle('invalid', invalid);
-            });
-        }
-
         function applyMassEdit() {
             if (!state.selectedItems.size) {
                 alert('Выберите предметы');
@@ -1017,18 +1110,22 @@
                 cost: $('#massCost').value
             };
 
-            const hasAnyValue = Object.values(values).some(value => value !== '');
+            const hasAnyValue = Object.values(values).some(value => value.trim() !== '');
             if (!hasAnyValue) {
                 alert('Заполните хотя бы одно поле');
                 return;
             }
 
             const indices = [...state.selectedItems];
+
             indices.forEach(index => {
-                for (const [field, value] of Object.entries(values)) {
-                    if (value === '') continue;
+                for (const [field, expression] of Object.entries(values)) {
+                    if (expression.trim() === '') continue;
+
                     const fallback = field.includes('quant') ? -1 : 0;
-                    state.items[index][field] = normalizeNumber(value, fallback);
+                    const currentValue = state.items[index][field];
+
+                    state.items[index][field] = applyNumericOperation(currentValue, expression, fallback);
                 }
             });
 
@@ -1608,10 +1705,6 @@
             document.addEventListener('input', handleTableInput);
             document.addEventListener('change', handleTableChange);
             document.addEventListener('focusout', handleTableBlur);
-
-            $('#modalCustomValue').addEventListener('input', () => {
-                // резерв под будущую логику, оставлено намеренно
-            });
         }
 
         function init() {
