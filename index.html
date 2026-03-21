@@ -106,6 +106,14 @@
             border-bottom: 2px solid var(--border);
         }
 
+        .brand-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
         .brand h1 {
             font-size: 1.8em;
             color: var(--accent);
@@ -113,7 +121,6 @@
             letter-spacing: 3px;
             text-shadow: 2px 2px 0 #3d2b1a;
             font-family: 'Segoe UI', monospace;
-            margin-bottom: 8px;
         }
 
         .brand p {
@@ -122,6 +129,42 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             line-height: 1.5;
+        }
+
+        .lang-switcher {
+            display: inline-flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .lang-btn {
+            min-width: 44px;
+            height: 30px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: #0f1a0f;
+            color: var(--accent-muted);
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', monospace;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 1px 3px rgba(255,215,140,0.08);
+        }
+
+        .lang-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #162216;
+        }
+
+        .lang-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #1f2f1f;
+            box-shadow: 0 0 10px rgba(196,154,108,0.18), inset 0 1px 3px rgba(255,215,140,0.12);
         }
 
         .sidebar-section h3 {
@@ -168,7 +211,8 @@
         }
 
         .quick-link:focus-visible,
-        .tool-card:focus-visible {
+        .tool-card:focus-visible,
+        .lang-btn:focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 3px;
             border-color: var(--accent);
@@ -457,6 +501,11 @@
                 padding: 15px;
             }
 
+            .brand-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
             .brand h1 {
                 font-size: 1.4em;
             }
@@ -484,34 +533,42 @@
     <div class="app">
         <aside class="sidebar">
             <div class="brand">
-                <h1>DAYZ TOOLS</h1>
-                <p>Control Panel<br>Набор утилит для DayZ-моддинга</p>
+                <div class="brand-top">
+                    <h1 data-i18n="brandTitle">DAYZ TOOLS</h1>
+
+                    <div class="lang-switcher" data-i18n-aria-label="languageSwitcherAria" aria-label="Language switcher">
+                        <button class="lang-btn" type="button" data-lang="ru">RU</button>
+                        <button class="lang-btn" type="button" data-lang="en">EN</button>
+                    </div>
+                </div>
+
+                <p data-i18n-html="brandSubtitle">Control Panel<br>Набор утилит для DayZ-моддинга</p>
             </div>
 
             <section class="sidebar-section">
-                <h3>Быстрый запуск</h3>
+                <h3 data-i18n="quickStartTitle">Быстрый запуск</h3>
                 <ul class="quick-list">
                     <li>
                         <a class="quick-link" href="DayZ_Types_Editor.html">
                             <span class="quick-icon">📋</span>
-                            <span>Types Editor</span>
+                            <span data-i18n="typesEditorName">Types Editor</span>
                         </a>
                     </li>
                     <li>
                         <a class="quick-link" href="DayZ_Recipe_Editor.html">
                             <span class="quick-icon">🔧</span>
-                            <span>Recipe Editor</span>
+                            <span data-i18n="recipeEditorName">Recipe Editor</span>
                         </a>
                     </li>
                 </ul>
             </section>
 
             <section class="sidebar-section">
-                <h3>Информация</h3>
+                <h3 data-i18n="infoTitle">Информация</h3>
                 <div class="info-box">
-                    <p><strong class="accent-text">Статус набора:</strong> активная разработка</p>
-                    <p><strong class="accent-text">Формат:</strong> локальные HTML-инструменты</p>
-                    <p><strong class="accent-text">Назначение:</strong> экономика лута, рецепты и подготовка данных для DayZ-модов</p>
+                    <p><strong class="accent-text" data-i18n="infoStatusLabel">Статус набора:</strong> <span data-i18n="infoStatusValue">активная разработка</span></p>
+                    <p><strong class="accent-text" data-i18n="infoFormatLabel">Формат:</strong> <span data-i18n="infoFormatValue">локальные HTML-инструменты</span></p>
+                    <p><strong class="accent-text" data-i18n="infoPurposeLabel">Назначение:</strong> <span data-i18n="infoPurposeValue">экономика лута, рецепты и подготовка данных для DayZ-модов</span></p>
                 </div>
             </section>
         </aside>
@@ -519,24 +576,24 @@
         <main class="main">
             <section class="panel" id="tools">
                 <div class="panel-content">
-                    <h3 class="section-title">Список утилит</h3>
+                    <h3 class="section-title" data-i18n="toolsTitle">Список утилит</h3>
 
                     <div class="tools-grid">
                         <a class="tool-card types" href="DayZ_Types_Editor.html">
                             <div class="tool-card-content">
                                 <div class="tool-top">
                                     <div class="tool-icon">📋</div>
-                                    <span class="tool-status ready">готово</span>
+                                    <span class="tool-status ready" data-i18n="statusReady">готово</span>
                                 </div>
-                                <h3>Types Editor</h3>
-                                <p>Редактор types.xml для настройки экономики, параметров лута и быстрого массового балансирования значений DayZ.</p>
+                                <h3 data-i18n="typesCardTitle">Types Editor</h3>
+                                <p data-i18n="typesCardDesc">Редактор types.xml для настройки экономики, параметров лута и быстрого массового балансирования значений DayZ.</p>
                                 <div class="tool-features">
                                     <ul>
-                                        <li>Табличное редактирование</li>
-                                        <li>Поиск и массовые изменения</li>
-                                        <li>Формулы в mass edit (+N, -N, *N, /N, ±N%)</li>
-                                        <li>Импорт и экспорт XML</li>
-                                        <li>Работа с cfglimitsdefinition.xml</li>
+                                        <li data-i18n="typesFeature1">Табличное редактирование</li>
+                                        <li data-i18n="typesFeature2">Поиск и массовые изменения</li>
+                                        <li data-i18n="typesFeature3">Формулы в mass edit (+N, -N, *N, /N, ±N%)</li>
+                                        <li data-i18n="typesFeature4">Импорт и экспорт XML</li>
+                                        <li data-i18n="typesFeature5">Работа с cfglimitsdefinition.xml</li>
                                     </ul>
                                 </div>
                                 <div class="filename">DayZ_Types_Editor.html</div>
@@ -547,16 +604,16 @@
                             <div class="tool-card-content">
                                 <div class="tool-top">
                                     <div class="tool-icon">🔧</div>
-                                    <span class="tool-status ready">готово</span>
+                                    <span class="tool-status ready" data-i18n="statusReady">готово</span>
                                 </div>
-                                <h3>Recipe Editor</h3>
-                                <p>Визуальный инструмент для создания, редактирования и экспорта рецептов крафта.</p>
+                                <h3 data-i18n="recipeCardTitle">Recipe Editor</h3>
+                                <p data-i18n="recipeCardDesc">Визуальный инструмент для создания, редактирования и экспорта рецептов крафта.</p>
                                 <div class="tool-features">
                                     <ul>
-                                        <li>Ингредиенты и результаты</li>
-                                        <li>Несколько вариантов крафта</li>
-                                        <li>Генерация Enforce Script</li>
-                                        <li>Импорт и экспорт .c файлов</li>
+                                        <li data-i18n="recipeFeature1">Ингредиенты и результаты</li>
+                                        <li data-i18n="recipeFeature2">Несколько вариантов крафта</li>
+                                        <li data-i18n="recipeFeature3">Генерация Enforce Script</li>
+                                        <li data-i18n="recipeFeature4">Импорт и экспорт .c файлов</li>
                                     </ul>
                                 </div>
                                 <div class="filename">DayZ_Recipe_Editor.html</div>
@@ -567,16 +624,16 @@
                             <div class="tool-card-content">
                                 <div class="tool-top">
                                     <div class="tool-icon">🧱</div>
-                                    <span class="tool-status dev">в разработке</span>
+                                    <span class="tool-status dev" data-i18n="statusDev">в разработке</span>
                                 </div>
-                                <h3>Future Module</h3>
-                                <p>Зарезервированный слот под следующий инструмент набора DayZ Tools.</p>
+                                <h3 data-i18n="futureCardTitle">Future Module</h3>
+                                <p data-i18n="futureCardDesc">Зарезервированный слот под следующий инструмент набора DayZ Tools.</p>
                                 <div class="tool-features">
                                     <ul>
-                                        <li>Trader / Object / Spawn editor</li>
-                                        <li>Loot presets или config helper</li>
-                                        <li>Легко заменить на новый модуль</li>
-                                        <li>Использует тот же layout</li>
+                                        <li data-i18n="futureFeature1">Trader / Object / Spawn editor</li>
+                                        <li data-i18n="futureFeature2">Loot presets или config helper</li>
+                                        <li data-i18n="futureFeature3">Легко заменить на новый модуль</li>
+                                        <li data-i18n="futureFeature4">Использует тот же layout</li>
                                     </ul>
                                 </div>
                                 <div class="filename">Coming_Soon.html</div>
@@ -586,10 +643,162 @@
                 </div>
             </section>
 
-            <div class="footer">
+            <div class="footer" data-i18n="footerText">
                 DayZ Tools Control Panel • Expandable Local Toolkit
             </div>
         </main>
     </div>
+
+    <script>
+        const LANG_STORAGE_KEY = 'dayzToolsLang';
+
+        const translations = {
+            ru: {
+                pageTitle: 'DayZ Tools - Панель управления',
+                languageSwitcherAria: 'Переключатель языка',
+
+                brandTitle: 'DAYZ TOOLS',
+                brandSubtitle: 'Control Panel<br>Набор утилит для DayZ-моддинга',
+
+                quickStartTitle: 'Быстрый запуск',
+                typesEditorName: 'Types Editor',
+                recipeEditorName: 'Recipe Editor',
+
+                infoTitle: 'Информация',
+                infoStatusLabel: 'Статус набора:',
+                infoStatusValue: 'активная разработка',
+                infoFormatLabel: 'Формат:',
+                infoFormatValue: 'локальные HTML-инструменты',
+                infoPurposeLabel: 'Назначение:',
+                infoPurposeValue: 'экономика лута, рецепты и подготовка данных для DayZ-модов',
+
+                toolsTitle: 'Список утилит',
+
+                statusReady: 'готово',
+                statusDev: 'в разработке',
+
+                typesCardTitle: 'Types Editor',
+                typesCardDesc: 'Редактор types.xml для настройки экономики, параметров лута и быстрого массового балансирования значений DayZ.',
+                typesFeature1: 'Табличное редактирование',
+                typesFeature2: 'Поиск и массовые изменения',
+                typesFeature3: 'Формулы в mass edit (+N, -N, *N, /N, ±N%)',
+                typesFeature4: 'Импорт и экспорт XML',
+                typesFeature5: 'Работа с cfglimitsdefinition.xml',
+
+                recipeCardTitle: 'Recipe Editor',
+                recipeCardDesc: 'Визуальный инструмент для создания, редактирования и экспорта рецептов крафта.',
+                recipeFeature1: 'Ингредиенты и результаты',
+                recipeFeature2: 'Несколько вариантов крафта',
+                recipeFeature3: 'Генерация Enforce Script',
+                recipeFeature4: 'Импорт и экспорт .c файлов',
+
+                futureCardTitle: 'Future Module',
+                futureCardDesc: 'Зарезервированный слот под следующий инструмент набора DayZ Tools.',
+                futureFeature1: 'Trader / Object / Spawn editor',
+                futureFeature2: 'Loot presets или config helper',
+                futureFeature3: 'Легко заменить на новый модуль',
+                futureFeature4: 'Использует тот же layout',
+
+                footerText: 'DayZ Tools Control Panel • Expandable Local Toolkit'
+            },
+
+            en: {
+                pageTitle: 'DayZ Tools - Control Panel',
+                languageSwitcherAria: 'Language switcher',
+
+                brandTitle: 'DAYZ TOOLS',
+                brandSubtitle: 'Control Panel<br>Toolkit for DayZ modding',
+
+                quickStartTitle: 'Quick Launch',
+                typesEditorName: 'Types Editor',
+                recipeEditorName: 'Recipe Editor',
+
+                infoTitle: 'Information',
+                infoStatusLabel: 'Toolkit Status:',
+                infoStatusValue: 'active development',
+                infoFormatLabel: 'Format:',
+                infoFormatValue: 'local HTML tools',
+                infoPurposeLabel: 'Purpose:',
+                infoPurposeValue: 'loot economy, recipes, and data preparation for DayZ mods',
+
+                toolsTitle: 'Tool List',
+
+                statusReady: 'ready',
+                statusDev: 'in development',
+
+                typesCardTitle: 'Types Editor',
+                typesCardDesc: 'Editor for types.xml to configure economy, loot parameters, and fast mass balancing of DayZ values.',
+                typesFeature1: 'Table-based editing',
+                typesFeature2: 'Search and mass changes',
+                typesFeature3: 'Mass edit formulas (+N, -N, *N, /N, ±N%)',
+                typesFeature4: 'XML import and export',
+                typesFeature5: 'Works with cfglimitsdefinition.xml',
+
+                recipeCardTitle: 'Recipe Editor',
+                recipeCardDesc: 'Visual tool for creating, editing, and exporting crafting recipes.',
+                recipeFeature1: 'Ingredients and results',
+                recipeFeature2: 'Multiple crafting variants',
+                recipeFeature3: 'Enforce Script generation',
+                recipeFeature4: '.c file import and export',
+
+                futureCardTitle: 'Future Module',
+                futureCardDesc: 'Reserved slot for the next tool in the DayZ Tools toolkit.',
+                futureFeature1: 'Trader / Object / Spawn editor',
+                futureFeature2: 'Loot presets or config helper',
+                futureFeature3: 'Easy to replace with a new module',
+                futureFeature4: 'Uses the same layout',
+
+                footerText: 'DayZ Tools Control Panel • Expandable Local Toolkit'
+            }
+        };
+
+        function applyLanguage(lang) {
+            const dict = translations[lang] || translations.ru;
+
+            document.documentElement.lang = lang;
+            document.title = dict.pageTitle || 'DayZ Tools - Control Panel';
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (dict[key] !== undefined) {
+                    el.textContent = dict[key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.dataset.i18nHtml;
+                if (dict[key] !== undefined) {
+                    el.innerHTML = dict[key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+                const key = el.dataset.i18nAriaLabel;
+                if (dict[key] !== undefined) {
+                    el.setAttribute('aria-label', dict[key]);
+                }
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            localStorage.setItem(LANG_STORAGE_KEY, lang);
+        }
+
+        function initLanguage() {
+            const savedLang = localStorage.getItem(LANG_STORAGE_KEY);
+            const lang = savedLang && translations[savedLang] ? savedLang : 'ru';
+            applyLanguage(lang);
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    applyLanguage(btn.dataset.lang);
+                });
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', initLanguage);
+    </script>
 </body>
 </html>
