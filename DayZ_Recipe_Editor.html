@@ -10,490 +10,289 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0a0f14;
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
             padding: 20px;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
         }
-        
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(45deg, rgba(101, 67, 33, 0.1) 0px, rgba(101, 67, 33, 0.1) 2px, 
-                                          rgba(70, 40, 20, 0.1) 2px, rgba(70, 40, 20, 0.1) 4px),
-                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" /><path d="M10 10 L 90 10 M10 20 L 90 20 M10 30 L 90 30 M10 40 L 90 40 M10 50 L 90 50 M10 60 L 90 60 M10 70 L 90 70 M10 80 L 90 80 M10 90 L 90 90" stroke="%233d2b1a" stroke-width="0.5" opacity="0.2"/><path d="M10 10 L 10 90 M20 10 L 20 90 M30 10 L 30 90 M40 10 L 40 90 M50 10 L 50 90 M60 10 L 60 90 M70 10 L 70 90 M80 10 L 80 90 M90 10 L 90 90" stroke="%233d2b1a" stroke-width="0.5" opacity="0.2"/></svg>');
-            pointer-events: none;
-            z-index: -1;
-        }
-        
+
         .container {
             max-width: 100%;
+            min-height: calc(100vh - 40px);
             margin: 0 auto;
-            background: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(5px);
-            border: 2px solid #7a5c3a;
-            border-radius: 8px;
+            background: #ffffff;
+            border-radius: 6px;
             padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(101, 67, 33, 0.3);
-            position: relative;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
         }
-        
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border: 2px solid rgba(170, 110, 40, 0.3);
-            border-radius: 10px;
-            pointer-events: none;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        }
-        
-        .container::after {
-            content: "";
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 1px dashed rgba(170, 110, 40, 0.2);
-            border-radius: 4px;
-            pointer-events: none;
-        }
-        
+
         .header {
-            background: #1e2b1e;
-            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
-            color: #c49a6c;
-            padding: 15px 20px;
+            background: #34495e;
+            color: white;
+            padding: 15px 18px;
             margin-bottom: 20px;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0;
-            border: 2px solid #5a4a3a;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.2), 0 5px 10px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
         }
-        
-        .header::before {
-            content: "";
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, transparent 50%, #7a5c3a 50%);
-            opacity: 0.3;
-        }
-        
+
         .header h2 {
             font-size: 1.5em;
-            font-weight: 600;
             margin: 0;
-            color: #c49a6c;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 0 #3d2b1a;
-            font-family: 'Segoe UI', monospace;
+            font-weight: 700;
         }
-        
-        .header-placeholder {
-            width: 180px;
-            height: 36px;
-            visibility: hidden;
+
+        .header-spacer {
+            width: 120px;
         }
-        
+
         .main-content {
             display: flex;
             gap: 20px;
         }
-        
+
         .sidebar {
             width: 300px;
-            background: #1e2b1e;
-            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
+            background: #ecf0f1;
             padding: 15px;
             border-radius: 5px;
             flex-shrink: 0;
-            border: 2px solid #5a4a3a;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.1), 0 5px 10px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
+            border: 1px solid #d5dce0;
         }
-        
-        .sidebar::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
-            pointer-events: none;
-        }
-        
-        .sidebar h3 {
-            color: #c49a6c;
+
+        .sidebar h3,
+        .editor-section-title {
+            color: #2c3e50;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #5a4a3a;
+            border-bottom: 2px solid #34495e;
             font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 1px 1px 0 #3d2b1a;
+            font-weight: 700;
         }
-        
+
         .editor {
             flex: 1;
-            background: #1e2b1e;
-            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
-            border-radius: 5px;
             min-width: 0;
-            border: 2px solid #5a4a3a;
+            background: #ffffff;
+            border-radius: 5px;
+        }
+
+        .editor-card {
+            background: white;
+            border: 1px solid #d5dce0;
+            border-radius: 5px;
             padding: 15px;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.1), 0 5px 10px rgba(0,0,0,0.5);
-            position: relative;
         }
-        
-        .editor::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
-            pointer-events: none;
+
+        .form-group {
+            margin-bottom: 12px;
         }
-        
-        .uniform-input,
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 6px 8px;
-            border: 1px solid #5a4a3a;
-            border-radius: 3px;
-            font-size: 13px;
-            line-height: normal;
-            box-sizing: border-box;
-            background: #0f1a0f;
-            color: #d4c8b0;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            font-family: 'Segoe UI', monospace;
-        }
-        
-        .uniform-input:focus,
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #c49a6c;
-            box-shadow: 0 0 0 2px rgba(196, 154, 108, 0.2);
-        }
-        
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-        
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-            font-family: 'Segoe UI', monospace;
-        }
-        
-        input[type="text"],
-        input[type="number"],
-        select {
-            height: 32px;
-        }
-        
-        input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            margin: 0;
-            cursor: pointer;
-            accent-color: #c49a6c;
-            background: #0f1a0f;
-            border: 1px solid #5a4a3a;
-        }
-        
-        label {
+
+        .form-group label {
             display: block;
             font-size: 12px;
             font-weight: bold;
             margin-bottom: 4px;
-            color: #b4a68a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #2c3e50;
         }
-        
-        .form-group {
-            margin-bottom: 12px;
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 3px;
+            font-size: 13px;
+            font-family: Arial, sans-serif;
+            background: white;
+            color: #2c3e50;
         }
-        
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.12);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin-bottom: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
         }
-        
+
         .checkbox-label {
             display: flex;
             align-items: center;
             gap: 8px;
             padding: 4px 0;
         }
-        
+
         .checkbox-label label {
             margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #34495e;
             cursor: pointer;
         }
-        
-        .uniform-btn {
-            padding: 8px 12px;
-            border: 2px solid #5a4a3a;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 13px;
-            height: 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace;
-            background: #1e2b1e;
-            color: #c49a6c;
-            box-shadow: 0 3px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .uniform-btn::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(196,154,108,0.2), transparent);
-            transition: left 0.3s;
-        }
-        
-        .uniform-btn:hover::before {
-            left: 100%;
-        }
-        
-        .uniform-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.3);
-        }
-        
-        .uniform-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2);
-        }
-        
-        .uniform-btn.block {
-            width: 100%;
-        }
-        
-        .uniform-btn.primary {
-            background: #1e3a1e;
-            border-color: #2a6b2a;
-        }
-        
-        .uniform-btn.primary:hover {
-            border-color: #27ae60;
-        }
-        
-        .uniform-btn.secondary {
-            background: #3a2a1e;
-            border-color: #8b5a2a;
-        }
-        
-        .uniform-btn.secondary:hover {
-            border-color: #e67e22;
-        }
-        
-        .uniform-btn.export {
-            background: #1e2a3a;
-            border-color: #2a4a6b;
-        }
-        
-        .uniform-btn.export:hover {
-            border-color: #3498db;
-        }
-        
-        .uniform-btn.import {
-            background: #3a2a1e;
-            border-color: #b87c3a;
-        }
-        
-        .uniform-btn.import:hover {
-            border-color: #f39c12;
-        }
-        
-        .uniform-btn.danger {
-            background: #3a1e1e;
-            border-color: #8b2a2a;
-        }
-        
-        .uniform-btn.danger:hover {
-            border-color: #e74c3c;
-        }
-        
-        .uniform-btn.neutral {
-            background: #2a2a2a;
-            border-color: #5a5a5a;
-        }
-        
-        .uniform-btn.neutral:hover {
-            border-color: #7f8c8d;
-        }
-        
+
         .btn-group {
             display: flex;
             gap: 8px;
             margin: 15px 0;
         }
-        
-        .btn-group .uniform-btn {
+
+        .btn-group button {
             flex: 1;
-            margin: 0;
         }
-        
+
+        .btn {
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 9px 12px;
+            color: white;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-green {
+            background: #27ae60;
+        }
+
+        .btn-green:hover {
+            background: #229954;
+        }
+
+        .btn-orange {
+            background: #f39c12;
+        }
+
+        .btn-orange:hover {
+            background: #e67e22;
+        }
+
+        .btn-blue {
+            background: #2980b9;
+        }
+
+        .btn-blue:hover {
+            background: #1f618d;
+        }
+
+        .btn-red {
+            background: #e74c3c;
+        }
+
+        .btn-red:hover {
+            background: #c0392b;
+        }
+
+        .btn-gray {
+            background: #7f8c8d;
+        }
+
+        .btn-gray:hover {
+            background: #707b7c;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
         .tab-buttons {
             display: flex;
             gap: 5px;
             margin-bottom: 15px;
-            border-bottom: 2px solid #5a4a3a;
+            border-bottom: 1px solid #d0d7db;
             padding-bottom: 10px;
         }
-        
+
         .tab-btn {
             padding: 8px 12px;
-            background: #1e2b1e;
-            border: 2px solid #5a4a3a;
+            background: none;
+            border: none;
             cursor: pointer;
             font-size: 13px;
-            color: #b4a68a;
+            color: #7f8c8d;
             border-radius: 3px;
-            transition: all 0.2s;
-            height: 36px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace;
-            font-weight: 600;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+            transition: background 0.2s ease, color 0.2s ease;
         }
-        
+
         .tab-btn:hover {
-            background: #2a3a2a;
-            border-color: #7a5c3a;
-            color: #d4c8b0;
+            background: #ecf0f1;
+            color: #2c3e50;
         }
-        
+
         .tab-btn.active {
-            background: #2a3a2a;
-            border-color: #c49a6c;
-            color: #c49a6c;
-            box-shadow: 0 0 10px rgba(196,154,108,0.3);
+            background: #34495e;
+            color: white;
         }
-        
+
         .tab-pane {
             display: none;
         }
-        
+
         .tab-pane.active {
             display: block;
         }
-        
+
         .card-container {
             max-height: 500px;
             overflow-y: auto;
-            border: 2px solid #5a4a3a;
-            border-radius: 3px;
-            padding: 12px;
-            background: #0f1a0f;
-            margin-bottom: 15px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            padding: 10px;
+            background: white;
+            margin-bottom: 12px;
         }
-        
+
         .ingredient-card,
-        .case-card,
-        .result-item {
-            background: #1e2b1e;
-            border-radius: 3px;
+        .case-card {
+            background: #ecf0f1;
+            border-radius: 4px;
             padding: 12px;
             margin-bottom: 12px;
-            border: 1px solid #5a4a3a;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.5), inset 0 1px 3px rgba(255,215,140,0.1);
-            position: relative;
+            border: 1px solid #d0d7db;
         }
-        
-        .ingredient-card::after,
-        .case-card::after,
-        .result-item::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
-            pointer-events: none;
-        }
-        
+
         .ingredient-card h4,
-        .case-card h4,
         .result-item h5 {
-            color: #c49a6c;
+            color: #2c3e50;
             margin-bottom: 10px;
             font-size: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 1px 1px 0 #3d2b1a;
             gap: 10px;
         }
-        
-        .result-item h5 {
-            font-size: 13px;
-        }
-        
+
         .case-header {
-            background: #2a3a2a;
-            color: #c49a6c;
+            background: #34495e;
+            color: white;
             padding: 8px 10px;
             border-radius: 3px;
             margin-bottom: 12px;
@@ -501,196 +300,172 @@
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
-            border: 1px solid #5a4a3a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.1);
             gap: 10px;
         }
-        
-        .preview-section {
-            background: #0f1a0f;
+
+        .mini-remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
             border-radius: 3px;
-            padding: 15px;
-            border: 1px solid #5a4a3a;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
         }
-        
+
+        .mini-remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #d0d7db;
+        }
+
         .preview-title {
             font-size: 16px;
             font-weight: bold;
-            color: #c49a6c;
+            color: #2c3e50;
             margin-bottom: 15px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #5a4a3a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border-bottom: 2px solid #34495e;
         }
-        
+
         .preview-block {
             margin-bottom: 15px;
         }
-        
+
         .preview-block h4 {
-            color: #b4a68a;
+            color: #2c3e50;
             margin-bottom: 8px;
             font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
-        
+
         .preview-ingredient,
         .preview-case {
-            background: #1e2b1e;
-            border-radius: 3px;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-left: 3px solid #c49a6c;
-            border-top: 1px solid #5a4a3a;
-            border-right: 1px solid #5a4a3a;
-            border-bottom: 1px solid #5a4a3a;
+            background: #ecf0f1;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid #2980b9;
         }
-        
+
         .preview-case {
-            border-left-color: #e67e22;
+            border-left-color: #f39c12;
         }
-        
+
         .preview-class-list {
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
-            margin: 8px 0;
+            margin: 5px 0;
         }
-        
+
         .preview-class-item {
-            background: #0f1a0f;
-            padding: 3px 10px;
+            background: white;
+            padding: 2px 8px;
             border-radius: 3px;
             font-size: 11px;
-            border: 1px solid #5a4a3a;
-            color: #d4c8b0;
+            border: 1px solid #bdc3c7;
         }
-        
+
         .preview-param-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 8px;
-            margin-top: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 5px;
+            margin-top: 5px;
             font-size: 11px;
-            color: #b4a68a;
         }
-        
+
         .preview-param strong {
-            color: #c49a6c;
+            color: #2980b9;
         }
-        
+
         .preview-result-item {
-            background: #0f1a0f;
-            padding: 8px 10px;
-            margin-bottom: 5px;
+            background: white;
+            padding: 6px 8px;
+            margin-bottom: 4px;
             border-radius: 3px;
             font-size: 11px;
-            border: 1px solid #5a4a3a;
-            color: #d4c8b0;
+            border: 1px solid #d7dbdd;
         }
-        
+
         .preview-badge {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 2px;
             font-size: 10px;
             margin-left: 5px;
-            background: #1e3a1e;
-            border: 1px solid #27ae60;
-            color: #27ae60;
+            background: #27ae60;
+            color: white;
         }
-        
+
         .preview-stats {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #5a4a3a;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #bdc3c7;
         }
-        
+
         .preview-stats .stat-item {
-            background: #1e2b1e;
-            padding: 5px 12px;
+            background: #ecf0f1;
+            padding: 5px 10px;
             border-radius: 3px;
             font-size: 12px;
-            border: 1px solid #5a4a3a;
-            color: #b4a68a;
         }
-        
+
         .code-output {
-            background: #0f1a0f;
-            color: #d4c8b0;
+            background: #2c3e50;
+            color: white;
             padding: 15px;
-            border-radius: 3px;
+            border-radius: 4px;
             margin-top: 15px;
-            font-family: 'Segoe UI', monospace;
+            font-family: monospace;
             white-space: pre-wrap;
             max-height: 300px;
             overflow-y: auto;
             font-size: 12px;
             line-height: 1.4;
-            border: 2px solid #5a4a3a;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
-        }
-        
-        .registration-code {
-            background: #0f1a0f;
-            color: #d4c8b0;
-            padding: 12px;
-            border-radius: 3px;
-            margin-top: 15px;
-            font-family: 'Segoe UI', monospace;
-            font-size: 12px;
-            border: 1px solid #5a4a3a;
-        }
-        
-        .comment {
-            color: #7a5c3a;
-        }
-        
-        .editor h3 {
-            color: #c49a6c;
-            margin-bottom: 15px;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid #5a4a3a;
-            padding-bottom: 8px;
-        }
-        
-        .card-container .uniform-btn,
-        .ingredient-card .uniform-btn,
-        .case-card .uniform-btn,
-        .result-item .uniform-btn {
-            height: 30px;
-            font-size: 12px;
-            padding: 6px 10px;
-            box-shadow: 0 2px 0 #3d2b1a, inset 0 1px 2px rgba(255,215,140,0.18);
         }
 
-        .ingredient-card .uniform-btn:hover,
-        .case-card .uniform-btn:hover,
-        .result-item .uniform-btn:hover {
-            box-shadow: 0 4px 0 #3d2b1a, inset 0 1px 2px rgba(255,215,140,0.25);
+        .registration-code {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
         }
-        
+
+        .comment {
+            color: #95a5a6;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
             }
+
             .sidebar {
                 width: 100%;
             }
-            
+
             .form-row {
                 grid-template-columns: 1fr;
             }
-            
-            .header-placeholder {
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .header-spacer {
                 display: none;
             }
         }
@@ -699,8 +474,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>RECIPE EDITOR</h2>
-            <div class="header-placeholder"></div>
+            <h2>DayZ Recipe Editor</h2>
+            <div class="header-spacer"></div>
         </div>
         
         <div class="main-content">
@@ -708,12 +483,12 @@
                 <h3>Параметры рецепта</h3>
                 
                 <div class="form-group">
-                    <label title="Наименование класса рецепта для регистрации. Один рецепт - один класс. Должно быть уникальным в рамках мода.">RecipeclassName:</label>
+                    <label title="Наименование класса рецепта для регистрации. Один рецепт - один класс. Должно быть уникальным в рамках мода.">Имя класса:</label>
                     <input type="text" id="className" value="" placeholder="CraftWeaponCleaner">
                 </div>
                 
                 <div class="form-group">
-                    <label title="Наименование рецепта, которое будет отображаться в игре.">recipeName:</label>
+                    <label title="Наименование рецепта, которое будет отображаться в игре.">Название рецепта:</label>
                     <input type="text" id="recipeName" value="" placeholder="Мой рецепт">
                 </div>
                 
@@ -727,58 +502,63 @@
                     </div>
                     
                     <div class="form-group">
-                        <label title="Длительность анимации в относительных единицах. Реальные секунды = значение * 4 приблизительно.">Animation:</label>
+                        <label title="Длительность анимации в относительных единицах. Реальные секунды = значение * 4 приблизительно.">Animation Length:</label>
                         <input type="number" id="animationLength" value="1" step="0.1" min="0">
                     </div>
                 </div>
                 
                 <div class="btn-group">
-                    <button class="uniform-btn primary" id="newRecipeBtn" title="Создать новый рецепт со значениями по умолчанию">Новый</button>
-                    <button class="uniform-btn secondary" id="clearRecipeBtn" title="Очистить все поля рецепта">Очистить</button>
+                    <button class="btn btn-green" id="newRecipeBtn" title="Создать новый рецепт со значениями по умолчанию">Новый</button>
+                    <button class="btn btn-orange" id="clearRecipeBtn" title="Очистить все поля рецепта">Очистить</button>
                 </div>
                 
-                <button class="uniform-btn export block" id="exportBtn" title="Сохранить рецепт в .c файл" style="margin-bottom: 5px;">Сохранить</button>
-                <button class="uniform-btn import block" id="importBtn" title="Загрузить рецепт из .c файла">Загрузить</button>
+                <div class="btn-group">
+                    <button class="btn btn-blue btn-block" id="exportBtn" title="Сохранить рецепт в .c файл">Сохранить</button>
+                    <button class="btn btn-orange btn-block" id="importBtn" title="Загрузить рецепт из .c файла">Загрузить</button>
+                </div>
             </div>
             
             <div class="editor">
-                <div class="tab-buttons">
-                    <button class="tab-btn active" data-tab="ingredients" title="Настройка ингредиентов для крафта">Ингредиенты</button>
-                    <button class="tab-btn" data-tab="results" title="Настройка результатов крафта">Результаты</button>
-                    <button class="tab-btn" data-tab="preview" title="Предпросмотр текущего рецепта">Предпросмотр</button>
-                    <button class="tab-btn" data-tab="code" title="Сгенерированный код рецепта">Код</button>
-                </div>
-                
-                <div id="ingredientsTab" class="tab-pane active">
-                    <h3>Ингредиенты</h3>
-                    <div class="card-container" id="ingredientsContainer">
-                        <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>
-                    </div>
-                    <button class="uniform-btn primary block" id="addIngredientBtn" title="Добавить новый ингредиент">+ Добавить ингредиент</button>
-                </div>
-                
-                <div id="resultsTab" class="tab-pane">
-                    <h3>Варианты результатов</h3>
-                    <div class="card-container" id="casesContainer">
-                        <p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>
-                    </div>
-                    <button class="uniform-btn import block" id="addCaseBtn" title="Добавить новый вариант результата">+ Добавить вариант</button>
-                </div>
-                
-                <div id="previewTab" class="tab-pane">
-                    <h3>Предпросмотр</h3>
-                    <div class="card-container" style="max-height: 500px;" id="previewContainer"></div>
-                </div>
-                
-                <div id="codeTab" class="tab-pane">
-                    <h3>Код</h3>
-                    <button class="uniform-btn export block" id="generateCodeBtn" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
-                    <button class="uniform-btn neutral block" id="copyCodeBtn" title="Копировать код в буфер обмена">Копировать код</button>
-                    <div id="codeOutput" class="code-output">
-                        // Нажмите "Сгенерировать код"
+                <div class="editor-card">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="ingredients" title="Настройка ингредиентов для крафта">Ингредиенты</button>
+                        <button class="tab-btn" data-tab="results" title="Настройка результатов крафта">Результаты</button>
+                        <button class="tab-btn" data-tab="preview" title="Предпросмотр текущего рецепта">Предпросмотр</button>
+                        <button class="tab-btn" data-tab="code" title="Сгенерированный код рецепта">Код</button>
                     </div>
                     
-                    <div id="registrationContainer" class="registration-code" style="display: none;"></div>
+                    <div id="ingredientsTab" class="tab-pane active">
+                        <div class="editor-section-title" style="margin-bottom:10px;">Ингредиенты</div>
+                        <p style="color: #7f8c8d; margin-bottom: 10px; font-size: 12px;">Каждый класс с новой строки</p>
+                        <div class="card-container" id="ingredientsContainer">
+                            <p style="color: #7f8c8d; text-align: center; padding: 20px;">Нет ингредиентов</p>
+                        </div>
+                        <button class="btn btn-green btn-block" id="addIngredientBtn" title="Добавить новый ингредиент">+ Добавить ингредиент</button>
+                    </div>
+                    
+                    <div id="resultsTab" class="tab-pane">
+                        <div class="editor-section-title" style="margin-bottom:10px;">Варианты результатов</div>
+                        <div class="card-container" id="casesContainer">
+                            <p style="color: #7f8c8d; text-align: center; padding: 20px;">Нет вариантов</p>
+                        </div>
+                        <button class="btn btn-orange btn-block" id="addCaseBtn" title="Добавить новый вариант результата">+ Добавить вариант</button>
+                    </div>
+                    
+                    <div id="previewTab" class="tab-pane">
+                        <div class="editor-section-title" style="margin-bottom:10px;">Предпросмотр</div>
+                        <div class="card-container" style="max-height: 500px;" id="previewContainer"></div>
+                    </div>
+                    
+                    <div id="codeTab" class="tab-pane">
+                        <div class="editor-section-title" style="margin-bottom:10px;">Код</div>
+                        <button class="btn btn-blue btn-block" id="generateCodeBtn" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
+                        <button class="btn btn-gray" id="copyCodeBtn" title="Копировать код в буфер обмена">Копировать</button>
+                        <div id="codeOutput" class="code-output">
+                            // Нажмите "Сгенерировать код"
+                        </div>
+                        
+                        <div id="registrationContainer" class="registration-code" style="display: none;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -873,7 +653,7 @@
             container.innerHTML = '';
 
             if (!state.ingredients.length) {
-                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет ингредиентов</p>';
+                container.innerHTML = '<p style="color: #7f8c8d; text-align: center; padding: 20px;">Нет ингредиентов</p>';
                 return;
             }
 
@@ -881,11 +661,11 @@
                 <div class="ingredient-card">
                     <h4>
                         Ингредиент #${index + 1}
-                        <button class="uniform-btn danger remove-ingredient-btn" data-index="${index}" style="width: 28px; height: 28px; padding: 0;">×</button>
+                        <button class="mini-remove-btn remove-ingredient-btn" data-index="${index}">×</button>
                     </h4>
 
                     <div class="form-group">
-                        <label title="Список классов предметов, которые можно использовать. Каждый класс с новой строки. Например: Apple, Pear, Banana">ItemClassName (с новой строки):</label>
+                        <label title="Список классов предметов, которые можно использовать. Каждый класс с новой строки. Например: Apple, Pear, Banana">Классы предметов (с новой строки):</label>
                         <textarea class="ingredient-input" data-index="${index}" data-field="classList" placeholder="Apple&#10;Pear&#10;Banana">${escapeHtml(ing.classList)}</textarea>
                     </div>
 
@@ -931,8 +711,10 @@
 
                     <div class="form-row">
                         <div class="form-group checkbox-label">
-                            <input type="checkbox" class="ingredient-checkbox" data-index="${index}" data-field="destroy" id="destroy_${index}" ${ing.destroy ? 'checked' : ''}>
-                            <label for="destroy_${index}" title="true = ингредиент полностью уничтожается после крафта, false = не уничтожается">Destroy</label>
+                            <label>
+                                <input type="checkbox" class="ingredient-checkbox" data-index="${index}" data-field="destroy" ${ing.destroy ? 'checked' : ''}>
+                                Уничтожить
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -944,7 +726,7 @@
             container.innerHTML = '';
 
             if (!state.cases.length) {
-                container.innerHTML = '<p style="color: #7a5c3a; text-align: center; padding: 20px;">Нет вариантов</p>';
+                container.innerHTML = '<p style="color: #7f8c8d; text-align: center; padding: 20px;">Нет вариантов</p>';
                 return;
             }
 
@@ -952,25 +734,27 @@
                 <div class="case-card">
                     <div class="case-header">
                         Вариант #${caseIndex + 1}
-                        <button class="uniform-btn danger remove-case-btn" data-case-index="${caseIndex}" style="width: 28px; height: 28px; padding: 0;">×</button>
+                        <button class="mini-remove-btn remove-case-btn" data-case-index="${caseIndex}">×</button>
                     </div>
 
                     ${caseItem.results.map((result, resultIndex) => `
                         <div class="result-item">
                             <h5>
                                 Результат #${resultIndex + 1}
-                                <button class="uniform-btn danger remove-result-btn" data-case-index="${caseIndex}" data-result-index="${resultIndex}" style="width: 24px; height: 24px; padding: 0;">×</button>
+                                <button class="mini-remove-btn remove-result-btn" data-case-index="${caseIndex}" data-result-index="${resultIndex}">×</button>
                             </h5>
 
                             <div class="form-group">
-                                <label title="Класс предмета, который будет создан. Например: Apple, WeaponCleaningKit">ItemClassName:</label>
+                                <label title="Класс предмета, который будет создан. Например: Apple, WeaponCleaningKit">Тип предмета:</label>
                                 <input type="text" class="result-input" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="type" value="${escapeHtml(result.type)}" placeholder="ItemClassName">
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group checkbox-label">
-                                    <input type="checkbox" class="result-checkbox" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setFullQuantity" id="full_${caseIndex}_${resultIndex}" ${result.setFullQuantity ? 'checked' : ''}>
-                                    <label for="full_${caseIndex}_${resultIndex}" title="true = создать предмет с полным стаком, false = использовать указанное количество">FullQuantity</label>
+                                    <label>
+                                        <input type="checkbox" class="result-checkbox" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setFullQuantity" ${result.setFullQuantity ? 'checked' : ''}>
+                                        Полный стак
+                                    </label>
                                 </div>
                             </div>
 
@@ -1005,7 +789,7 @@
                         </div>
                     `).join('')}
 
-                    <button class="uniform-btn primary block add-result-btn" data-case-index="${caseIndex}" style="margin-top: 10px;">+ Добавить результат</button>
+                    <button class="btn btn-green btn-block add-result-btn" data-case-index="${caseIndex}" style="margin-top: 10px;">+ Добавить результат</button>
                 </div>
             `).join('');
         }
@@ -1033,7 +817,7 @@
             html += `<div class="preview-block"><h4>Ингредиенты (${state.ingredients.length}):</h4>`;
 
             if (!state.ingredients.length) {
-                html += `<p style="color: #7a5c3a;">Нет ингредиентов</p>`;
+                html += `<p style="color: #7f8c8d;">Нет ингредиентов</p>`;
             } else {
                 state.ingredients.forEach((ing, index) => {
                     const classes = parseClassList(ing.classList);
@@ -1069,7 +853,7 @@
             html += `<div class="preview-block"><h4>Варианты результатов (${state.cases.length}):</h4>`;
 
             if (!state.cases.length) {
-                html += `<p style="color: #7a5c3a;">Нет результатов</p>`;
+                html += `<p style="color: #7f8c8d;">Нет результатов</p>`;
             } else {
                 state.cases.forEach((caseItem, caseIndex) => {
                     html += `
