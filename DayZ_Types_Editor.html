@@ -39,7 +39,6 @@
             margin-bottom: 20px;
             border-radius: 5px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
         }
@@ -207,20 +206,6 @@
 
         .btn-gray:hover {
             background: #707b7c;
-        }
-
-        .load-definitions-btn {
-            background: #2980b9;
-            color: white;
-            border: none;
-            padding: 9px 14px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .load-definitions-btn:hover {
-            background: #1f618d;
         }
 
         .mass-edit-panel {
@@ -640,7 +625,6 @@
     <div class="container">
         <div class="header">
             <h2>DayZ Types Editor</h2>
-            <button class="load-definitions-btn" id="loadDefinitionsBtn" title="Загрузить cfglimitsdefinition.xml">Загрузить определения</button>
         </div>
         <div class="main-content">
             <div class="sidebar">
@@ -685,6 +669,7 @@
                 <div class="import-export-section">
                     <button class="btn btn-blue" id="exportBtn">Сохранить</button>
                     <button class="btn btn-orange" id="importBtn">Загрузить</button>
+                    <button class="btn btn-blue" id="loadDefinitionsBtn">Загрузить определения</button>
                 </div>
             </div>
             <div class="editor">
