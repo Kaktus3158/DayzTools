@@ -736,6 +736,7 @@
             items: [],
             selectedItems: new Set(),
             currentSearchTerm: '',
+            lastValidValues: {},
             definitions: {
                 categories: [],
                 tags: [],
@@ -867,6 +868,51 @@
             value: [],
             tag: []
         });
+
+        function getFieldKey(index, field) {
+            return `${index}:${field}`;
+        }
+
+        function rememberValidValue(index, field, value) {
+            state.lastValidValues[getFieldKey(index, field)] = value;
+        }
+
+        function getRememberedValidValue(index, field, fallback = '') {
+            const key = getFieldKey(index, field);
+            return key in state.lastValidValues ? state.lastValidValues[key] : fallback;
+        }
+
+        function isValidFieldValue(field, value) {
+            const raw = String(value ?? '').trim();
+
+            if (field === 'name') {
+                return raw !== '';
+            }
+
+            const num = Number.parseInt(raw, 10);
+            if (Number.isNaN(num)) return false;
+
+            if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) {
+                return num >= 0;
+            }
+
+            if (['quantmin', 'quantmax'].includes(field)) {
+                return num === -1 || num >= 0;
+            }
+
+            return true;
+        }
+
+        function getFieldValidationMessage(field) {
+            if (field === 'name') return 'Имя не может быть пустым';
+            if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) {
+                return `${field} должен быть 0 или больше`;
+            }
+            if (['quantmin', 'quantmax'].includes(field)) {
+                return `${field} должен быть -1 или 0 и больше`;
+            }
+            return 'Недопустимое значение';
+        }
 
         function generateUniqueName(base) {
             const existing = new Set(state.items.map(item => String(item.name || '').trim()));
@@ -1043,6 +1089,15 @@
                 const isVisible = !state.currentSearchTerm || itemMatchesSearch(item, state.currentSearchTerm);
                 const isSelected = state.selectedItems.has(index);
                 const errors = validateItem(item, index);
+
+                rememberValidValue(index, 'name', item.name);
+                rememberValidValue(index, 'nominal', item.nominal);
+                rememberValidValue(index, 'lifetime', item.lifetime);
+                rememberValidValue(index, 'restock', item.restock);
+                rememberValidValue(index, 'min', item.min);
+                rememberValidValue(index, 'quantmin', item.quantmin);
+                rememberValidValue(index, 'quantmax', item.quantmax);
+                rememberValidValue(index, 'cost', item.cost);
 
                 return `
                     <tr
@@ -1732,7 +1787,7 @@
 
             if (target.classList.contains('name-input')) {
                 const index = Number.parseInt(target.dataset.index, 10);
-                updateItemField(index, 'name', target.value);
+                state.items[index].name = target.value;
                 updateRowValidation(index);
                 if (state.currentSearchTerm) applySearchFilter();
             }
@@ -1747,7 +1802,20 @@
 
             if (target.classList.contains('name-input')) {
                 const index = Number.parseInt(target.dataset.index, 10);
-                validateField(target, index, 'name');
+                const field = 'name';
+                const newValue = target.value;
+
+                if (!isValidFieldValue(field, newValue)) {
+                    const oldValue = getRememberedValidValue(index, field, state.items[index]?.name || 'NewItem');
+                    target.value = oldValue;
+                    state.items[index][field] = oldValue;
+                    showValidationTooltip(target, getFieldValidationMessage(field));
+                } else {
+                    state.items[index][field] = newValue;
+                    rememberValidValue(index, field, newValue);
+                }
+
+                validateField(target, index, field);
                 saveStateToLocalStorage();
                 return;
             }
@@ -1755,8 +1823,24 @@
             if (target.classList.contains('number-input')) {
                 const index = Number.parseInt(target.dataset.index, 10);
                 const field = target.dataset.field;
-                updateNumberField(index, field, target.value);
+                const rawValue = target.value;
+
+                if (!isValidFieldValue(field, rawValue)) {
+                    const fallback = field.includes('quant') ? -1 : 0;
+                    const oldValue = getRememberedValidValue(index, field, state.items[index]?.[field] ?? fallback);
+                    target.value = oldValue;
+                    state.items[index][field] = normalizeNumber(oldValue, fallback);
+                    showValidationTooltip(target, getFieldValidationMessage(field));
+                } else {
+                    const fallback = field.includes('quant') ? -1 : 0;
+                    const normalized = normalizeNumber(rawValue, fallback);
+                    state.items[index][field] = normalized;
+                    target.value = normalized;
+                    rememberValidValue(index, field, normalized);
+                }
+
                 validateField(target, index, field);
+                saveStateToLocalStorage();
                 return;
             }
 
