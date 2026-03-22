@@ -5,223 +5,263 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DayZ Types Editor</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0a0f14;
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
             padding: 20px;
-            height: 100vh;
+            min-height: 100vh;
             overflow: hidden;
-            position: relative;
         }
-        
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                repeating-linear-gradient(45deg, rgba(101, 67, 33, 0.1) 0px, rgba(101, 67, 33, 0.1) 2px, 
-                                          rgba(70, 40, 20, 0.1) 2px, rgba(70, 40, 20, 0.1) 4px),
-                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" /><path d="M10 10 L 90 10 M10 20 L 90 20 M10 30 L 90 30 M10 40 L 90 40 M10 50 L 90 50 M10 60 L 90 60 M10 70 L 90 70 M10 80 L 90 80 M10 90 L 90 90" stroke="%233d2b1a" stroke-width="0.5" opacity="0.2"/><path d="M10 10 L 10 90 M20 10 L 20 90 M30 10 L 30 90 M40 10 L 40 90 M50 10 L 50 90 M60 10 L 60 90 M70 10 L 70 90 M80 10 L 80 90 M90 10 L 90 90" stroke="%233d2b1a" stroke-width="0.5" opacity="0.2"/></svg>');
-            pointer-events: none;
-            z-index: -1;
-        }
-        
+
         .container {
-            max-width: 100%; height: 100%; margin: 0 auto;
-            background: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(5px);
-            border: 2px solid #7a5c3a; border-radius: 8px;
+            max-width: 100%;
+            height: calc(100vh - 40px);
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 6px;
             padding: 20px;
-            display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(101, 67, 33, 0.3);
-            position: relative;
-        }
-        .container::before {
-            content: ""; position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            border: 2px solid rgba(170, 110, 40, 0.3); border-radius: 10px;
-            pointer-events: none; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-        }
-        .container::after {
-            content: ""; position: absolute;
-            top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px dashed rgba(170, 110, 40, 0.2); border-radius: 4px;
-            pointer-events: none;
-        }
-        
-        .header {
-            background: #1e2b1e;
-            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
-            color: #c49a6c; padding: 15px 20px; margin-bottom: 20px;
-            border-radius: 5px;
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0; border: 2px solid #5a4a3a;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.2), 0 5px 10px rgba(0,0,0,0.5);
-            position: relative; overflow: hidden; gap: 12px;
-        }
-        .header::before {
-            content: ""; position: absolute; top: 5px; right: 5px;
-            width: 30px; height: 30px;
-            background: linear-gradient(135deg, transparent 50%, #7a5c3a 50%);
-            opacity: 0.3;
-        }
-        .header h2 {
-            font-size: 1.5em; font-weight: 600; margin: 0; color: #c49a6c;
-            text-transform: uppercase; letter-spacing: 2px;
-            text-shadow: 2px 2px 0 #3d2b1a;
-            font-family: 'Segoe UI', monospace;
-        }
-
-        .header-right {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
         }
 
-        .lang-switcher {
-            display: inline-flex;
-            gap: 6px;
+        .header {
+            background: #34495e;
+            color: white;
+            padding: 15px 18px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             flex-shrink: 0;
         }
 
-        .lang-btn {
-            min-width: 44px;
-            height: 30px;
-            padding: 0 10px;
-            border: 1px solid #5a4a3a;
-            border-radius: 4px;
-            background: #0f1a0f;
-            color: #b4a68a;
-            cursor: pointer;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace;
-            transition: all 0.2s ease;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.08);
+        .header h2 {
+            font-size: 1.5em;
+            margin: 0;
+            font-weight: 700;
         }
 
-        .lang-btn:hover {
-            border-color: #c49a6c;
-            color: #c49a6c;
-            background: #162216;
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
         }
 
-        .lang-btn.active {
-            border-color: #c49a6c;
-            color: #c49a6c;
-            background: #1f2f1f;
-            box-shadow: 0 0 10px rgba(196,154,108,0.18), inset 0 1px 3px rgba(255,215,140,0.12);
-        }
-        
-        .load-definitions-btn {
-            background: #1e2a3a; border: 2px solid #2a4a6b; color: #c49a6c;
-            padding: 8px 15px; border-radius: 3px; cursor: pointer;
-            font-size: 13px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            text-transform: uppercase; letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace; font-weight: 600;
-            box-shadow: 0 3px 0 #1a2a3a, inset 0 1px 3px rgba(255,215,140,0.2);
-            position: relative; overflow: hidden; transition: all 0.2s;
-        }
-        .load-definitions-btn::before {
-            content: ""; position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(196,154,108,0.2), transparent);
-            transition: left 0.3s;
-        }
-        .load-definitions-btn:hover::before { left: 100%; }
-        .load-definitions-btn:hover { border-color: #3498db; transform: translateY(-2px); box-shadow: 0 5px 0 #1a2a3a, inset 0 1px 3px rgba(255,215,140,0.3); }
-        .load-definitions-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #1a2a3a, inset 0 1px 3px rgba(255,215,140,0.2); }
-        
-        .main-content { display: flex; gap: 20px; flex: 1; min-height: 0; overflow: hidden; }
-        
         .sidebar {
-            width: 280px;
-            background: #1e2b1e;
-            background-image: linear-gradient(145deg, #2a3a2a 0%, #1a251a 100%);
-            padding: 15px; border-radius: 5px; overflow-y: auto; flex-shrink: 0;
-            border: 2px solid #5a4a3a;
-            box-shadow: inset 0 1px 3px rgba(255,215,140,0.1), 0 5px 10px rgba(0,0,0,0.5);
-            position: relative;
+            width: 300px;
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            border: 1px solid #d5dce0;
         }
-        .sidebar::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
-            pointer-events: none;
+
+        .sidebar h3,
+        .editor-section-title {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #34495e;
+            font-size: 16px;
+            font-weight: 700;
         }
-        .sidebar h3 {
-            color: #c49a6c; margin-bottom: 15px; padding-bottom: 10px;
-            border-bottom: 2px solid #5a4a3a; font-size: 16px;
-            text-transform: uppercase; letter-spacing: 2px;
-            text-shadow: 1px 1px 0 #3d2b1a;
+
+        .editor {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
-        
-        .editor { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
-        
-        .form-group { margin-bottom: 12px; }
+
+        .editor-card {
+            background: white;
+            border: 1px solid #d5dce0;
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
         .form-group label {
-            display: block; font-size: 12px; font-weight: bold; margin-bottom: 3px;
-            color: #b4a68a; text-transform: uppercase; letter-spacing: 1px;
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #2c3e50;
         }
-        .sidebar input[type="text"], .sidebar input[type="number"], .sidebar input[type="file"], .sidebar select {
-            width: 100%; padding: 6px 5px; border: 1px solid #5a4a3a; border-radius: 3px;
-            font-size: 13px; height: 32px; line-height: normal;
-            background: #0f1a0f; color: #d4c8b0; font-family: 'Segoe UI', monospace;
+
+        .sidebar input[type="text"],
+        .sidebar input[type="number"],
+        .sidebar select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 3px;
+            font-size: 13px;
+            height: 32px;
+            background: white;
+            color: #2c3e50;
+            font-family: Arial, sans-serif;
         }
-        .sidebar input[type="text"]:focus, .sidebar input[type="number"]:focus, .sidebar select:focus {
-            outline: none; border-color: #c49a6c; box-shadow: 0 0 0 2px rgba(196, 154, 108, 0.2);
+
+        .sidebar input[type="text"]:focus,
+        .sidebar input[type="number"]:focus,
+        .sidebar select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.12);
         }
-        .sidebar input[type="number"] { -moz-appearance: textfield; }
+
+        .sidebar input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
         .sidebar input[type="number"]::-webkit-outer-spin-button,
-        .sidebar input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        
-        .search-wrapper { display: flex; gap: 5px; margin-bottom: 15px; }
+        .sidebar input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .search-wrapper {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
         .search-wrapper input {
-            flex: 1; height: 32px; padding: 6px 5px;
-            border: 1px solid #5a4a3a; border-radius: 3px; font-size: 13px;
-            background: #0f1a0f; color: #d4c8b0; font-family: 'Segoe UI', monospace;
+            flex: 1;
         }
-        .search-wrapper input:focus { outline: none; border-color: #c49a6c; box-shadow: 0 0 0 2px rgba(196, 154, 108, 0.2); }
-        .clear-search-btn {
-            background: #3a1e1e; border: 2px solid #8b2a2a; color: #d4c8b0;
-            width: 32px; height: 32px; border-radius: 3px; cursor: pointer; font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; box-shadow: 0 2px 0 #2a1a1a; transition: all 0.2s;
+
+        .btn {
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 9px 12px;
+            color: white;
+            transition: background 0.2s ease, transform 0.1s ease;
         }
-        .clear-search-btn:hover { border-color: #e74c3c; transform: translateY(-2px); box-shadow: 0 4px 0 #2a1a1a; }
-        .clear-search-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #2a1a1a; }
-        .clear-search-btn:disabled { background: #2a2a2a; border-color: #5a5a5a; cursor: not-allowed; opacity: 0.5; transform: none; box-shadow: 0 2px 0 #1a1a1a; }
-        
-        .mass-edit-panel { margin-bottom: 15px; }
-        .mass-edit-panel .form-group { margin-bottom: 10px; }
-        .mass-edit-panel .form-group:last-child { margin-bottom: 0; }
-        .mass-edit-panel label { font-size: 11px; color: #b4a68a; margin-bottom: 2px; }
-        .mass-edit-panel input { background: #0f1a0f; border-color: #5a4a3a; color: #d4c8b0; }
-        .mass-edit-buttons { display: flex; gap: 8px; margin-top: 12px; }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-green {
+            background: #27ae60;
+        }
+
+        .btn-green:hover {
+            background: #229954;
+        }
+
+        .btn-orange {
+            background: #f39c12;
+        }
+
+        .btn-orange:hover {
+            background: #e67e22;
+        }
+
+        .btn-blue {
+            background: #2980b9;
+        }
+
+        .btn-blue:hover {
+            background: #1f618d;
+        }
+
+        .btn-red {
+            background: #e74c3c;
+        }
+
+        .btn-red:hover {
+            background: #c0392b;
+        }
+
+        .btn-gray {
+            background: #7f8c8d;
+        }
+
+        .btn-gray:hover {
+            background: #707b7c;
+        }
+
+        .load-definitions-btn {
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .load-definitions-btn:hover {
+            background: #1f618d;
+        }
+
+        .mass-edit-panel {
+            margin-bottom: 15px;
+        }
+
+        .mass-edit-buttons,
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .mass-edit-buttons button,
+        .action-buttons button {
+            flex: 1;
+        }
+
+        .import-export-section {
+            margin-top: 15px;
+        }
+
+        .import-export-section .btn {
+            width: 100%;
+            margin-bottom: 6px;
+        }
 
         .mass-edit-help {
             margin-bottom: 15px;
             padding: 10px;
-            background: #0f1a0f;
-            border: 1px solid #5a4a3a;
+            background: #ffffff;
+            border: 1px solid #d0d7db;
             border-radius: 3px;
-            box-shadow: inset 0 0 12px rgba(0,0,0,0.5);
-            position: relative;
-            z-index: 1;
         }
 
         .mass-edit-help-title {
-            color: #c49a6c;
+            color: #2c3e50;
             font-size: 11px;
             font-weight: 700;
             margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace;
         }
 
         .mass-edit-help-list {
@@ -229,308 +269,431 @@
             flex-direction: column;
             gap: 4px;
             font-size: 11px;
-            color: #b4a68a;
+            color: #5f6b73;
             line-height: 1.4;
-            font-family: 'Segoe UI', monospace;
         }
 
         .mass-edit-help-list strong {
-            color: #d4c8b0;
+            color: #2c3e50;
         }
-        
-        .mass-edit-btn {
-            flex: 1; padding: 0 3px; border: 2px solid #5a4a3a; border-radius: 3px;
-            cursor: pointer; font-size: 11px; height: 36px; font-weight: 600;
-            display: flex; align-items: center; justify-content: center;
-            text-align: center; line-height: 1.2; white-space: normal; word-break: break-word;
-            text-transform: uppercase; letter-spacing: 1px; font-family: 'Segoe UI', monospace;
-            box-shadow: 0 3px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2);
-            position: relative; overflow: hidden; transition: all 0.2s;
-        }
-        .mass-edit-btn::before {
-            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(196,154,108,0.2), transparent);
-            transition: left 0.3s;
-        }
-        .mass-edit-btn:hover::before { left: 100%; }
-        .mass-edit-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.3); }
-        .mass-edit-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2); }
-        .mass-edit-btn.primary { background: #1e2a3a; border-color: #2a4a6b; color: #c49a6c; }
-        .mass-edit-btn.primary:hover { border-color: #3498db; }
-        .mass-edit-btn.danger { background: #3a1e1e; border-color: #8b2a2a; color: #d4c8b0; }
-        .mass-edit-btn.danger:hover { border-color: #e74c3c; }
-        
-        .action-buttons { display: flex; gap: 8px; margin-top: 8px; }
-        .action-buttons button {
-            flex: 1; height: 36px; border: 2px solid #5a4a3a; border-radius: 3px;
-            cursor: pointer; font-size: 13px; font-weight: 600;
-            display: flex; align-items: center; justify-content: center;
-            text-transform: uppercase; letter-spacing: 1px; font-family: 'Segoe UI', monospace;
-            box-shadow: 0 3px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2);
-            position: relative; overflow: hidden; transition: all 0.2s;
-        }
-        .action-buttons button::before {
-            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(196,154,108,0.2), transparent);
-            transition: left 0.3s;
-        }
-        .action-buttons button:hover::before { left: 100%; }
-        .action-buttons button:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.3); }
-        .action-buttons button:active { transform: translateY(2px); box-shadow: 0 1px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2); }
-        .add-btn { background: #1e3a1e; border-color: #2a6b2a; color: #c49a6c; }
-        .add-btn:hover { border-color: #27ae60; }
-        .clear-btn { background: #3a2a1e; border-color: #8b5a2a; color: #d4c8b0; }
-        .clear-btn:hover { border-color: #e67e22; }
-        
-        .import-export-section { margin-top: 15px; }
-        .import-btn, .export-btn {
-            width: 100%; padding: 8px; border: 2px solid #5a4a3a; border-radius: 3px;
-            cursor: pointer; font-size: 13px; margin-bottom: 5px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            text-transform: uppercase; letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace; font-weight: 600;
-            box-shadow: 0 3px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2);
-            position: relative; overflow: hidden; transition: all 0.2s;
-        }
-        .import-btn::before, .export-btn::before {
-            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(196,154,108,0.2), transparent);
-            transition: left 0.3s;
-        }
-        .import-btn:hover::before, .export-btn:hover::before { left: 100%; }
-        .import-btn:hover, .export-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.3); }
-        .import-btn:active, .export-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #3d2b1a, inset 0 1px 3px rgba(255,215,140,0.2); }
-        .export-btn { background: #1e2a3a; border-color: #2a4a6b; color: #c49a6c; }
-        .export-btn:hover { border-color: #3498db; }
-        .import-btn { background: #3a2a1e; border-color: #b87c3a; color: #d4c8b0; }
-        .import-btn:hover { border-color: #f39c12; }
-        
+
         .table-container {
-            display: flex; flex-direction: column;
-            border: 2px solid #5a4a3a; border-radius: 3px;
-            background: #0f1a0f; flex: 1; overflow: hidden; contain: strict;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            background: white;
+            flex: 1;
+            overflow: hidden;
         }
+
         .table-header {
-            overflow: hidden; border-bottom: 2px solid #5a4a3a;
-            background: #1e2b1e; flex-shrink: 0;
-            padding-right: 34px; margin-right: -17px;
+            overflow: hidden;
+            border-bottom: 1px solid #bdc3c7;
+            background: #ecf0f1;
+            flex-shrink: 0;
+            padding-right: 34px;
+            margin-right: -17px;
         }
-        .table-body { overflow-x: auto; overflow-y: auto; flex: 1; will-change: transform; }
-        .table-body::-webkit-scrollbar { width: 16px; height: 16px; background: #2a2a2a; }
-        .table-body::-webkit-scrollbar-thumb { background: #5a5a5a; border-radius: 8px; border: 2px solid #2a2a2a; }
-        .table-body::-webkit-scrollbar-thumb:hover { background: #7a7a7a; }
-        .table-body::-webkit-scrollbar-track { background: #2a2a2a; }
-        .table-body::-webkit-scrollbar-corner { background: #2a2a2a; }
-        
-        table { border-collapse: collapse; font-size: 12px; table-layout: fixed; width: 100%; min-width: 2000px; }
+
+        .table-body {
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .table-body::-webkit-scrollbar {
+            width: 14px;
+            height: 14px;
+            background: #ecf0f1;
+        }
+
+        .table-body::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 8px;
+            border: 2px solid #ecf0f1;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-size: 12px;
+            table-layout: fixed;
+            width: 100%;
+            min-width: 2000px;
+        }
+
         th {
-            background: #2a3a2a; color: #c49a6c; padding: 8px 4px;
-            font-weight: 600; white-space: nowrap; text-align: center;
-            position: relative; user-select: none; overflow: hidden;
-            border-right: 1px solid #5a4a3a;
-            text-transform: uppercase; letter-spacing: 1px; font-size: 11px;
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 8px 4px;
+            font-weight: 600;
+            white-space: nowrap;
+            text-align: center;
+            border-right: 1px solid #d0d7db;
+            font-size: 11px;
+            text-transform: uppercase;
         }
+
         td {
-            padding: 4px 2px; border-bottom: 1px solid #5a4a3a;
-            border-right: 1px solid #3d2b1a; text-align: center;
-            overflow: hidden; background: #1a251a; color: #d4c8b0;
+            padding: 4px 2px;
+            border-bottom: 1px solid #e1e6e8;
+            border-right: 1px solid #edf1f2;
+            text-align: center;
+            overflow: hidden;
+            background: white;
+            color: #2c3e50;
         }
-        tr { contain: content; }
-        tr:hover td { background: #2a3a2a; }
-        tr.selected td { background: #3d2b1a; }
-        tr.hidden-by-search { display: none; }
-        tr.validation-error td { border-bottom: 2px solid rgba(231, 76, 60, 0.5); }
-        
-        .checkbox-cell { text-align: center; }
-        .checkbox-cell input { width: 14px; height: 14px; accent-color: #c49a6c; }
-        .number-input, .text-input, .name-input {
-            width: 100%; padding: 6px 4px; border: 1px solid #5a4a3a; border-radius: 2px;
-            font-size: 11px; height: 28px; line-height: normal;
-            background: #0f1a0f; color: #d4c8b0; font-family: 'Segoe UI', monospace;
+
+        tr:hover td {
+            background: #f4f7f8;
         }
-        .number-input:focus, .text-input:focus, .name-input:focus {
-            outline: none; border-color: #c49a6c; box-shadow: 0 0 0 2px rgba(196, 154, 108, 0.2);
+
+        tr.selected td {
+            background: #dfeaf1;
         }
-        .number-input.invalid, .name-input.invalid {
-            border-color: #e74c3c; box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+
+        tr.hidden-by-search {
+            display: none;
         }
-        .number-input { text-align: center; -moz-appearance: textfield; }
-        .number-input::-webkit-outer-spin-button, .number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .text-input { text-align: left; }
-        .name-input { text-align: left; }
-        .flag-cell { text-align: center; }
-        .flag-checkbox { width: 14px; height: 14px; accent-color: #c49a6c; }
-        
-        .field-with-button { display: flex; gap: 2px; width: 100%; }
+
+        tr.validation-error td {
+            border-bottom: 2px solid rgba(231, 76, 60, 0.7);
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        .checkbox-cell input {
+            width: 14px;
+            height: 14px;
+            accent-color: #34495e;
+        }
+
+        .number-input,
+        .text-input,
+        .name-input {
+            width: 100%;
+            padding: 6px 4px;
+            border: 1px solid #c9d1d4;
+            border-radius: 2px;
+            font-size: 11px;
+            height: 28px;
+            background: white;
+            color: #2c3e50;
+            font-family: Arial, sans-serif;
+        }
+
+        .number-input:focus,
+        .text-input:focus,
+        .name-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.12);
+        }
+
+        .number-input.invalid,
+        .name-input.invalid {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.12);
+        }
+
+        .number-input {
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .number-input::-webkit-outer-spin-button,
+        .number-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .text-input {
+            text-align: left;
+        }
+
+        .name-input {
+            text-align: left;
+        }
+
+        .flag-cell {
+            text-align: center;
+        }
+
+        .flag-checkbox {
+            width: 14px;
+            height: 14px;
+            accent-color: #34495e;
+        }
+
+        .field-with-button {
+            display: flex;
+            gap: 2px;
+            width: 100%;
+        }
+
         .field-with-button input {
-            flex: 1; min-width: 0; padding: 6px 4px;
-            border: 1px solid #5a4a3a; border-radius: 2px 0 0 2px;
-            font-size: 11px; height: 28px; background: #0f1a0f; color: #d4c8b0;
+            flex: 1;
+            min-width: 0;
+            border-radius: 2px 0 0 2px;
         }
+
         .field-with-button button {
-            width: 24px; padding: 0; background: #2a3a2a;
-            border: 1px solid #5a4a3a; border-left: none;
-            border-radius: 0 2px 2px 0; cursor: pointer;
-            font-size: 11px; display: flex; align-items: center; justify-content: center;
-            height: 28px; color: #c49a6c; transition: all 0.2s;
+            width: 24px;
+            background: #ecf0f1;
+            border: 1px solid #c9d1d4;
+            border-left: none;
+            border-radius: 0 2px 2px 0;
+            cursor: pointer;
+            color: #2c3e50;
+            font-size: 11px;
         }
-        .field-with-button button:hover { background: #3a4a3a; border-color: #c49a6c; color: #d4c8b0; }
-        
+
+        .field-with-button button:hover {
+            background: #dfe6e9;
+        }
+
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); z-index: 1000;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1000;
         }
-        .modal.active { display: flex; justify-content: center; align-items: center; }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .modal-content {
-            background: #1e2b1e; border: 2px solid #7a5c3a; border-radius: 8px;
-            width: 500px; max-width: 90%; max-height: 80vh; overflow-y: auto; padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(101, 67, 33, 0.3);
-            position: relative;
+            background: white;
+            border-radius: 6px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
         }
-        .modal-content::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path d="M1 3 L1 4 M2 2 L2 3 M3 1 L3 2 M0 0 L0 1" stroke="%23aa6e40" stroke-width="0.5" opacity="0.1"/></svg>');
-            pointer-events: none;
-        }
+
         .modal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #5a4a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #d0d7db;
         }
-        .modal-header h3 { font-size: 16px; color: #c49a6c; text-transform: uppercase; letter-spacing: 2px; }
-        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #7a5c3a; transition: color 0.2s; }
-        .modal-close:hover { color: #e74c3c; }
-        .selected-values { margin-bottom: 15px; padding: 10px; background: #0f1a0f; border: 1px solid #5a4a3a; border-radius: 3px; }
-        .selected-values-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .selected-values-header span { color: #7a5c3a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .modal-header h3 {
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .modal-close:hover {
+            color: #e74c3c;
+        }
+
+        .selected-values {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f4f6f7;
+            border: 1px solid #d0d7db;
+            border-radius: 3px;
+        }
+
+        .selected-values-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .selected-values-header span {
+            color: #7f8c8d;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
         .clear-all-btn {
-            background: none; border: 1px solid #5a4a3a; color: #d4c8b0;
-            padding: 3px 10px; border-radius: 3px; cursor: pointer;
-            font-size: 11px; text-transform: uppercase; transition: all 0.2s;
+            background: none;
+            border: 1px solid #c9d1d4;
+            color: #2c3e50;
+            padding: 3px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
         }
-        .clear-all-btn:hover { background: #3a1e1e; border-color: #e74c3c; }
-        .selected-values-list { display: flex; flex-wrap: wrap; gap: 5px; min-height: 28px; }
+
+        .clear-all-btn:hover {
+            background: #fcebea;
+            border-color: #e74c3c;
+            color: #c0392b;
+        }
+
+        .selected-values-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            min-height: 28px;
+        }
+
         .selected-value-tag {
-            display: inline-block; background: #2a3a2a; padding: 4px 10px; border-radius: 3px;
-            border: 1px solid #5a4a3a; color: #c49a6c; font-size: 11px;
+            display: inline-block;
+            background: #ecf0f1;
+            padding: 4px 10px;
+            border-radius: 3px;
+            border: 1px solid #d0d7db;
+            color: #2c3e50;
+            font-size: 11px;
         }
-        .selected-value-placeholder { color: #7a5c3a; font-style: italic; font-size: 11px; padding: 4px 0; }
+
+        .selected-value-placeholder {
+            color: #95a5a6;
+            font-style: italic;
+            font-size: 11px;
+            padding: 4px 0;
+        }
+
         .modal-list {
-            max-height: 300px; overflow-y: auto; border: 1px solid #5a4a3a;
-            border-radius: 3px; margin-bottom: 15px; background: #0f1a0f;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #d0d7db;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            background: white;
         }
-        .modal-list::-webkit-scrollbar { width: 12px; background: #0f1a0f; }
-        .modal-list::-webkit-scrollbar-thumb { background: #5a4a3a; border-radius: 6px; border: 2px solid #0f1a0f; }
+
         .modal-item {
-            padding: 8px 10px; border-bottom: 1px solid #3d2b1a; cursor: pointer;
-            font-size: 12px; color: #d4c8b0; transition: all 0.2s;
-            display: flex; align-items: center; gap: 8px;
+            padding: 8px 10px;
+            border-bottom: 1px solid #edf1f2;
+            cursor: pointer;
+            font-size: 12px;
+            color: #2c3e50;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .modal-item:hover { background: #2a3a2a; }
-        .modal-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: #c49a6c; cursor: pointer; }
-        .modal-custom { display: flex; gap: 5px; margin-bottom: 15px; }
+
+        .modal-item:hover {
+            background: #f4f7f8;
+        }
+
+        .modal-custom {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
         .modal-custom input {
-            flex: 1; padding: 8px; border: 1px solid #5a4a3a; border-radius: 3px;
-            font-size: 12px; height: 36px; background: #0f1a0f; color: #d4c8b0;
-            font-family: 'Segoe UI', monospace;
+            flex: 1;
         }
-        .modal-custom input:focus { outline: none; border-color: #c49a6c; }
-        .modal-custom button {
-            background: #1e3a1e; border: 2px solid #2a6b2a; color: #c49a6c;
-            padding: 0 15px; border-radius: 3px; cursor: pointer; font-size: 12px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            text-transform: uppercase; letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace; font-weight: 600;
-            box-shadow: 0 2px 0 #1a2a1a; transition: all 0.2s;
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
         }
-        .modal-custom button:hover { border-color: #27ae60; transform: translateY(-2px); box-shadow: 0 4px 0 #1a2a1a; }
-        .modal-custom button:active { transform: translateY(2px); box-shadow: 0 0 0 #1a2a1a; }
-        .modal-buttons { display: flex; gap: 10px; }
+
         .modal-buttons button {
-            flex: 1; padding: 8px; border: 2px solid #5a4a3a; border-radius: 3px;
-            cursor: pointer; font-size: 12px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            text-transform: uppercase; letter-spacing: 1px;
-            font-family: 'Segoe UI', monospace; font-weight: 600;
-            box-shadow: 0 3px 0 #3d2b1a; transition: all 0.2s;
+            flex: 1;
         }
-        .modal-save { background: #1e3a1e; border-color: #2a6b2a; color: #c49a6c; }
-        .modal-save:hover { border-color: #27ae60; transform: translateY(-2px); box-shadow: 0 5px 0 #3d2b1a; }
-        .modal-cancel { background: #3a1e1e; border-color: #8b2a2a; color: #d4c8b0; }
-        .modal-cancel:hover { border-color: #e74c3c; transform: translateY(-2px); box-shadow: 0 5px 0 #3d2b1a; }
-        
+
         .validation-tooltip {
-            position: fixed; background: #3a1e1e; border: 1px solid #e74c3c;
-            color: #df7d7d; padding: 6px 12px; border-radius: 3px;
-            font-size: 11px; z-index: 2000; pointer-events: none;
-            font-family: 'Segoe UI', monospace;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.5); max-width: 300px;
+            position: fixed;
+            background: #fcebea;
+            border: 1px solid #e74c3c;
+            color: #c0392b;
+            padding: 6px 12px;
+            border-radius: 3px;
+            font-size: 11px;
+            z-index: 2000;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+            max-width: 300px;
         }
-        
-        @media (max-width: 1200px) { .main-content { flex-direction: column; } .sidebar { width: 100%; } }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h2 data-i18n="editorTitle">TYPES EDITOR</h2>
-            <div class="header-right">
-                <button class="load-definitions-btn" id="loadDefinitionsBtn" data-i18n="loadDefinitionsBtn" data-i18n-title="loadDefinitionsTitle" title="Загрузить cfglimitsdefinition.xml">ЗАГРУЗИТЬ ОПРЕДЕЛЕНИЯ</button>
-                <div class="lang-switcher" data-i18n-aria-label="languageSwitcherAria" aria-label="Language switcher">
-                    <button class="lang-btn" type="button" data-lang="ru">RU</button>
-                    <button class="lang-btn" type="button" data-lang="en">EN</button>
-                </div>
-            </div>
+            <h2>DayZ Types Editor</h2>
+            <button class="load-definitions-btn" id="loadDefinitionsBtn" title="Загрузить cfglimitsdefinition.xml">Загрузить определения</button>
         </div>
         <div class="main-content">
             <div class="sidebar">
-                <h3 data-i18n="searchTitle">ПОИСК</h3>
+                <h3>Поиск</h3>
                 <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Поиск по параметрам..." data-i18n-placeholder="searchPlaceholder">
-                    <button class="clear-search-btn" id="clearSearchBtn" data-i18n-title="clearSearchTitle" title="Очистить поиск" disabled>×</button>
+                    <input type="text" id="searchInput" placeholder="Поиск по параметрам...">
+                    <button class="btn btn-red" id="clearSearchBtn" title="Очистить поиск" disabled style="width:32px; min-width:32px; padding:0;">×</button>
                 </div>
                 
-                <h3 data-i18n="massEditTitle">МАССОВОЕ РЕДАКТИРОВАНИЕ</h3>
+                <h3>Массовое редактирование</h3>
                 <div class="mass-edit-panel">
-                    <div class="form-group"><label>nominal:</label><input type="text" id="massNominal" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
-                    <div class="form-group"><label>lifetime:</label><input type="text" id="massLifetime" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
-                    <div class="form-group"><label>restock:</label><input type="text" id="massRestock" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
-                    <div class="form-group"><label>min:</label><input type="text" id="massMin" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
-                    <div class="form-group"><label>quantmin:</label><input type="text" id="massQuantmin" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
-                    <div class="form-group"><label>quantmax:</label><input type="text" id="massQuantmax" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
-                    <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула" data-i18n-placeholder="formulaPlaceholder"></div>
+                    <div class="form-group"><label>nominal:</label><input type="text" id="massNominal" placeholder="число или формула"></div>
+                    <div class="form-group"><label>lifetime:</label><input type="text" id="massLifetime" placeholder="число или формула"></div>
+                    <div class="form-group"><label>restock:</label><input type="text" id="massRestock" placeholder="число или формула"></div>
+                    <div class="form-group"><label>min:</label><input type="text" id="massMin" placeholder="число или формула"></div>
+                    <div class="form-group"><label>quantmin:</label><input type="text" id="massQuantmin" placeholder="число или формула"></div>
+                    <div class="form-group"><label>quantmax:</label><input type="text" id="massQuantmax" placeholder="число или формула"></div>
+                    <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула"></div>
                     <div class="mass-edit-buttons">
-                        <button class="mass-edit-btn primary" id="applyMassEditBtn" data-i18n="applyBtn">ПРИМЕНИТЬ</button>
-                        <button class="mass-edit-btn danger" id="deleteSelectedBtn" data-i18n="deleteBtn">УДАЛИТЬ</button>
+                        <button class="btn btn-blue" id="applyMassEditBtn">Применить</button>
+                        <button class="btn btn-red" id="deleteSelectedBtn">Удалить</button>
                     </div>
                 </div>
 
                 <div class="mass-edit-help">
-                    <div class="mass-edit-help-title" data-i18n="formulasTitle">ФОРМУЛЫ</div>
+                    <div class="mass-edit-help-title">Формулы</div>
                     <div class="mass-edit-help-list">
-                        <div><strong>N</strong> — <span data-i18n="formulaSet">установить значение</span></div>
-                        <div><strong>+N</strong> — <span data-i18n="formulaAdd">прибавить</span></div>
-                        <div><strong>-N</strong> — <span data-i18n="formulaSubtract">вычесть</span></div>
-                        <div><strong>*N</strong> — <span data-i18n="formulaMultiply">умножить</span></div>
-                        <div><strong>/N</strong> — <span data-i18n="formulaDivide">разделить</span></div>
-                        <div><strong>+N%</strong> — <span data-i18n="formulaPercentPlus">увеличить на процент</span></div>
-                        <div><strong>-N%</strong> — <span data-i18n="formulaPercentMinus">уменьшить на процент</span></div>
+                        <div><strong>N</strong> — установить значение</div>
+                        <div><strong>+N</strong> — прибавить</div>
+                        <div><strong>-N</strong> — вычесть</div>
+                        <div><strong>*N</strong> — умножить</div>
+                        <div><strong>/N</strong> — разделить</div>
+                        <div><strong>+N%</strong> — увеличить на процент</div>
+                        <div><strong>-N%</strong> — уменьшить на процент</div>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="add-btn" id="addItemBtn" data-i18n="addBtn">ДОБАВИТЬ</button>
-                    <button class="clear-btn" id="clearAllBtn" data-i18n="clearBtn">ОЧИСТИТЬ</button>
+                    <button class="btn btn-green" id="addItemBtn">Добавить</button>
+                    <button class="btn btn-orange" id="clearAllBtn">Очистить</button>
                 </div>
                 <div class="import-export-section">
-                    <button class="export-btn" id="exportBtn" data-i18n="saveBtn">СОХРАНИТЬ</button>
-                    <button class="import-btn" id="importBtn" data-i18n="loadBtn">ЗАГРУЗИТЬ</button>
+                    <button class="btn btn-blue" id="exportBtn">Сохранить</button>
+                    <button class="btn btn-orange" id="importBtn">Загрузить</button>
                 </div>
             </div>
             <div class="editor">
-                <div class="table-container">
-                    <div class="table-header" id="tableHeader"><table><thead id="tableHeaderRow"></thead></table></div>
-                    <div class="table-body" id="tableBody"><table><tbody id="tableBodyRows"></tbody></table></div>
+                <div class="editor-card">
+                    <div class="editor-section-title">Список предметов</div>
+                    <div class="table-container">
+                        <div class="table-header" id="tableHeader"><table><thead id="tableHeaderRow"></thead></table></div>
+                        <div class="table-body" id="tableBody"><table><tbody id="tableBodyRows"></tbody></table></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -539,26 +702,26 @@
     <div class="modal" id="valueModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">ВЫБЕРИТЕ ЗНАЧЕНИЯ</h3>
+                <h3 id="modalTitle">Выберите значения</h3>
                 <button class="modal-close" id="modalCloseBtn">×</button>
             </div>
             <div class="selected-values">
                 <div class="selected-values-header">
-                    <span data-i18n="selectedValuesLabel">ВЫБРАНО:</span>
-                    <button class="clear-all-btn" id="clearAllSelectionsBtn" data-i18n="clearAllBtn">ОЧИСТИТЬ ВСЕ</button>
+                    <span>Выбрано:</span>
+                    <button class="clear-all-btn" id="clearAllSelectionsBtn">Очистить все</button>
                 </div>
                 <div class="selected-values-list" id="selectedValuesList">
-                    <span class="selected-value-placeholder" id="selectedValuesPlaceholder">ничего не выбрано</span>
+                    <span class="selected-value-placeholder">ничего не выбрано</span>
                 </div>
             </div>
             <div class="modal-list" id="modalList"></div>
             <div class="modal-custom">
-                <input type="text" id="modalCustomValue" placeholder="Свое значение..." data-i18n-placeholder="customValuePlaceholder">
-                <button id="addCustomValueBtn" data-i18n="addBtnShort">ДОБАВИТЬ</button>
+                <input type="text" id="modalCustomValue" placeholder="Свое значение...">
+                <button class="btn btn-green" id="addCustomValueBtn">Добавить</button>
             </div>
             <div class="modal-buttons">
-                <button class="modal-save" id="saveModalBtn" data-i18n="saveModalBtn">СОХРАНИТЬ</button>
-                <button class="modal-cancel" id="cancelModalBtn" data-i18n="cancelBtn">ОТМЕНА</button>
+                <button class="btn btn-green" id="saveModalBtn">Сохранить</button>
+                <button class="btn btn-red" id="cancelModalBtn">Отмена</button>
             </div>
         </div>
     </div>
@@ -566,179 +729,6 @@
     <div class="validation-tooltip" id="validationTooltip" style="display:none;"></div>
 
     <script>
-        const LANG_STORAGE_KEY = 'dayzToolsLang';
-        let currentLang = localStorage.getItem(LANG_STORAGE_KEY) || 'ru';
-
-        const translations = {
-            ru: {
-                pageTitle: 'DayZ Types Editor',
-                languageSwitcherAria: 'Переключатель языка',
-
-                editorTitle: 'TYPES EDITOR',
-                loadDefinitionsBtn: 'ЗАГРУЗИТЬ ОПРЕДЕЛЕНИЯ',
-                loadDefinitionsTitle: 'Загрузить cfglimitsdefinition.xml',
-
-                searchTitle: 'ПОИСК',
-                searchPlaceholder: 'Поиск по параметрам...',
-                clearSearchTitle: 'Очистить поиск',
-
-                massEditTitle: 'МАССОВОЕ РЕДАКТИРОВАНИЕ',
-                formulaPlaceholder: 'число или формула',
-                applyBtn: 'ПРИМЕНИТЬ',
-                deleteBtn: 'УДАЛИТЬ',
-
-                formulasTitle: 'ФОРМУЛЫ',
-                formulaSet: 'установить значение',
-                formulaAdd: 'прибавить',
-                formulaSubtract: 'вычесть',
-                formulaMultiply: 'умножить',
-                formulaDivide: 'разделить',
-                formulaPercentPlus: 'увеличить на процент',
-                formulaPercentMinus: 'уменьшить на процент',
-
-                addBtn: 'ДОБАВИТЬ',
-                clearBtn: 'ОЧИСТИТЬ',
-                saveBtn: 'СОХРАНИТЬ',
-                loadBtn: 'ЗАГРУЗИТЬ',
-
-                selectedValuesLabel: 'ВЫБРАНО:',
-                clearAllBtn: 'ОЧИСТИТЬ ВСЕ',
-                customValuePlaceholder: 'Свое значение...',
-                addBtnShort: 'ДОБАВИТЬ',
-                saveModalBtn: 'СОХРАНИТЬ',
-                cancelBtn: 'ОТМЕНА',
-                selectedNothing: 'ничего не выбрано',
-                loadDefinitionsHint: 'Загрузите файл определений',
-
-                modalCategoryTitle: 'ВЫБЕРИТЕ КАТЕГОРИИ',
-                modalUsageTitle: 'ВЫБЕРИТЕ USAGE',
-                modalValueTitle: 'ВЫБЕРИТЕ VALUE',
-                modalTagTitle: 'ВЫБЕРИТЕ ТЕГИ',
-
-                alertSelectItems: 'Выберите предметы',
-                alertFillAtLeastOne: 'Заполните хотя бы одно поле',
-                alertAppliedToItems: 'Применено к {count} предметам',
-                confirmDeleteItems: 'Удалить {count} предметов?',
-                confirmClearAll: 'Очистить все {count} предметов?',
-                alertNothingToSave: 'Нечего сохранять',
-                confirmValidationWarnings: 'Обнаружено {count} предупреждений валидации.\\nВсё равно сохранить?',
-                alertDefinitionsLoaded: 'Загружено {count} определений',
-                alertItemsLoaded: 'Загружено {count} предметов',
-                alertErrorPrefix: 'Ошибка: {message}',
-
-                validationEmptyName: 'Имя пустое',
-                validationDuplicateName: 'Дублирующееся имя',
-                validationFlagMustBeBinary: 'Флаг {flag} должен быть 0 или 1',
-
-                tableColName: 'Имя',
-                tableColNominal: 'nominal',
-                tableColLifetime: 'lifetime',
-                tableColRestock: 'restock',
-                tableColMin: 'min',
-                tableColQuantmin: 'quantmin',
-                tableColQuantmax: 'quantmax',
-                tableColCost: 'cost',
-                tableColCargo: 'cargo',
-                tableColHoarder: 'hoarder',
-                tableColMap: 'map',
-                tableColPlayer: 'player',
-                tableColCrafted: 'crafted',
-                tableColDeloot: 'deloot',
-                tableColCategory: 'category',
-                tableColUsage: 'usage',
-                tableColValue: 'value',
-                tableColTag: 'tag'
-            },
-
-            en: {
-                pageTitle: 'DayZ Types Editor',
-                languageSwitcherAria: 'Language switcher',
-
-                editorTitle: 'TYPES EDITOR',
-                loadDefinitionsBtn: 'LOAD DEFINITIONS',
-                loadDefinitionsTitle: 'Load cfglimitsdefinition.xml',
-
-                searchTitle: 'SEARCH',
-                searchPlaceholder: 'Search parameters...',
-                clearSearchTitle: 'Clear search',
-
-                massEditTitle: 'MASS EDIT',
-                formulaPlaceholder: 'number or formula',
-                applyBtn: 'APPLY',
-                deleteBtn: 'DELETE',
-
-                formulasTitle: 'FORMULAS',
-                formulaSet: 'set value',
-                formulaAdd: 'add',
-                formulaSubtract: 'subtract',
-                formulaMultiply: 'multiply',
-                formulaDivide: 'divide',
-                formulaPercentPlus: 'increase by percent',
-                formulaPercentMinus: 'decrease by percent',
-
-                addBtn: 'ADD',
-                clearBtn: 'CLEAR',
-                saveBtn: 'SAVE',
-                loadBtn: 'LOAD',
-
-                selectedValuesLabel: 'SELECTED:',
-                clearAllBtn: 'CLEAR ALL',
-                customValuePlaceholder: 'Custom value...',
-                addBtnShort: 'ADD',
-                saveModalBtn: 'SAVE',
-                cancelBtn: 'CANCEL',
-                selectedNothing: 'nothing selected',
-                loadDefinitionsHint: 'Load definitions file',
-
-                modalCategoryTitle: 'SELECT CATEGORIES',
-                modalUsageTitle: 'SELECT USAGE',
-                modalValueTitle: 'SELECT VALUE',
-                modalTagTitle: 'SELECT TAGS',
-
-                alertSelectItems: 'Select items',
-                alertFillAtLeastOne: 'Fill at least one field',
-                alertAppliedToItems: 'Applied to {count} items',
-                confirmDeleteItems: 'Delete {count} items?',
-                confirmClearAll: 'Clear all {count} items?',
-                alertNothingToSave: 'Nothing to save',
-                confirmValidationWarnings: '{count} validation warnings detected.\\nSave anyway?',
-                alertDefinitionsLoaded: 'Loaded {count} definitions',
-                alertItemsLoaded: 'Loaded {count} items',
-                alertErrorPrefix: 'Error: {message}',
-
-                validationEmptyName: 'Name is empty',
-                validationDuplicateName: 'Duplicate name',
-                validationFlagMustBeBinary: 'Flag {flag} must be 0 or 1',
-
-                tableColName: 'Name',
-                tableColNominal: 'nominal',
-                tableColLifetime: 'lifetime',
-                tableColRestock: 'restock',
-                tableColMin: 'min',
-                tableColQuantmin: 'quantmin',
-                tableColQuantmax: 'quantmax',
-                tableColCost: 'cost',
-                tableColCargo: 'cargo',
-                tableColHoarder: 'hoarder',
-                tableColMap: 'map',
-                tableColPlayer: 'player',
-                tableColCrafted: 'crafted',
-                tableColDeloot: 'deloot',
-                tableColCategory: 'category',
-                tableColUsage: 'usage',
-                tableColValue: 'value',
-                tableColTag: 'tag'
-            }
-        };
-
-        function t(key, params = {}) {
-            let text = translations[currentLang]?.[key] ?? translations.ru[key] ?? key;
-            for (const [param, value] of Object.entries(params)) {
-                text = text.replaceAll(`{${param}}`, value);
-            }
-            return text;
-        }
-
         const STORAGE_KEY = 'dayzTypesEditorData_v2';
         const DEFINITIONS_STORAGE_KEY = 'dayzTypesEditorDefinitions_v1';
 
@@ -765,24 +755,24 @@
 
         const columns = [
             { id:'col0', title:'', type:'checkbox', width:40 },
-            { id:'col1', titleKey:'tableColName', title:'Имя', type:'name', field:'name', width:250 },
-            { id:'col2', titleKey:'tableColNominal', title:'nominal', type:'number', field:'nominal', width:80 },
-            { id:'col3', titleKey:'tableColLifetime', title:'lifetime', type:'number', field:'lifetime', width:80 },
-            { id:'col4', titleKey:'tableColRestock', title:'restock', type:'number', field:'restock', width:80 },
-            { id:'col5', titleKey:'tableColMin', title:'min', type:'number', field:'min', width:80 },
-            { id:'col6', titleKey:'tableColQuantmin', title:'quantmin', type:'number', field:'quantmin', width:80 },
-            { id:'col7', titleKey:'tableColQuantmax', title:'quantmax', type:'number', field:'quantmax', width:80 },
-            { id:'col8', titleKey:'tableColCost', title:'cost', type:'number', field:'cost', width:80 },
-            { id:'col9', titleKey:'tableColCargo', title:'cargo', type:'flag', flag:'count_in_cargo', width:60 },
-            { id:'col10', titleKey:'tableColHoarder', title:'hoarder', type:'flag', flag:'count_in_hoarder', width:64 },
-            { id:'col11', titleKey:'tableColMap', title:'map', type:'flag', flag:'count_in_map', width:60 },
-            { id:'col12', titleKey:'tableColPlayer', title:'player', type:'flag', flag:'count_in_player', width:60 },
-            { id:'col13', titleKey:'tableColCrafted', title:'crafted', type:'flag', flag:'crafted', width:60 },
-            { id:'col14', titleKey:'tableColDeloot', title:'deloot', type:'flag', flag:'deloot', width:60 },
-            { id:'col15', titleKey:'tableColCategory', title:'category', type:'text', field:'category', width:180 },
-            { id:'col16', titleKey:'tableColUsage', title:'usage', type:'text', field:'usage', width:180 },
-            { id:'col17', titleKey:'tableColValue', title:'value', type:'text', field:'value', width:180 },
-            { id:'col18', titleKey:'tableColTag', title:'tag', type:'text', field:'tag', width:180 }
+            { id:'col1', title:'Имя', type:'name', field:'name', width:250 },
+            { id:'col2', title:'nominal', type:'number', field:'nominal', width:80 },
+            { id:'col3', title:'lifetime', type:'number', field:'lifetime', width:80 },
+            { id:'col4', title:'restock', type:'number', field:'restock', width:80 },
+            { id:'col5', title:'min', type:'number', field:'min', width:80 },
+            { id:'col6', title:'quantmin', type:'number', field:'quantmin', width:80 },
+            { id:'col7', title:'quantmax', type:'number', field:'quantmax', width:80 },
+            { id:'col8', title:'cost', type:'number', field:'cost', width:80 },
+            { id:'col9', title:'cargo', type:'flag', flag:'count_in_cargo', width:60 },
+            { id:'col10', title:'hoarder', type:'flag', flag:'count_in_hoarder', width:64 },
+            { id:'col11', title:'map', type:'flag', flag:'count_in_map', width:60 },
+            { id:'col12', title:'player', type:'flag', flag:'count_in_player', width:60 },
+            { id:'col13', title:'crafted', type:'flag', flag:'crafted', width:60 },
+            { id:'col14', title:'deloot', type:'flag', flag:'deloot', width:60 },
+            { id:'col15', title:'category', type:'text', field:'category', width:180 },
+            { id:'col16', title:'usage', type:'text', field:'usage', width:180 },
+            { id:'col17', title:'value', type:'text', field:'value', width:180 },
+            { id:'col18', title:'tag', type:'text', field:'tag', width:180 }
         ];
 
         const $ = (selector) => document.querySelector(selector);
@@ -846,16 +836,11 @@
             if (Number.isNaN(operand)) return current;
 
             switch (operator) {
-                case '+':
-                    return Math.trunc(current + operand);
-                case '-':
-                    return Math.trunc(current - operand);
-                case '*':
-                    return Math.trunc(current * operand);
-                case '/':
-                    return operand === 0 ? current : Math.trunc(current / operand);
-                default:
-                    return current;
+                case '+': return Math.trunc(current + operand);
+                case '-': return Math.trunc(current - operand);
+                case '*': return Math.trunc(current * operand);
+                case '/': return operand === 0 ? current : Math.trunc(current / operand);
+                default: return current;
             }
         };
 
@@ -882,55 +867,6 @@
             value: [],
             tag: []
         });
-
-        function applyLanguage(lang) {
-            currentLang = translations[lang] ? lang : 'ru';
-            localStorage.setItem(LANG_STORAGE_KEY, currentLang);
-
-            document.documentElement.lang = currentLang;
-            document.title = t('pageTitle');
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.dataset.i18n;
-                el.textContent = t(key);
-            });
-
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.dataset.i18nTitle;
-                el.title = t(key);
-            });
-
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.dataset.i18nPlaceholder;
-                el.placeholder = t(key);
-            });
-
-            document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
-                const key = el.dataset.i18nAriaLabel;
-                el.setAttribute('aria-label', t(key));
-            });
-
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === currentLang);
-            });
-
-            renderHeader();
-            renderTable();
-
-            const placeholder = $('#selectedValuesPlaceholder');
-            if (placeholder) {
-                placeholder.textContent = t('selectedNothing');
-            }
-
-            if ($('#valueModal').classList.contains('active') && state.currentModal.field) {
-                const currentValues = state.currentModal.inputElement
-                    ? parseSpaceList(state.currentModal.inputElement.value)
-                    : [];
-                renderModalList(state.currentModal.allOptions, currentValues);
-                updateSelectedValuesDisplay(currentValues);
-                updateModalTitle(state.currentModal.field);
-            }
-        }
 
         function generateUniqueName(base) {
             const existing = new Set(state.items.map(item => String(item.name || '').trim()));
@@ -964,8 +900,8 @@
 
             const name = String(item?.name || '').trim();
 
-            if (!name) errors.push(t('validationEmptyName'));
-            if (duplicateIndices.has(index)) errors.push(t('validationDuplicateName'));
+            if (!name) errors.push('Имя пустое');
+            if (duplicateIndices.has(index)) errors.push('Дублирующееся имя');
 
             if (item.nominal < 0) errors.push('nominal < 0');
             if (item.min < 0) errors.push('min < 0');
@@ -983,7 +919,7 @@
             for (const flagName of flagNames) {
                 const value = item.flags?.[flagName];
                 if (![0, 1].includes(value)) {
-                    errors.push(t('validationFlagMustBeBinary', { flag: flagName }));
+                    errors.push(`Флаг ${flagName} должен быть 0 или 1`);
                 }
             }
 
@@ -1020,10 +956,7 @@
 
             const fieldErrors = errors.filter(error =>
                 error.toLowerCase().includes(String(field).toLowerCase()) ||
-                (field === 'name' && (
-                    error.toLowerCase().includes('имя') ||
-                    error.toLowerCase().includes('name')
-                ))
+                (field === 'name' && error.toLowerCase().includes('имя'))
             );
 
             element.classList.toggle('invalid', fieldErrors.length > 0 || (field === 'name' && !String(item.name || '').trim()));
@@ -1094,7 +1027,7 @@
                         <th style="width:${column.width}px;">
                             ${column.type === 'checkbox'
                                 ? '<input type="checkbox" id="selectAllCheckbox">'
-                                : escapeHtml(column.titleKey ? t(column.titleKey) : column.title)}
+                                : escapeHtml(column.title)}
                         </th>
                     `).join('')}
                 </tr>
@@ -1138,7 +1071,7 @@
             }
 
             if (column.type === 'name') {
-                const invalid = !String(item.name || '').trim() || errors.some(e => e === t('validationEmptyName') || e === t('validationDuplicateName'));
+                const invalid = !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя'));
                 return `
                     <td ${widthStyle}>
                         <input
@@ -1245,7 +1178,7 @@
 
             const nameInput = row.querySelector('.name-input');
             if (nameInput) {
-                nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e === t('validationEmptyName') || e === t('validationDuplicateName')));
+                nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя')));
             }
 
             const numberInputs = row.querySelectorAll('.number-input');
@@ -1370,7 +1303,7 @@
 
         function applyMassEdit() {
             if (!state.selectedItems.size) {
-                alert(t('alertSelectItems'));
+                alert('Выберите предметы');
                 return;
             }
 
@@ -1386,7 +1319,7 @@
 
             const hasAnyValue = Object.values(values).some(value => value.trim() !== '');
             if (!hasAnyValue) {
-                alert(t('alertFillAtLeastOne'));
+                alert('Заполните хотя бы одно поле');
                 return;
             }
 
@@ -1406,16 +1339,16 @@
             state.selectedItems.clear();
             saveStateToLocalStorage();
             renderTable();
-            alert(t('alertAppliedToItems', { count: indices.length }));
+            alert(`Применено к ${indices.length} предметам`);
         }
 
         function deleteSelected() {
             if (!state.selectedItems.size) {
-                alert(t('alertSelectItems'));
+                alert('Выберите предметы');
                 return;
             }
 
-            if (!confirm(t('confirmDeleteItems', { count: state.selectedItems.size }))) return;
+            if (!confirm(`Удалить ${state.selectedItems.size} предметов?`)) return;
 
             const indices = [...state.selectedItems].sort((a, b) => b - a);
             indices.forEach(index => state.items.splice(index, 1));
@@ -1438,7 +1371,7 @@
 
         function clearAll() {
             if (!state.items.length) return;
-            if (!confirm(t('confirmClearAll', { count: state.items.length }))) return;
+            if (!confirm(`Очистить все ${state.items.length} предметов?`)) return;
 
             state.items = [];
             state.selectedItems.clear();
@@ -1449,34 +1382,28 @@
             renderTable();
         }
 
-        function updateModalTitle(field) {
-            let key = '';
-            switch (field) {
-                case 'category': key = 'modalCategoryTitle'; break;
-                case 'usage': key = 'modalUsageTitle'; break;
-                case 'value': key = 'modalValueTitle'; break;
-                case 'tag': key = 'modalTagTitle'; break;
-            }
-            $('#modalTitle').textContent = key ? t(key) : '';
-        }
-
         function openModal(index, field) {
             const item = state.items[index];
             if (!item) return;
 
+            let title = '';
             let options = [];
 
             switch (field) {
                 case 'category':
+                    title = 'Выберите категории';
                     options = state.definitions.categories || [];
                     break;
                 case 'usage':
+                    title = 'Выберите usage';
                     options = state.definitions.usage || [];
                     break;
                 case 'value':
+                    title = 'Выберите value';
                     options = state.definitions.value || [];
                     break;
                 case 'tag':
+                    title = 'Выберите теги';
                     options = state.definitions.tags || [];
                     break;
                 default:
@@ -1490,7 +1417,7 @@
                 allOptions: uniqueArray(options)
             };
 
-            updateModalTitle(field);
+            $('#modalTitle').textContent = title;
 
             const currentValues = state.currentModal.inputElement
                 ? parseSpaceList(state.currentModal.inputElement.value)
@@ -1507,7 +1434,7 @@
             const list = $('#modalList');
 
             if (!options.length) {
-                list.innerHTML = `<div class="modal-item" style="justify-content:center;color:#7a5c3a;">${escapeHtml(t('loadDefinitionsHint'))}</div>`;
+                list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Загрузите файл определений</div>';
                 return;
             }
 
@@ -1527,7 +1454,7 @@
             const container = $('#selectedValuesList');
 
             if (!values.length) {
-                container.innerHTML = `<span class="selected-value-placeholder">${escapeHtml(t('selectedNothing'))}</span>`;
+                container.innerHTML = '<span class="selected-value-placeholder">ничего не выбрано</span>';
                 return;
             }
 
@@ -1639,9 +1566,9 @@
 
                         saveStateToLocalStorage();
 
-                        alert(t('alertDefinitionsLoaded', { count: categories.length + tags.length + usage.length + value.length }));
+                        alert(`Загружено ${categories.length + tags.length + usage.length + value.length} определений`);
                     } catch (error) {
-                        alert(t('alertErrorPrefix', { message: error.message }));
+                        alert(`Ошибка: ${error.message}`);
                         console.error(error);
                     }
                 };
@@ -1654,13 +1581,13 @@
 
         function exportXML() {
             if (!state.items.length) {
-                alert(t('alertNothingToSave'));
+                alert('Нечего сохранять');
                 return;
             }
 
             const totalErrors = state.items.reduce((sum, item, index) => sum + validateItem(item, index).length, 0);
 
-            if (totalErrors > 0 && !confirm(t('confirmValidationWarnings', { count: totalErrors }))) {
+            if (totalErrors > 0 && !confirm(`Обнаружено ${totalErrors} предупреждений валидации.\nВсё равно сохранить?`)) {
                 return;
             }
 
@@ -1761,9 +1688,9 @@
                         saveStateToLocalStorage();
                         renderTable();
 
-                        alert(t('alertItemsLoaded', { count: state.items.length }));
+                        alert(`Загружено ${state.items.length} предметов`);
                     } catch (error) {
-                        alert(t('alertErrorPrefix', { message: error.message }));
+                        alert(`Ошибка: ${error.message}`);
                         console.error(error);
                     }
                 };
@@ -1842,11 +1769,6 @@
 
         function handleDocumentClick(event) {
             const target = event.target;
-
-            if (target.matches('.lang-btn')) {
-                applyLanguage(target.dataset.lang);
-                return;
-            }
 
             if (!target.closest('#validationTooltip')) {
                 $('#validationTooltip').style.display = 'none';
@@ -1994,7 +1916,8 @@
 
         function init() {
             loadStateFromLocalStorage();
-            applyLanguage(currentLang);
+            renderHeader();
+            renderTable();
             setupScrollSync();
             setupKeyboardShortcuts();
             bindEvents();
