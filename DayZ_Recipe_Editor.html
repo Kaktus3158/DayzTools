@@ -661,7 +661,7 @@
                 <div class="ingredient-card">
                     <h4>
                         Ингредиент #${index + 1}
-                        <button class="mini-remove-btn remove-ingredient-btn" data-index="${index}">×</button>
+                        <button class="mini-remove-btn remove-ingredient-btn" data-index="${index}" title="Удалить ингредиент">×</button>
                     </h4>
 
                     <div class="form-group">
@@ -711,7 +711,7 @@
 
                     <div class="form-row">
                         <div class="form-group checkbox-label">
-                            <label>
+                            <label title="true = ингредиент полностью уничтожается после крафта, false = не уничтожается">
                                 <input type="checkbox" class="ingredient-checkbox" data-index="${index}" data-field="destroy" ${ing.destroy ? 'checked' : ''}>
                                 Уничтожить
                             </label>
@@ -734,14 +734,14 @@
                 <div class="case-card">
                     <div class="case-header">
                         Вариант #${caseIndex + 1}
-                        <button class="mini-remove-btn remove-case-btn" data-case-index="${caseIndex}">×</button>
+                        <button class="mini-remove-btn remove-case-btn" data-case-index="${caseIndex}" title="Удалить вариант">×</button>
                     </div>
 
                     ${caseItem.results.map((result, resultIndex) => `
                         <div class="result-item">
                             <h5>
                                 Результат #${resultIndex + 1}
-                                <button class="mini-remove-btn remove-result-btn" data-case-index="${caseIndex}" data-result-index="${resultIndex}">×</button>
+                                <button class="mini-remove-btn remove-result-btn" data-case-index="${caseIndex}" data-result-index="${resultIndex}" title="Удалить результат">×</button>
                             </h5>
 
                             <div class="form-group">
@@ -751,7 +751,7 @@
 
                             <div class="form-row">
                                 <div class="form-group checkbox-label">
-                                    <label>
+                                    <label title="true = создать предмет с полным стаком, false = использовать указанное количество">
                                         <input type="checkbox" class="result-checkbox" data-case-index="${caseIndex}" data-result-index="${resultIndex}" data-field="setFullQuantity" ${result.setFullQuantity ? 'checked' : ''}>
                                         Полный стак
                                     </label>
@@ -789,7 +789,7 @@
                         </div>
                     `).join('')}
 
-                    <button class="btn btn-green btn-block add-result-btn" data-case-index="${caseIndex}" style="margin-top: 10px;">+ Добавить результат</button>
+                    <button class="btn btn-green btn-block add-result-btn" data-case-index="${caseIndex}" title="Добавить результат в вариант" style="margin-top: 10px;">+ Добавить результат</button>
                 </div>
             `).join('');
         }
