@@ -907,6 +907,7 @@
 
         function updateIngredientField(index, field, value) {
             if (!state.ingredients[index]) return;
+
             if (field === 'destroy') {
                 state.ingredients[index][field] = value;
             } else if (field === 'classList') {
@@ -915,7 +916,7 @@
                 const parsed = Number.parseInt(value, 10);
                 state.ingredients[index][field] = Number.isNaN(parsed) ? 0 : parsed;
             }
-            renderIngredients();
+
             updatePreview();
         }
 
@@ -932,7 +933,6 @@
                 result[field] = Number.isNaN(parsed) ? 0 : parsed;
             }
 
-            renderCases();
             updatePreview();
         }
 
