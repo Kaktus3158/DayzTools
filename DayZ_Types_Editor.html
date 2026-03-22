@@ -644,8 +644,8 @@
                     <div class="form-group"><label>quantmax:</label><input type="text" id="massQuantmax" placeholder="число или формула"></div>
                     <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула"></div>
                     <div class="mass-edit-buttons">
-                        <button class="btn btn-blue" id="applyMassEditBtn">Применить</button>
-                        <button class="btn btn-red" id="deleteSelectedBtn">Удалить</button>
+                        <button class="btn btn-blue" id="applyMassEditBtn" title="Применить массовое редактирование к выбранным строкам">Применить</button>
+                        <button class="btn btn-red" id="deleteSelectedBtn" title="Удалить выбранные строки">Удалить</button>
                     </div>
                 </div>
 
@@ -663,13 +663,13 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-green" id="addItemBtn">Добавить</button>
-                    <button class="btn btn-orange" id="clearAllBtn">Очистить</button>
+                    <button class="btn btn-green" id="addItemBtn" title="Добавить новый предмет">Добавить</button>
+                    <button class="btn btn-orange" id="clearAllBtn" title="Очистить все предметы">Очистить</button>
                 </div>
                 <div class="import-export-section">
-                    <button class="btn btn-blue" id="exportBtn">Сохранить</button>
-                    <button class="btn btn-orange" id="importBtn">Загрузить</button>
-                    <button class="btn btn-blue" id="loadDefinitionsBtn">Загрузить определения</button>
+                    <button class="btn btn-blue" id="exportBtn" title="Сохранить types.xml">Сохранить</button>
+                    <button class="btn btn-orange" id="importBtn" title="Загрузить types.xml">Загрузить</button>
+                    <button class="btn btn-blue" id="loadDefinitionsBtn" title="Загрузить cfglimitsdefinition.xml">Загрузить определения</button>
                 </div>
             </div>
             <div class="editor">
@@ -688,12 +688,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">Выберите значения</h3>
-                <button class="modal-close" id="modalCloseBtn">×</button>
+                <button class="modal-close" id="modalCloseBtn" title="Закрыть">×</button>
             </div>
             <div class="selected-values">
                 <div class="selected-values-header">
                     <span>Выбрано:</span>
-                    <button class="clear-all-btn" id="clearAllSelectionsBtn">Очистить все</button>
+                    <button class="clear-all-btn" id="clearAllSelectionsBtn" title="Очистить все выбранные значения">Очистить все</button>
                 </div>
                 <div class="selected-values-list" id="selectedValuesList">
                     <span class="selected-value-placeholder">ничего не выбрано</span>
@@ -702,11 +702,11 @@
             <div class="modal-list" id="modalList"></div>
             <div class="modal-custom">
                 <input type="text" id="modalCustomValue" placeholder="Свое значение...">
-                <button class="btn btn-green" id="addCustomValueBtn">Добавить</button>
+                <button class="btn btn-green" id="addCustomValueBtn" title="Добавить пользовательское значение">Добавить</button>
             </div>
             <div class="modal-buttons">
-                <button class="btn btn-green" id="saveModalBtn">Сохранить</button>
-                <button class="btn btn-red" id="cancelModalBtn">Отмена</button>
+                <button class="btn btn-green" id="saveModalBtn" title="Сохранить выбранные значения">Сохранить</button>
+                <button class="btn btn-red" id="cancelModalBtn" title="Закрыть без сохранения">Отмена</button>
             </div>
         </div>
     </div>
