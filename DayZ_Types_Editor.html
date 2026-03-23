@@ -265,7 +265,7 @@
         .table-container {
             display: flex;
             flex-direction: column;
-            border: 1px solid #bdc3c7;
+            border: 1px solid #bfc7cb;
             border-radius: 4px;
             background: white;
             flex: 1;
@@ -275,7 +275,7 @@
         .table-header {
             overflow: hidden;
             border-bottom: 1px solid #bdc3c7;
-            background: #ecf0f1;
+            background: #e3e9ec;
             flex-shrink: 0;
             padding-right: 0;
         }
@@ -295,21 +295,22 @@
         }
 
         th {
-            background: #ecf0f1;
+            background: #e3e9ec;
             color: #2c3e50;
             padding: 8px 4px;
             font-weight: 600;
             white-space: nowrap;
             text-align: center;
-            border-right: 1px solid #d0d7db;
+            border-right: 1px solid #b7c0c5;
+            border-bottom: 1px solid #c4ccd1;
             font-size: 11px;
             text-transform: uppercase;
         }
 
         td {
             padding: 4px 2px;
-            border-bottom: 1px solid #e1e6e8;
-            border-right: 1px solid #edf1f2;
+            border-bottom: 1px solid #d7dee2;
+            border-right: 1px solid #d2d9dd;
             text-align: center;
             overflow: hidden;
             background: white;
@@ -317,7 +318,7 @@
         }
 
         tr:hover td {
-            background: #f4f7f8;
+            background: #eef3f5;
         }
 
         tr.selected td {
@@ -1162,19 +1163,6 @@
             }
 
             return `<td ${widthStyle}></td>`;
-        }
-
-        function getScrollbarWidth(element) {
-            return element.offsetWidth - element.clientWidth;
-        }
-
-        function syncTableHeaderScrollbarSpacing() {
-            const tableBody = $('#tableBody');
-            const tableHeader = $('#tableHeader');
-            if (!tableBody || !tableHeader) return;
-
-            const scrollbarWidth = getScrollbarWidth(tableBody);
-            tableHeader.style.paddingRight = `${scrollbarWidth}px`;
         }
 
         function updateItemField(index, field, value) {
