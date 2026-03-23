@@ -731,7 +731,6 @@
                     
                     <div id="ingredientsTab" class="tab-pane active">
                         <div class="editor-section-title" style="margin-bottom:10px;">Ингредиенты</div>
-                        <p style="color: #7f8c8d; margin-bottom: 10px; font-size: 12px;">Каждый класс с новой строки</p>
                         <div class="card-container" id="ingredientsContainer">
                             <p style="color: #7f8c8d; text-align: center; padding: 20px;">Нет ингредиентов</p>
                         </div>
@@ -752,7 +751,7 @@
                     </div>
                     
                     <div id="codeTab" class="tab-pane">
-                        <div class="editor-section-title" style="margin-bottom:10px;">Код</div>
+                        <div class="editor-section-title" style="margin-bottom: 10px;">Код</div>
                         <button class="btn btn-blue btn-block" id="generateCodeBtn" title="Сгенерировать код рецепта" style="margin-bottom: 10px;">Сгенерировать код</button>
                         <button class="btn btn-gray" id="copyCodeBtn" title="Копировать код в буфер обмена">Копировать</button>
                         <div id="codeOutput" class="code-output">
@@ -1365,7 +1364,7 @@
                             const setHealthMatch = code.match(new RegExp(`m_IngredientSetHealth\\[${index}\\]\\s*=\\s*(-?\\d+)`));
                             if (setHealthMatch) value.setHealth = parseInt(setHealthMatch[1], 10);
 
-                            const addQMatch = code.match(new RegExp(`m_IngredientAddQuantity\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            const addQMatch = code.match(new RegExp(`m_IngredientAddQuantity\\[${index}\\]\\s*=\\s(-?\\d+)`));
                             if (addQMatch) value.addQuantity = parseInt(addQMatch[1], 10);
 
                             const destroyMatch = code.match(new RegExp(`m_IngredientDestroy\\[${index}\\]\\s*=\\s*(true|false)`));
@@ -1428,8 +1427,6 @@
                                 }
                             });
                         } else {
-                            // Fallback: если код не содержит ожидаемого формата `case N: { ... }`,
-                            // пытаемся вытащить содержимое Spawn_Result целиком и считаем все результаты за один вариант.
                             const spawnResultMatch =
                                 code.match(/void\s+Spawn_Result\(\)\s*{\s*([\s\S]*?)\n\t\t}\n\t}\n};/) ||
                                 code.match(/void\s+Spawn_Result\(\)\s*{([\s\S]*?)}/);
