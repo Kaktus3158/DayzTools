@@ -1,79 +1,2242 @@
-# 🎮 DayZ Tools
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayZ Types Editor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-Набор браузерных инструментов для DayZ-моддинга и редактирования конфигурационных файлов.
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(17, 24, 39, 0.78);
+            --panel-solid: #111827;
+            --card: rgba(17, 24, 39, 0.62);
+            --card-solid: #0f172a;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --muted-2: #6b7280;
+            --border: rgba(148, 163, 184, 0.22);
+            --border-2: rgba(148, 163, 184, 0.35);
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            --accent: #2980b9;
+        }
 
-## 🌐 Онлайн-версия
+        body {
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(41, 128, 185, 0.35), transparent 38%),
+                radial-gradient(circle at 90% 20%, rgba(39, 174, 96, 0.22), transparent 35%),
+                var(--bg);
+            padding: 20px;
+            min-height: 100vh;
+            overflow: hidden;
+            color: var(--text);
+        }
 
-Открыть панель инструментов:
+        .container {
+            max-width: 100%;
+            height: calc(100vh - 40px);
+            margin: 0 auto;
+            background: var(--panel);
+            border-radius: 6px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
 
-[➡ DayZ Tools Control Panel](https://kaktus3158.github.io/DayzTools/)
+        .header {
+            background: rgba(17, 24, 39, 0.88);
+            color: var(--text);
+            padding: 15px 18px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+        }
 
----
+        .header h2 {
+            font-size: 1.5em;
+            margin: 0;
+            font-weight: 700;
+        }
 
-## 🧰 Состав набора
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
 
-### 📋 Types Editor
-Редактор `types.xml` для настройки экономики, параметров лута и массового балансирования значений DayZ.
+        .sidebar {
+            width: 300px;
+            background: rgba(17, 24, 39, 0.66);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
 
-**Возможности:**
-- табличное редактирование
-- поиск по параметрам
-- массовое изменение значений
-- формулы в mass edit:
-  - `N`
-  - `+N`
-  - `-N`
-  - `*N`
-  - `/N`
-  - `+N%`
-  - `-N%`
-- импорт и экспорт XML
-- работа с `cfglimitsdefinition.xml`
+        .sidebar h3,
+        .editor-section-title {
+            color: var(--text);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(41, 128, 185, 0.65);
+            font-size: 16px;
+            font-weight: 700;
+        }
 
----
+        .editor {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-### 🔧 Recipe Editor
-Визуальный редактор рецептов крафта.
+        .editor-card {
+            background: rgba(17, 24, 39, 0.55);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
 
-**Возможности:**
-- создание рецептов через интерфейс
-- настройка ингредиентов и результатов
-- несколько вариантов результатов
-- генерация Enforce Script
-- импорт и экспорт `.c` файлов
+        .form-group {
+            margin-bottom: 12px;
+        }
 
----
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
 
-## 🎯 Назначение проекта
+        .sidebar input[type="text"],
+        .sidebar input[type="number"],
+        .sidebar select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-size: 13px;
+            height: 32px;
+            background: rgba(2, 6, 23, 0.35);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
 
-Этот набор инструментов помогает работать с конфигами DayZ:
+        .sidebar input[type="text"]:focus,
+        .sidebar input[type="number"]:focus,
+        .sidebar select:focus {
+            outline: none;
+            border-color: rgba(41, 128, 185, 0.9);
+            box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.20);
+        }
 
-- экономика и лут
-- рецепты крафта
-- подготовка данных для DayZ-модов
+        .sidebar input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
 
----
+        .sidebar input[type="number"]::-webkit-outer-spin-button,
+        .sidebar input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
-## ⚙️ Технологии
+        .search-wrapper {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
 
-Проект сделан на:
+        .search-wrapper input {
+            flex: 1;
+        }
 
-- HTML
-- CSS
-- JavaScript
+        .btn {
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 9px 12px;
+            color: white;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
 
-Без фреймворков и без сборки.
+        .btn:hover {
+            transform: translateY(-1px);
+        }
 
-Все инструменты можно:
-- запускать локально через `index.html`
-- использовать онлайн через GitHub Pages
+        .btn:active {
+            transform: translateY(0);
+        }
 
----
+        .btn-green {
+            background: #27ae60;
+        }
 
-## 📁 Структура проекта
+        .btn-green:hover {
+            background: #229954;
+        }
 
-```text
-index.html
-DayZ_Types_Editor.html
-DayZ_Recipe_Editor.html
-README.md
+        .btn-orange {
+            background: #f39c12;
+        }
+
+        .btn-orange:hover {
+            background: #e67e22;
+        }
+
+        .btn-blue {
+            background: #2980b9;
+        }
+
+        .btn-blue:hover {
+            background: #1f618d;
+        }
+
+        .btn-red {
+            background: #e74c3c;
+        }
+
+        .btn-red:hover {
+            background: #c0392b;
+        }
+
+        .mass-edit-panel {
+            margin-bottom: 15px;
+        }
+
+        .mass-edit-buttons,
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .mass-edit-buttons button,
+        .action-buttons button {
+            flex: 1;
+        }
+
+        .import-export-section {
+            margin-top: 15px;
+        }
+
+        .import-export-section .btn {
+            width: 100%;
+            margin-bottom: 6px;
+        }
+
+        .mass-edit-help {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(2, 6, 23, 0.22);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+        }
+
+        .mass-edit-help-title {
+            color: var(--text);
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .mass-edit-help-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .mass-edit-help-list strong {
+            color: var(--text);
+        }
+
+        .table-container {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: rgba(2, 6, 23, 0.22);
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .table-header {
+            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+            background: rgba(17, 24, 39, 0.78);
+            flex-shrink: 0;
+            padding-right: 0;
+        }
+
+        .table-body {
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-size: 12px;
+            table-layout: fixed;
+            width: 100%;
+            min-width: 2000px;
+        }
+
+        th {
+            background: rgba(17, 24, 39, 0.78);
+            color: var(--text);
+            padding: 8px 4px;
+            font-weight: 600;
+            white-space: nowrap;
+            text-align: center;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 4px 2px;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            text-align: center;
+            overflow: hidden;
+            background: rgba(2, 6, 23, 0.15);
+            color: var(--text);
+        }
+
+        tr:hover td {
+            background: rgba(148, 163, 184, 0.14);
+        }
+
+        tr.selected td {
+            background: rgba(41, 128, 185, 0.18);
+        }
+
+        tr.hidden-by-search {
+            display: none;
+        }
+
+        tr.validation-error td {
+            border-bottom: 2px solid rgba(231, 76, 60, 0.7);
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        .checkbox-cell input {
+            width: 14px;
+            height: 14px;
+            accent-color: rgba(41, 128, 185, 0.9);
+        }
+
+        .number-input,
+        .text-input,
+        .name-input {
+            width: 100%;
+            padding: 6px 4px;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            font-size: 11px;
+            height: 28px;
+            background: rgba(2, 6, 23, 0.25);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .number-input:focus,
+        .text-input:focus,
+        .name-input:focus {
+            outline: none;
+            border-color: rgba(41, 128, 185, 0.9);
+            box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.20);
+        }
+
+        .number-input.invalid,
+        .name-input.invalid {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.12);
+        }
+
+        .number-input {
+            text-align: center;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .number-input::-webkit-outer-spin-button,
+        .number-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .text-input {
+            text-align: left;
+        }
+
+        .name-input {
+            text-align: left;
+        }
+
+        .flag-cell {
+            text-align: center;
+        }
+
+        .flag-checkbox {
+            width: 14px;
+            height: 14px;
+            accent-color: rgba(41, 128, 185, 0.9);
+        }
+
+        .field-with-button {
+            display: flex;
+            gap: 2px;
+            width: 100%;
+        }
+
+        .field-with-button input {
+            flex: 1;
+            min-width: 0;
+            border-radius: 2px 0 0 2px;
+        }
+
+        .field-with-button button {
+            width: 24px;
+            background: rgba(148, 163, 184, 0.12);
+            border: 1px solid var(--border);
+            border-left: none;
+            border-radius: 0 2px 2px 0;
+            cursor: pointer;
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .field-with-button button:hover {
+            background: rgba(148, 163, 184, 0.22);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(17, 24, 39, 0.78);
+            border-radius: 6px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: var(--muted);
+        }
+
+        .modal-close:hover {
+            color: #ff6b6b;
+        }
+
+        .selected-values {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(2, 6, 23, 0.22);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+        }
+
+        .selected-values-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .selected-values-header span {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .clear-all-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 3px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .clear-all-btn:hover {
+            background: rgba(231, 76, 60, 0.14);
+            border-color: rgba(231, 76, 60, 0.8);
+            color: rgba(231, 76, 60, 1);
+        }
+
+        .selected-values-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            min-height: 28px;
+        }
+
+        .selected-value-tag {
+            display: inline-block;
+            background: rgba(148, 163, 184, 0.12);
+            padding: 4px 10px;
+            border-radius: 3px;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .selected-value-placeholder {
+            color: var(--muted-2);
+            font-style: italic;
+            font-size: 11px;
+            padding: 4px 0;
+        }
+
+        .modal-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            margin-bottom: 15px;
+            background: rgba(2, 6, 23, 0.22);
+            color: var(--text);
+        }
+
+        .modal-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text);
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-item:hover {
+            background: rgba(148, 163, 184, 0.14);
+        }
+
+        .modal-custom {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .modal-custom input {
+            flex: 1;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        .validation-tooltip {
+            position: fixed;
+            background: rgba(231, 76, 60, 0.12);
+            border: 1px solid rgba(231, 76, 60, 0.8);
+            color: rgba(231, 76, 60, 1);
+            padding: 6px 12px;
+            border-radius: 3px;
+            font-size: 11px;
+            z-index: 2000;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+            max-width: 300px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+
+        /* Light theme (restore original look) */
+        body {
+            background: #2c3e50;
+            color: #2c3e50;
+            overflow: hidden;
+        }
+
+        .container {
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            border: none;
+            backdrop-filter: none;
+        }
+
+        .header {
+            background: #34495e;
+            color: white;
+            border: none;
+        }
+
+        .sidebar {
+            background: #ecf0f1;
+            border: 1px solid #d5dce0;
+            backdrop-filter: none;
+        }
+
+        .sidebar h3,
+        .editor-section-title {
+            color: #2c3e50;
+            border-bottom: 2px solid #34495e;
+        }
+
+        .editor-card {
+            background: white;
+            border: 1px solid #d5dce0;
+        }
+
+        .sidebar input[type="text"],
+        .sidebar input[type="number"],
+        .sidebar select {
+            border: 1px solid #bdc3c7;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .sidebar input[type="text"]:focus,
+        .sidebar input[type="number"]:focus,
+        .sidebar select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.12);
+        }
+
+        .mass-edit-help {
+            background: #ffffff;
+            border: 1px solid #d0d7db;
+        }
+
+        .mass-edit-help-title,
+        .mass-edit-help-list strong {
+            color: #2c3e50;
+        }
+
+        .table-container {
+            border: 1px solid #c4ccd1;
+            background: white;
+        }
+
+        .table-header {
+            border-bottom: 1px solid #c4ccd1;
+            background: #e3e9ec;
+        }
+
+        th {
+            background: #e3e9ec;
+            color: #2c3e50;
+            border-right: 1px solid #c4ccd1;
+            border-bottom: 1px solid #c4ccd1;
+        }
+
+        td {
+            border-bottom: 1px solid #c4ccd1;
+            border-right: 1px solid #c4ccd1;
+            background: white;
+            color: #2c3e50;
+        }
+
+        tr:hover td {
+            background: #eef3f5;
+        }
+
+        tr.selected td {
+            background: #dfeaf1;
+        }
+
+        .checkbox-cell input,
+        .flag-checkbox {
+            accent-color: #34495e;
+        }
+
+        .number-input,
+        .text-input,
+        .name-input {
+            border: 1px solid #c9d1d4;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .number-input:focus,
+        .text-input:focus,
+        .name-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.12);
+        }
+
+        .number-input.invalid,
+        .name-input.invalid {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.12);
+        }
+
+        .field-with-button button {
+            background: #ecf0f1;
+            border: 1px solid #c9d1d4;
+            color: #2c3e50;
+        }
+
+        .field-with-button button:hover {
+            background: #dfe6e9;
+        }
+
+        .modal-content {
+            background: white;
+            color: #2c3e50;
+            border: none;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #d0d7db;
+        }
+
+        .modal-header h3 {
+            color: #2c3e50;
+        }
+
+        .modal-close {
+            color: #7f8c8d;
+        }
+
+        .modal-close:hover {
+            color: #e74c3c;
+        }
+
+        .selected-values {
+            background: #f4f6f7;
+            border: 1px solid #d0d7db;
+        }
+
+        .selected-values-header span {
+            color: #7f8c8d;
+        }
+
+        .clear-all-btn {
+            border: 1px solid #c9d1d4;
+            color: #2c3e50;
+        }
+
+        .clear-all-btn:hover {
+            background: #fcebea;
+            border-color: #e74c3c;
+            color: #c0392b;
+        }
+
+        .selected-value-tag {
+            background: #ecf0f1;
+            border: 1px solid #d0d7db;
+            color: #2c3e50;
+        }
+
+        .selected-value-placeholder {
+            color: #95a5a6;
+        }
+
+        .modal-list {
+            border: 1px solid #d0d7db;
+            background: white;
+        }
+
+        .modal-item {
+            color: #2c3e50;
+        }
+
+        .modal-item:hover {
+            background: #f4f7f8;
+        }
+
+        .validation-tooltip {
+            background: #fcebea;
+            border: 1px solid #e74c3c;
+            color: #c0392b;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>DayZ Types Editor</h2>
+        </div>
+        <div class="main-content">
+            <div class="sidebar">
+                <h3>Поиск</h3>
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Поиск по параметрам...">
+                    <button class="btn btn-red" id="clearSearchBtn" title="Очистить поиск" disabled style="width:32px; min-width:32px; padding:0;">×</button>
+                </div>
+                
+                <h3>Массовое редактирование</h3>
+                <div class="mass-edit-panel">
+                    <div class="form-group"><label>nominal:</label><input type="text" id="massNominal" placeholder="число или формула"></div>
+                    <div class="form-group"><label>lifetime:</label><input type="text" id="massLifetime" placeholder="число или формула"></div>
+                    <div class="form-group"><label>restock:</label><input type="text" id="massRestock" placeholder="число или формула"></div>
+                    <div class="form-group"><label>min:</label><input type="text" id="massMin" placeholder="число или формула"></div>
+                    <div class="form-group"><label>quantmin:</label><input type="text" id="massQuantmin" placeholder="число или формула"></div>
+                    <div class="form-group"><label>quantmax:</label><input type="text" id="massQuantmax" placeholder="число или формула"></div>
+                    <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула"></div>
+                    <div class="mass-edit-buttons">
+                        <button class="btn btn-blue" id="applyMassEditBtn" title="Применить массовое редактирование к выбранным строкам">Применить</button>
+                        <button class="btn btn-red" id="deleteSelectedBtn" title="Удалить выбранные строки">Удалить</button>
+                    </div>
+                </div>
+
+                <div class="mass-edit-help">
+                    <div class="mass-edit-help-title">Формулы</div>
+                    <div class="mass-edit-help-list">
+                        <div><strong>N</strong> — установить значение</div>
+                        <div><strong>+N</strong> — прибавить</div>
+                        <div><strong>-N</strong> — вычесть</div>
+                        <div><strong>*N</strong> — умножить</div>
+                        <div><strong>/N</strong> — разделить</div>
+                        <div><strong>+N%</strong> — увеличить на процент</div>
+                        <div><strong>-N%</strong> — уменьшить на процент</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-green" id="addItemBtn" title="Добавить новый предмет">Добавить</button>
+                    <button class="btn btn-orange" id="clearAllBtn" title="Очистить все предметы">Очистить</button>
+                </div>
+                <div class="import-export-section">
+                    <button class="btn btn-blue" id="exportBtn" title="Сохранить types.xml">Сохранить</button>
+                    <button class="btn btn-orange" id="importBtn" title="Загрузить types.xml">Загрузить</button>
+                    <button class="btn btn-blue" id="loadDefinitionsBtn" title="Загрузить cfglimitsdefinition.xml">Загрузить определения</button>
+                </div>
+            </div>
+            <div class="editor">
+                <div class="editor-card">
+                    <div class="editor-section-title">Список предметов</div>
+                    <div class="table-container">
+                        <div class="table-header" id="tableHeader"><table><thead id="tableHeaderRow"></thead></table></div>
+                        <div class="table-body" id="tableBody"><table><tbody id="tableBodyRows"></tbody></table></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="valueModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Выберите значения</h3>
+                <button class="modal-close" id="modalCloseBtn" title="Закрыть">×</button>
+            </div>
+            <div class="selected-values">
+                <div class="selected-values-header">
+                    <span>Выбрано:</span>
+                    <button class="clear-all-btn" id="clearAllSelectionsBtn" title="Очистить все выбранные значения">Очистить все</button>
+                </div>
+                <div class="selected-values-list" id="selectedValuesList">
+                    <span class="selected-value-placeholder">ничего не выбрано</span>
+                </div>
+            </div>
+            <div class="modal-list" id="modalList"></div>
+            <div class="modal-custom">
+                <input type="text" id="modalCustomValue" placeholder="Свое значение...">
+                <button class="btn btn-green" id="addCustomValueBtn" title="Добавить пользовательское значение">Добавить</button>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-green" id="saveModalBtn" title="Сохранить выбранные значения">Сохранить</button>
+                <button class="btn btn-red" id="cancelModalBtn" title="Закрыть без сохранения">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="validation-tooltip" id="validationTooltip" style="display:none;"></div>
+
+    <script>
+        const STORAGE_KEY = 'dayzTypesEditorData_v2';
+        const DEFINITIONS_STORAGE_KEY = 'dayzTypesEditorDefinitions_v1';
+
+        const state = {
+            items: [],
+            selectedItems: new Set(),
+            currentSearchTerm: '',
+            lastValidValues: {},
+            definitions: {
+                categories: [],
+                tags: [],
+                usage: [],
+                value: []
+            },
+            currentModal: {
+                index: -1,
+                field: '',
+                inputElement: null,
+                allOptions: []
+            },
+            searchTimer: null,
+            rafId: null,
+            ticking: false
+        };
+
+        const columns = [
+            { id:'col0', title:'', type:'checkbox', width:40 },
+            { id:'col1', title:'Имя', type:'name', field:'name', width:250 },
+            { id:'col2', title:'nominal', type:'number', field:'nominal', width:80 },
+            { id:'col3', title:'lifetime', type:'number', field:'lifetime', width:80 },
+            { id:'col4', title:'restock', type:'number', field:'restock', width:80 },
+            { id:'col5', title:'min', type:'number', field:'min', width:80 },
+            { id:'col6', title:'quantmin', type:'number', field:'quantmin', width:80 },
+            { id:'col7', title:'quantmax', type:'number', field:'quantmax', width:80 },
+            { id:'col8', title:'cost', type:'number', field:'cost', width:80 },
+            { id:'col9', title:'cargo', type:'flag', flag:'count_in_cargo', width:60 },
+            { id:'col10', title:'hoarder', type:'flag', flag:'count_in_hoarder', width:64 },
+            { id:'col11', title:'map', type:'flag', flag:'count_in_map', width:60 },
+            { id:'col12', title:'player', type:'flag', flag:'count_in_player', width:60 },
+            { id:'col13', title:'crafted', type:'flag', flag:'crafted', width:60 },
+            { id:'col14', title:'deloot', type:'flag', flag:'deloot', width:60 },
+            { id:'col15', title:'category', type:'text', field:'category', width:180 },
+            { id:'col16', title:'usage', type:'text', field:'usage', width:180 },
+            { id:'col17', title:'value', type:'text', field:'value', width:180 },
+            { id:'col18', title:'tag', type:'text', field:'tag', width:180 }
+        ];
+
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+        const escapeHtml = (str) => String(str ?? '')
+            .replace(/&/g,'&amp;')
+            .replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;')
+            .replace(/'/g,'&#39;');
+
+        const escapeXmlAttr = (str) => String(str ?? '')
+            .replace(/&/g,'&amp;')
+            .replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;')
+            .replace(/'/g,'&apos;');
+
+        const uniqueArray = (arr) => [...new Set((arr || []).filter(Boolean))];
+
+        const parseSpaceList = (text) => uniqueArray(
+            String(text ?? '')
+                .split(/\s+/)
+                .map(v => v.trim())
+                .filter(Boolean)
+        );
+
+        const arrayToSpaceList = (arr) => (arr && arr.length ? arr.join(' ') : '');
+
+        const normalizeNumber = (value, fallback = 0) => {
+            const parsed = Number.parseInt(value, 10);
+            return Number.isNaN(parsed) ? fallback : parsed;
+        };
+
+        const applyNumericOperation = (currentValue, expression, fallback = 0) => {
+            const raw = String(expression ?? '').trim();
+            if (!raw) return currentValue;
+
+            const current = normalizeNumber(currentValue, fallback);
+
+            if (/^\d+$/.test(raw)) {
+                return normalizeNumber(raw, fallback);
+            }
+
+            const percentMatch = raw.match(/^([+-])\s*(\d+(?:\.\d+)?)%$/);
+            if (percentMatch) {
+                const operator = percentMatch[1];
+                const percent = Number.parseFloat(percentMatch[2]);
+                if (Number.isNaN(percent)) return current;
+
+                const delta = current * (percent / 100);
+                const result = operator === '+' ? current + delta : current - delta;
+                return Math.trunc(result);
+            }
+
+            const operator = raw.charAt(0);
+            const operandText = raw.slice(1).trim();
+            const operand = Number.parseFloat(operandText);
+
+            if (Number.isNaN(operand)) return current;
+
+            switch (operator) {
+                case '+': return Math.trunc(current + operand);
+                case '-': return Math.trunc(current - operand);
+                case '*': return Math.trunc(current * operand);
+                case '/': return operand === 0 ? current : Math.trunc(current / operand);
+                default: return current;
+            }
+        };
+
+        const getItemTemplate = () => ({
+            id: crypto?.randomUUID ? crypto.randomUUID() : `item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+            name: generateUniqueName('NewItem'),
+            nominal: 10,
+            lifetime: 14400,
+            restock: 0,
+            min: 5,
+            quantmin: -1,
+            quantmax: -1,
+            cost: 100,
+            flags: {
+                count_in_cargo: 0,
+                count_in_hoarder: 0,
+                count_in_map: 1,
+                count_in_player: 0,
+                crafted: 0,
+                deloot: 0
+            },
+            category: [],
+            usage: [],
+            value: [],
+            tag: []
+        });
+
+        function getFieldKey(index, field) {
+            return `${index}:${field}`;
+        }
+
+        function rememberValidValue(index, field, value) {
+            state.lastValidValues[getFieldKey(index, field)] = value;
+        }
+
+        function getRememberedValidValue(index, field, fallback = '') {
+            const key = getFieldKey(index, field);
+            return key in state.lastValidValues ? state.lastValidValues[key] : fallback;
+        }
+
+        function isValidFieldValue(field, value) {
+            const raw = String(value ?? '').trim();
+
+            if (field === 'name') {
+                return raw !== '';
+            }
+
+            const num = Number.parseInt(raw, 10);
+            if (Number.isNaN(num)) return false;
+
+            if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) {
+                return num >= 0;
+            }
+
+            if (['quantmin', 'quantmax'].includes(field)) {
+                return num === -1 || num >= 0;
+            }
+
+            return true;
+        }
+
+        function getFieldValidationMessage(field) {
+            if (field === 'name') return 'Имя не может быть пустым';
+            if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) {
+                return `${field} должен быть 0 или больше`;
+            }
+            if (['quantmin', 'quantmax'].includes(field)) {
+                return `${field} должен быть -1 или 0 и больше`;
+            }
+            return 'Недопустимое значение';
+        }
+
+        function generateUniqueName(base) {
+            const existing = new Set(state.items.map(item => String(item.name || '').trim()));
+            if (!existing.has(base)) return base;
+            let counter = 1;
+            while (existing.has(`${base}_${counter}`)) counter++;
+            return `${base}_${counter}`;
+        }
+
+        function getDuplicateNames() {
+            const seen = new Map();
+            const duplicates = new Set();
+
+            state.items.forEach((item, index) => {
+                const name = String(item?.name || '').trim().toLowerCase();
+                if (!name) return;
+                if (seen.has(name)) {
+                    duplicates.add(index);
+                    duplicates.add(seen.get(name));
+                } else {
+                    seen.set(name, index);
+                }
+            });
+
+            return duplicates;
+        }
+
+        function validateItem(item, index) {
+            const errors = [];
+            const duplicateIndices = getDuplicateNames();
+
+            const name = String(item?.name || '').trim();
+
+            if (!name) errors.push('Имя пустое');
+            if (duplicateIndices.has(index)) errors.push('Дублирующееся имя');
+
+            if (item.nominal < 0) errors.push('nominal < 0');
+            if (item.min < 0) errors.push('min < 0');
+            if (item.nominal >= 0 && item.min >= 0 && item.nominal < item.min) {
+                errors.push(`nominal (${item.nominal}) < min (${item.min})`);
+            }
+            if (item.lifetime < 0) errors.push('lifetime < 0');
+            if (item.restock < 0) errors.push('restock < 0');
+            if (item.cost < 0) errors.push('cost < 0');
+            if (item.quantmin >= 0 && item.quantmax >= 0 && item.quantmin > item.quantmax) {
+                errors.push(`quantmin (${item.quantmin}) > quantmax (${item.quantmax})`);
+            }
+
+            const flagNames = ['count_in_cargo','count_in_hoarder','count_in_map','count_in_player','crafted','deloot'];
+            for (const flagName of flagNames) {
+                const value = item.flags?.[flagName];
+                if (![0, 1].includes(value)) {
+                    errors.push(`Флаг ${flagName} должен быть 0 или 1`);
+                }
+            }
+
+            return errors;
+        }
+
+        function showValidationTooltip(element, message) {
+            const tooltip = $('#validationTooltip');
+            if (!element || !tooltip) return;
+
+            const rect = element.getBoundingClientRect();
+            tooltip.textContent = message;
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${rect.left}px`;
+            tooltip.style.top = `${rect.bottom + 5}px`;
+
+            window.clearTimeout(showValidationTooltip.timerId);
+            showValidationTooltip.timerId = window.setTimeout(() => {
+                tooltip.style.display = 'none';
+            }, 3000);
+        }
+
+        function validateField(element, index, field) {
+            const item = state.items[index];
+            if (!item || !element) return;
+
+            const errors = validateItem(item, index);
+            const row = element.closest('tr');
+
+            if (row) {
+                row.classList.toggle('validation-error', errors.length > 0);
+                row.title = errors.join('; ');
+            }
+
+            const fieldErrors = errors.filter(error =>
+                error.toLowerCase().includes(String(field).toLowerCase()) ||
+                (field === 'name' && error.toLowerCase().includes('имя'))
+            );
+
+            element.classList.toggle('invalid', fieldErrors.length > 0 || (field === 'name' && !String(item.name || '').trim()));
+
+            if (fieldErrors.length > 0) {
+                showValidationTooltip(element, fieldErrors[0]);
+            }
+        }
+
+        function saveStateToLocalStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
+                localStorage.setItem(DEFINITIONS_STORAGE_KEY, JSON.stringify(state.definitions));
+            } catch (error) {
+                console.warn('Не удалось сохранить состояние:', error);
+            }
+        }
+
+        function loadStateFromLocalStorage() {
+            try {
+                const rawItems = localStorage.getItem(STORAGE_KEY);
+                const rawDefs = localStorage.getItem(DEFINITIONS_STORAGE_KEY);
+
+                if (rawItems) {
+                    const parsedItems = JSON.parse(rawItems);
+                    if (Array.isArray(parsedItems)) {
+                        state.items = parsedItems.map(item => ({
+                            ...getItemTemplate(),
+                            ...item,
+                            id: item.id || (crypto?.randomUUID ? crypto.randomUUID() : `item_${Date.now()}_${Math.random().toString(16).slice(2)}`),
+                            flags: {
+                                count_in_cargo: 0,
+                                count_in_hoarder: 0,
+                                count_in_map: 1,
+                                count_in_player: 0,
+                                crafted: 0,
+                                deloot: 0,
+                                ...(item.flags || {})
+                            },
+                            category: uniqueArray(item.category || []),
+                            usage: uniqueArray(item.usage || []),
+                            value: uniqueArray(item.value || []),
+                            tag: uniqueArray(item.tag || [])
+                        }));
+                    }
+                }
+
+                if (rawDefs) {
+                    const parsedDefs = JSON.parse(rawDefs);
+                    state.definitions = {
+                        categories: uniqueArray(parsedDefs?.categories || []),
+                        tags: uniqueArray(parsedDefs?.tags || []),
+                        usage: uniqueArray(parsedDefs?.usage || []),
+                        value: uniqueArray(parsedDefs?.value || [])
+                    };
+                }
+            } catch (error) {
+                console.warn('Не удалось восстановить состояние:', error);
+            }
+        }
+
+        function renderHeader() {
+            const thead = $('#tableHeaderRow');
+
+            const html = `
+                <tr>
+                    ${columns.map(column => `
+                        <th style="width:${column.width}px;">
+                            ${column.type === 'checkbox'
+                                ? '<input type="checkbox" id="selectAllCheckbox">'
+                                : escapeHtml(column.title)}
+                        </th>
+                    `).join('')}
+                </tr>
+            `;
+
+            thead.innerHTML = html;
+        }
+
+        function renderTable() {
+            const tbody = $('#tableBodyRows');
+
+            const html = state.items.map((item, index) => {
+                const isVisible = !state.currentSearchTerm || itemMatchesSearch(item, state.currentSearchTerm);
+                const isSelected = state.selectedItems.has(index);
+                const errors = validateItem(item, index);
+
+                rememberValidValue(index, 'name', item.name);
+                rememberValidValue(index, 'nominal', item.nominal);
+                rememberValidValue(index, 'lifetime', item.lifetime);
+                rememberValidValue(index, 'restock', item.restock);
+                rememberValidValue(index, 'min', item.min);
+                rememberValidValue(index, 'quantmin', item.quantmin);
+                rememberValidValue(index, 'quantmax', item.quantmax);
+                rememberValidValue(index, 'cost', item.cost);
+
+                return `
+                    <tr
+                        data-index="${index}"
+                        class="${isSelected ? 'selected' : ''} ${!isVisible ? 'hidden-by-search' : ''} ${errors.length ? 'validation-error' : ''}"
+                        title="${escapeHtml(errors.join('; '))}"
+                    >
+                        ${columns.map(column => renderCell(item, index, column, errors)).join('')}
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = html;
+            updateSelectAllCheckbox();
+            syncTableHeaderScrollbarSpacing();
+        }
+
+        function renderCell(item, index, column, errors) {
+            const widthStyle = `style="width:${column.width}px"`;
+
+            if (column.type === 'checkbox') {
+                return `
+                    <td class="checkbox-cell" ${widthStyle}>
+                        <input type="checkbox" class="item-checkbox" data-index="${index}" ${state.selectedItems.has(index) ? 'checked' : ''}>
+                    </td>
+                `;
+            }
+
+            if (column.type === 'name') {
+                const invalid = !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя'));
+                return `
+                    <td ${widthStyle}>
+                        <input
+                            type="text"
+                            class="name-input ${invalid ? 'invalid' : ''}"
+                            data-index="${index}"
+                            data-field="name"
+                            value="${escapeHtml(item.name)}"
+                        >
+                    </td>
+                `;
+            }
+
+            if (column.type === 'number') {
+                const fieldErrors = errors.some(e => e.toLowerCase().includes(column.field.toLowerCase()));
+                return `
+                    <td ${widthStyle}>
+                        <input
+                            type="number"
+                            class="number-input ${fieldErrors ? 'invalid' : ''}"
+                            data-index="${index}"
+                            data-field="${column.field}"
+                            value="${escapeHtml(item[column.field])}"
+                        >
+                    </td>
+                `;
+            }
+
+            if (column.type === 'flag') {
+                return `
+                    <td class="flag-cell" ${widthStyle}>
+                        <input
+                            type="checkbox"
+                            class="flag-checkbox"
+                            data-index="${index}"
+                            data-flag="${column.flag}"
+                            ${item.flags?.[column.flag] ? 'checked' : ''}
+                        >
+                    </td>
+                `;
+            }
+
+            if (column.type === 'text') {
+                const value = arrayToSpaceList(item[column.field]);
+                return `
+                    <td ${widthStyle}>
+                        <div class="field-with-button">
+                            <input
+                                type="text"
+                                id="field-${index}-${column.field}"
+                                class="text-input"
+                                data-index="${index}"
+                                data-field="${column.field}"
+                                value="${escapeHtml(value)}"
+                            >
+                            <button type="button" class="open-modal-btn" data-index="${index}" data-field="${column.field}">▼</button>
+                        </div>
+                    </td>
+                `;
+            }
+
+            return `<td ${widthStyle}></td>`;
+        }
+
+        function updateItemField(index, field, value) {
+            if (!state.items[index]) return;
+            state.items[index][field] = value;
+            saveStateToLocalStorage();
+        }
+
+        function updateNumberField(index, field, value) {
+            if (!state.items[index]) return;
+
+            const fallback = field.includes('quant') ? -1 : 0;
+            state.items[index][field] = normalizeNumber(value, fallback);
+
+            saveStateToLocalStorage();
+            updateRowValidation(index);
+        }
+
+        function updateFlag(index, flag, checked) {
+            if (!state.items[index]) return;
+            state.items[index].flags[flag] = checked ? 1 : 0;
+            saveStateToLocalStorage();
+            updateRowValidation(index);
+        }
+
+        function updateTextField(index, field, value) {
+            if (!state.items[index]) return;
+            state.items[index][field] = parseSpaceList(value);
+            saveStateToLocalStorage();
+
+            if (state.currentSearchTerm) applySearchFilter();
+        }
+
+        function updateRowValidation(index) {
+            const row = $(`#tableBodyRows tr[data-index="${index}"]`);
+            const item = state.items[index];
+            if (!row || !item) return;
+
+            const errors = validateItem(item, index);
+            row.classList.toggle('validation-error', errors.length > 0);
+            row.title = errors.join('; ');
+
+            const nameInput = row.querySelector('.name-input');
+            if (nameInput) {
+                nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя')));
+            }
+
+            const numberInputs = row.querySelectorAll('.number-input');
+            numberInputs.forEach(input => {
+                const field = input.dataset.field;
+                const invalid = errors.some(e => e.toLowerCase().includes(String(field).toLowerCase()));
+                input.classList.toggle('invalid', invalid);
+            });
+        }
+
+        function itemMatchesSearch(item, searchTerm) {
+            if (!searchTerm) return true;
+
+            const st = String(searchTerm || '').toLowerCase();
+
+            if (String(item?.name || '').toLowerCase().includes(st)) return true;
+
+            const numericFields = ['nominal','lifetime','restock','min','quantmin','quantmax','cost'];
+            if (numericFields.some(field => String(item?.[field] ?? '').includes(st))) return true;
+
+            const flagValues = Object.values(item?.flags || {});
+            if (flagValues.some(value => String(value).includes(st))) return true;
+
+            const textFields = ['category','usage','value','tag'];
+            for (const field of textFields) {
+                const arr = Array.isArray(item?.[field]) ? item[field] : [];
+                if (arr.some(value => String(value).toLowerCase().includes(st))) return true;
+            }
+
+            return false;
+        }
+
+        function applySearchFilter() {
+            $$('#tableBodyRows tr[data-index]').forEach(row => {
+                const index = Number.parseInt(row.dataset.index, 10);
+                const matched = itemMatchesSearch(state.items[index], state.currentSearchTerm);
+                row.classList.toggle('hidden-by-search', !matched);
+            });
+
+            updateSelectAllCheckbox();
+        }
+
+        function updateClearButton() {
+            $('#clearSearchBtn').disabled = !$('#searchInput').value;
+        }
+
+        function filterItemsDebounced() {
+            window.clearTimeout(state.searchTimer);
+            state.searchTimer = window.setTimeout(() => {
+                state.currentSearchTerm = $('#searchInput').value.toLowerCase();
+                applySearchFilter();
+                updateClearButton();
+            }, 120);
+        }
+
+        function clearSearch() {
+            state.currentSearchTerm = '';
+            $('#searchInput').value = '';
+            applySearchFilter();
+            updateClearButton();
+        }
+
+        function toggleItemSelection(index) {
+            if (state.selectedItems.has(index)) {
+                state.selectedItems.delete(index);
+            } else {
+                state.selectedItems.add(index);
+            }
+
+            const row = $(`#tableBodyRows tr[data-index="${index}"]`);
+            if (row) {
+                row.classList.toggle('selected', state.selectedItems.has(index));
+                const checkbox = row.querySelector('.item-checkbox');
+                if (checkbox) checkbox.checked = state.selectedItems.has(index);
+            }
+
+            updateSelectAllCheckbox();
+        }
+
+        function toggleSelectVisible() {
+            const selectAll = $('#selectAllCheckbox');
+            const visibleRows = $$('#tableBodyRows tr[data-index]:not(.hidden-by-search)');
+
+            visibleRows.forEach(row => {
+                const index = Number.parseInt(row.dataset.index, 10);
+
+                if (selectAll.checked) {
+                    state.selectedItems.add(index);
+                    row.classList.add('selected');
+                } else {
+                    state.selectedItems.delete(index);
+                    row.classList.remove('selected');
+                }
+
+                const checkbox = row.querySelector('.item-checkbox');
+                if (checkbox) checkbox.checked = selectAll.checked;
+            });
+
+            updateSelectAllCheckbox();
+        }
+
+        function updateSelectAllCheckbox() {
+            const checkbox = $('#selectAllCheckbox');
+            if (!checkbox) return;
+
+            const visibleRows = $$('#tableBodyRows tr[data-index]:not(.hidden-by-search)');
+            if (!visibleRows.length) {
+                checkbox.checked = false;
+                checkbox.indeterminate = false;
+                return;
+            }
+
+            let selectedVisibleCount = 0;
+            for (const row of visibleRows) {
+                const index = Number.parseInt(row.dataset.index, 10);
+                if (state.selectedItems.has(index)) selectedVisibleCount++;
+            }
+
+            checkbox.checked = selectedVisibleCount === visibleRows.length;
+            checkbox.indeterminate = selectedVisibleCount > 0 && selectedVisibleCount < visibleRows.length;
+        }
+
+        function applyMassEdit() {
+            if (!state.selectedItems.size) {
+                alert('Выберите предметы');
+                return;
+            }
+
+            const values = {
+                nominal: $('#massNominal').value,
+                lifetime: $('#massLifetime').value,
+                restock: $('#massRestock').value,
+                min: $('#massMin').value,
+                quantmin: $('#massQuantmin').value,
+                quantmax: $('#massQuantmax').value,
+                cost: $('#massCost').value
+            };
+
+            const hasAnyValue = Object.values(values).some(value => value.trim() !== '');
+            if (!hasAnyValue) {
+                alert('Заполните хотя бы одно поле');
+                return;
+            }
+
+            const indices = [...state.selectedItems];
+
+            indices.forEach(index => {
+                for (const [field, expression] of Object.entries(values)) {
+                    if (expression.trim() === '') continue;
+
+                    const fallback = field.includes('quant') ? -1 : 0;
+                    const currentValue = state.items[index][field];
+
+                    state.items[index][field] = applyNumericOperation(currentValue, expression, fallback);
+                }
+            });
+
+            state.selectedItems.clear();
+            saveStateToLocalStorage();
+            renderTable();
+            alert(`Применено к ${indices.length} предметам`);
+        }
+
+        function deleteSelected() {
+            if (!state.selectedItems.size) {
+                alert('Выберите предметы');
+                return;
+            }
+
+            if (!confirm(`Удалить ${state.selectedItems.size} предметов?`)) return;
+
+            const indices = [...state.selectedItems].sort((a, b) => b - a);
+            indices.forEach(index => state.items.splice(index, 1));
+
+            state.selectedItems.clear();
+            saveStateToLocalStorage();
+            renderTable();
+        }
+
+        function addItem() {
+            state.items.push(getItemTemplate());
+            saveStateToLocalStorage();
+            renderTable();
+
+            setTimeout(() => {
+                const tableBody = $('#tableBody');
+                tableBody.scrollTop = tableBody.scrollHeight;
+            }, 50);
+        }
+
+        function clearAll() {
+            if (!state.items.length) return;
+            if (!confirm(`Очистить все ${state.items.length} предметов?`)) return;
+
+            state.items = [];
+            state.selectedItems.clear();
+            state.currentSearchTerm = '';
+            $('#searchInput').value = '';
+            updateClearButton();
+            saveStateToLocalStorage();
+            renderTable();
+        }
+
+        function openModal(index, field) {
+            const item = state.items[index];
+            if (!item) return;
+
+            let title = '';
+            let options = [];
+
+            switch (field) {
+                case 'category':
+                    title = 'Выберите категории';
+                    options = state.definitions.categories || [];
+                    break;
+                case 'usage':
+                    title = 'Выберите usage';
+                    options = state.definitions.usage || [];
+                    break;
+                case 'value':
+                    title = 'Выберите value';
+                    options = state.definitions.value || [];
+                    break;
+                case 'tag':
+                    title = 'Выберите теги';
+                    options = state.definitions.tags || [];
+                    break;
+                default:
+                    return;
+            }
+
+            state.currentModal = {
+                index,
+                field,
+                inputElement: $(`#field-${index}-${field}`),
+                allOptions: uniqueArray(options)
+            };
+
+            $('#modalTitle').textContent = title;
+
+            const currentValues = state.currentModal.inputElement
+                ? parseSpaceList(state.currentModal.inputElement.value)
+                : [];
+
+            renderModalList(state.currentModal.allOptions, currentValues);
+            updateSelectedValuesDisplay(currentValues);
+
+            $('#modalCustomValue').value = '';
+            $('#valueModal').classList.add('active');
+        }
+
+        function renderModalList(options, selected) {
+            const list = $('#modalList');
+
+            if (!options.length) {
+                list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Загрузите файл определений</div>';
+                return;
+            }
+
+            list.innerHTML = options.map(option => `
+                <div class="modal-item">
+                    <input type="checkbox" class="value-checkbox" value="${escapeHtml(option)}" ${selected.includes(option) ? 'checked' : ''}>
+                    <span>${escapeHtml(option)}</span>
+                </div>
+            `).join('');
+        }
+
+        function getSelectedValuesFromCheckboxes() {
+            return uniqueArray($$('.value-checkbox:checked').map(checkbox => checkbox.value));
+        }
+
+        function updateSelectedValuesDisplay(values) {
+            const container = $('#selectedValuesList');
+
+            if (!values.length) {
+                container.innerHTML = '<span class="selected-value-placeholder">ничего не выбрано</span>';
+                return;
+            }
+
+            container.innerHTML = values
+                .map(value => `<span class="selected-value-tag">${escapeHtml(value)}</span>`)
+                .join('');
+        }
+
+        function clearAllSelections() {
+            $$('.value-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedValuesDisplay([]);
+        }
+
+        function addCustomValue() {
+            const customInput = $('#modalCustomValue');
+            const value = customInput.value.trim();
+
+            if (!value) return;
+
+            const existingCheckbox = $$('.value-checkbox').find(checkbox => checkbox.value === value);
+
+            if (existingCheckbox) {
+                existingCheckbox.checked = true;
+            } else {
+                state.currentModal.allOptions = uniqueArray([...state.currentModal.allOptions, value]);
+                const currentSelected = getSelectedValuesFromCheckboxes();
+                renderModalList(state.currentModal.allOptions, uniqueArray([...currentSelected, value]));
+            }
+
+            updateSelectedValuesDisplay(getSelectedValuesFromCheckboxes());
+            customInput.value = '';
+            customInput.focus();
+        }
+
+        function saveModalValues() {
+            const selectedValues = uniqueArray(getSelectedValuesFromCheckboxes());
+
+            if (state.currentModal.inputElement) {
+                state.currentModal.inputElement.value = selectedValues.join(' ');
+            }
+
+            if (state.items[state.currentModal.index]) {
+                state.items[state.currentModal.index][state.currentModal.field] = selectedValues;
+            }
+
+            saveStateToLocalStorage();
+
+            if (state.currentSearchTerm) applySearchFilter();
+            closeModal();
+        }
+
+        function closeModal() {
+            $('#valueModal').classList.remove('active');
+        }
+
+        function downloadTextFile(content, filename, mimeType = 'text/plain') {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+
+            anchor.href = url;
+            anchor.download = filename;
+            anchor.click();
+
+            URL.revokeObjectURL(url);
+        }
+
+        function loadDefinitionsFromFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xml';
+
+            input.addEventListener('change', event => {
+                const [file] = event.target.files || [];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = loadEvent => {
+                    try {
+                        const xmlDoc = new DOMParser().parseFromString(loadEvent.target.result, 'text/xml');
+                        if (xmlDoc.querySelector('parsererror')) {
+                            throw new Error('Невалидный XML');
+                        }
+
+                        const categories = [...xmlDoc.getElementsByTagName('category')]
+                            .map(node => node.getAttribute('name'))
+                            .filter(Boolean);
+
+                        const tags = [...xmlDoc.getElementsByTagName('tag')]
+                            .map(node => node.getAttribute('name'))
+                            .filter(Boolean);
+
+                        const usage = [...xmlDoc.getElementsByTagName('usage')]
+                            .map(node => node.getAttribute('name'))
+                            .filter(Boolean);
+
+                        const value = [...xmlDoc.getElementsByTagName('value')]
+                            .map(node => node.getAttribute('name'))
+                            .filter(Boolean);
+
+                        state.definitions = {
+                            categories: uniqueArray(categories),
+                            tags: uniqueArray(tags),
+                            usage: uniqueArray(usage),
+                            value: uniqueArray(value)
+                        };
+
+                        saveStateToLocalStorage();
+
+                        alert(`Загружено ${categories.length + tags.length + usage.length + value.length} определений`);
+                    } catch (error) {
+                        alert(`Ошибка: ${error.message}`);
+                        console.error(error);
+                    }
+                };
+
+                reader.readAsText(file);
+            });
+
+            input.click();
+        }
+
+        function exportXML() {
+            if (!state.items.length) {
+                alert('Нечего сохранять');
+                return;
+            }
+
+            const totalErrors = state.items.reduce((sum, item, index) => sum + validateItem(item, index).length, 0);
+
+            if (totalErrors > 0 && !confirm(`Обнаружено ${totalErrors} предупреждений валидации.\nВсё равно сохранить?`)) {
+                return;
+            }
+
+            let xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<types>\n';
+
+            state.items.forEach(item => {
+                xml += `\t<type name="${escapeXmlAttr(item.name)}">\n`;
+                xml += `\t\t<nominal>${item.nominal}</nominal>\n`;
+                xml += `\t\t<lifetime>${item.lifetime}</lifetime>\n`;
+                xml += `\t\t<restock>${item.restock}</restock>\n`;
+                xml += `\t\t<min>${item.min}</min>\n`;
+                xml += `\t\t<quantmin>${item.quantmin}</quantmin>\n`;
+                xml += `\t\t<quantmax>${item.quantmax}</quantmax>\n`;
+                xml += `\t\t<cost>${item.cost}</cost>\n`;
+                xml += `\t\t<flags count_in_cargo="${item.flags.count_in_cargo}" count_in_hoarder="${item.flags.count_in_hoarder}" count_in_map="${item.flags.count_in_map}" count_in_player="${item.flags.count_in_player}" crafted="${item.flags.crafted}" deloot="${item.flags.deloot}" />\n`;
+
+                uniqueArray(item.category).forEach(value => {
+                    xml += `\t\t<category name="${escapeXmlAttr(value)}" />\n`;
+                });
+
+                uniqueArray(item.usage).forEach(value => {
+                    xml += `\t\t<usage name="${escapeXmlAttr(value)}" />\n`;
+                });
+
+                uniqueArray(item.value).forEach(value => {
+                    xml += `\t\t<value name="${escapeXmlAttr(value)}" />\n`;
+                });
+
+                uniqueArray(item.tag).forEach(value => {
+                    xml += `\t\t<tag name="${escapeXmlAttr(value)}" />\n`;
+                });
+
+                xml += '\t</type>\n';
+            });
+
+            xml += '</types>';
+
+            downloadTextFile(xml, 'types.xml', 'text/xml');
+        }
+
+        function importXML() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xml';
+
+            input.addEventListener('change', event => {
+                const [file] = event.target.files || [];
+                if (!file) return;
+
+                const reader = new FileReader();
+
+                reader.onload = loadEvent => {
+                    try {
+                        const doc = new DOMParser().parseFromString(loadEvent.target.result, 'text/xml');
+                        if (doc.querySelector('parsererror')) {
+                            throw new Error('Невалидный XML файл');
+                        }
+
+                        const importedItems = [];
+                        const types = [...doc.getElementsByTagName('type')];
+
+                        for (const typeNode of types) {
+                            const item = getItemTemplate();
+                            item.name = typeNode.getAttribute('name') || generateUniqueName('Unknown');
+
+                            const numberTags = ['nominal','lifetime','restock','min','quantmin','quantmax','cost'];
+                            for (const tag of numberTags) {
+                                const element = typeNode.getElementsByTagName(tag)[0];
+                                if (!element) continue;
+
+                                const fallback = tag.includes('quant') ? -1 : 0;
+                                item[tag] = normalizeNumber(element.textContent, fallback);
+                            }
+
+                            const flagsNode = typeNode.getElementsByTagName('flags')[0];
+                            if (flagsNode) {
+                                const flagNames = ['count_in_cargo','count_in_hoarder','count_in_map','count_in_player','crafted','deloot'];
+                                for (const flagName of flagNames) {
+                                    const value = normalizeNumber(flagsNode.getAttribute(flagName) ?? '0', 0);
+                                    item.flags[flagName] = value === 1 ? 1 : 0;
+                                }
+                            }
+
+                            const textFields = ['category','usage','value','tag'];
+                            for (const field of textFields) {
+                                const nodes = [...typeNode.getElementsByTagName(field)];
+                                item[field] = uniqueArray(
+                                    nodes.map(node => node.getAttribute('name')).filter(Boolean)
+                                );
+                            }
+
+                            importedItems.push(item);
+                        }
+
+                        state.items = importedItems;
+                        state.selectedItems.clear();
+                        state.currentSearchTerm = $('#searchInput').value.toLowerCase();
+                        saveStateToLocalStorage();
+                        renderTable();
+
+                        alert(`Загружено ${state.items.length} предметов`);
+                    } catch (error) {
+                        alert(`Ошибка: ${error.message}`);
+                        console.error(error);
+                    }
+                };
+
+                reader.readAsText(file);
+            });
+
+            input.click();
+        }
+
+        function handleTableChange(event) {
+            const target = event.target;
+
+            if (target.id === 'selectAllCheckbox') {
+                toggleSelectVisible();
+                return;
+            }
+
+            if (target.classList.contains('item-checkbox')) {
+                const index = Number.parseInt(target.dataset.index, 10);
+                toggleItemSelection(index);
+                return;
+            }
+
+            if (target.classList.contains('flag-checkbox')) {
+                const index = Number.parseInt(target.dataset.index, 10);
+                const flag = target.dataset.flag;
+                updateFlag(index, flag, target.checked);
+                return;
+            }
+
+            if (target.classList.contains('value-checkbox')) {
+                updateSelectedValuesDisplay(getSelectedValuesFromCheckboxes());
+            }
+        }
+
+        function handleTableInput(event) {
+            const target = event.target;
+
+            if (target.classList.contains('name-input')) {
+                const index = Number.parseInt(target.dataset.index, 10);
+                state.items[index].name = target.value;
+                updateRowValidation(index);
+                if (state.currentSearchTerm) applySearchFilter();
+            }
+
+            if (target.id === 'searchInput') {
+                filterItemsDebounced();
+            }
+        }
+
+        function handleTableBlur(event) {
+            const target = event.target;
+
+            if (target.classList.contains('name-input')) {
+                const index = Number.parseInt(target.dataset.index, 10);
+                const field = 'name';
+                const newValue = target.value;
+
+                if (!isValidFieldValue(field, newValue)) {
+                    const oldValue = getRememberedValidValue(index, field, state.items[index]?.name || 'NewItem');
+                    target.value = oldValue;
+                    state.items[index][field] = oldValue;
+                    showValidationTooltip(target, getFieldValidationMessage(field));
+                } else {
+                    state.items[index][field] = newValue;
+                    rememberValidValue(index, field, newValue);
+                }
+
+                validateField(target, index, field);
+                saveStateToLocalStorage();
+                return;
+            }
+
+            if (target.classList.contains('number-input')) {
+                const index = Number.parseInt(target.dataset.index, 10);
+                const field = target.dataset.field;
+                const rawValue = target.value;
+
+                if (!isValidFieldValue(field, rawValue)) {
+                    const fallback = field.includes('quant') ? -1 : 0;
+                    const oldValue = getRememberedValidValue(index, field, state.items[index]?.[field] ?? fallback);
+                    target.value = oldValue;
+                    state.items[index][field] = normalizeNumber(oldValue, fallback);
+                    showValidationTooltip(target, getFieldValidationMessage(field));
+                } else {
+                    const fallback = field.includes('quant') ? -1 : 0;
+                    const normalized = normalizeNumber(rawValue, fallback);
+                    state.items[index][field] = normalized;
+                    target.value = normalized;
+                    rememberValidValue(index, field, normalized);
+                }
+
+                validateField(target, index, field);
+                saveStateToLocalStorage();
+                return;
+            }
+
+            if (target.classList.contains('text-input')) {
+                const index = Number.parseInt(target.dataset.index, 10);
+                const field = target.dataset.field;
+                updateTextField(index, field, target.value);
+            }
+        }
+
+        function handleDocumentClick(event) {
+            const target = event.target;
+
+            if (!target.closest('#validationTooltip')) {
+                $('#validationTooltip').style.display = 'none';
+            }
+
+            if (target.id === 'clearSearchBtn') {
+                clearSearch();
+                return;
+            }
+
+            if (target.id === 'loadDefinitionsBtn') {
+                loadDefinitionsFromFile();
+                return;
+            }
+
+            if (target.id === 'applyMassEditBtn') {
+                applyMassEdit();
+                return;
+            }
+
+            if (target.id === 'deleteSelectedBtn') {
+                deleteSelected();
+                return;
+            }
+
+            if (target.id === 'addItemBtn') {
+                addItem();
+                return;
+            }
+
+            if (target.id === 'clearAllBtn') {
+                clearAll();
+                return;
+            }
+
+            if (target.id === 'exportBtn') {
+                exportXML();
+                return;
+            }
+
+            if (target.id === 'importBtn') {
+                importXML();
+                return;
+            }
+
+            if (target.classList.contains('open-modal-btn')) {
+                const index = Number.parseInt(target.dataset.index, 10);
+                const field = target.dataset.field;
+                openModal(index, field);
+                return;
+            }
+
+            if (target.id === 'modalCloseBtn' || target.id === 'cancelModalBtn') {
+                closeModal();
+                return;
+            }
+
+            if (target.id === 'clearAllSelectionsBtn') {
+                clearAllSelections();
+                return;
+            }
+
+            if (target.id === 'addCustomValueBtn') {
+                addCustomValue();
+                return;
+            }
+
+            if (target.id === 'saveModalBtn') {
+                saveModalValues();
+                return;
+            }
+
+            if (target.id === 'valueModal') {
+                closeModal();
+            }
+        }
+
+        function getScrollbarWidth(element) {
+            return element.offsetWidth - element.clientWidth;
+        }
+
+        function syncTableHeaderScrollbarSpacing() {
+            const tableBody = $('#tableBody');
+            const tableHeader = $('#tableHeader');
+            if (!tableBody || !tableHeader) return;
+
+            const scrollbarWidth = getScrollbarWidth(tableBody);
+            tableHeader.style.paddingRight = `${scrollbarWidth}px`;
+        }
+
+        function setupScrollSync() {
+            const tableBody = $('#tableBody');
+            const tableHeader = $('#tableHeader');
+
+            if (!tableBody || !tableHeader) return;
+
+            const syncScroll = () => {
+                tableHeader.scrollLeft = tableBody.scrollLeft;
+            };
+
+            tableBody.addEventListener('scroll', () => {
+                if (state.ticking) return;
+
+                state.rafId = requestAnimationFrame(() => {
+                    syncScroll();
+                    state.ticking = false;
+                });
+
+                state.ticking = true;
+            });
+
+            const syncAll = () => {
+                syncScroll();
+                syncTableHeaderScrollbarSpacing();
+            };
+
+            window.addEventListener('resize', syncAll);
+
+            syncAll();
+        }
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', event => {
+                const modalActive = $('#valueModal').classList.contains('active');
+
+                if (event.ctrlKey && event.key.toLowerCase() === 's') {
+                    event.preventDefault();
+                    exportXML();
+                    return;
+                }
+
+                if (event.key === 'Escape' && modalActive) {
+                    closeModal();
+                    return;
+                }
+
+                if (event.key === 'Enter' && modalActive) {
+                    if (event.target.id === 'modalCustomValue') {
+                        event.preventDefault();
+                        addCustomValue();
+                        return;
+                    }
+
+                    if (event.target.tagName !== 'BUTTON') {
+                        event.preventDefault();
+                        saveModalValues();
+                        return;
+                    }
+                }
+
+                if (
+                    event.key === 'Delete' &&
+                    !event.target.matches('input,textarea,select') &&
+                    state.selectedItems.size > 0
+                ) {
+                    deleteSelected();
+                }
+            });
+        }
+
+        function bindEvents() {
+            document.addEventListener('click', handleDocumentClick);
+            document.addEventListener('input', handleTableInput);
+            document.addEventListener('change', handleTableChange);
+            document.addEventListener('focusout', handleTableBlur);
+        }
+
+        function init() {
+            loadStateFromLocalStorage();
+            renderHeader();
+            renderTable();
+            setupScrollSync();
+            setupKeyboardShortcuts();
+            bindEvents();
+            updateClearButton();
+
+            if ($('#searchInput').value) {
+                state.currentSearchTerm = $('#searchInput').value.toLowerCase();
+                applySearchFilter();
+            }
+        }
+
+        window.addEventListener('load', init);
+
+        window.addEventListener('beforeunload', () => {
+            if (state.rafId) cancelAnimationFrame(state.rafId);
+            saveStateToLocalStorage();
+        });
+    </script>
+</body>
+</html>
