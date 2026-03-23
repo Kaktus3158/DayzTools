@@ -274,10 +274,8 @@
 
         .table-header {
             overflow: hidden;
-            border-bottom: 1px solid #bdc3c7;
-            background: #ecf0f1;
             flex-shrink: 0;
-            padding-right: 17px;
+            background: white;
         }
 
         .table-body {
@@ -292,8 +290,6 @@
             table-layout: fixed;
             width: 100%;
             min-width: 2000px;
-            border-left: 1px solid #c7d0d6;
-            border-top: 1px solid #c7d0d6;
         }
 
         th {
@@ -303,20 +299,25 @@
             font-weight: 600;
             white-space: nowrap;
             text-align: center;
-            border-right: 1px solid #b8c4cc;
-            border-bottom: 1px solid #b8c4cc;
+            border-right: 1px solid #c7d0d6;
+            border-bottom: 1px solid #c7d0d6;
             font-size: 11px;
             text-transform: uppercase;
         }
 
         td {
             padding: 4px 2px;
-            border-bottom: 1px solid #d6dde2;
             border-right: 1px solid #c7d0d6;
+            border-bottom: 1px solid #d6dde2;
             text-align: center;
             overflow: hidden;
             background: white;
             color: #2c3e50;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: none;
         }
 
         tr:hover td {
@@ -384,10 +385,7 @@
             margin: 0;
         }
 
-        .text-input {
-            text-align: left;
-        }
-
+        .text-input,
         .name-input {
             text-align: left;
         }
@@ -666,8 +664,16 @@
                 <div class="editor-card">
                     <div class="editor-section-title">Список предметов</div>
                     <div class="table-container">
-                        <div class="table-header" id="tableHeader"><table><thead id="tableHeaderRow"></thead></table></div>
-                        <div class="table-body" id="tableBody"><table><tbody id="tableBodyRows"></tbody></table></div>
+                        <div class="table-header" id="tableHeader">
+                            <table>
+                                <thead id="tableHeaderRow"></thead>
+                            </table>
+                        </div>
+                        <div class="table-body" id="tableBody">
+                            <table>
+                                <tbody id="tableBodyRows"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1041,7 +1047,6 @@
 
         function renderHeader() {
             const thead = $('#tableHeaderRow');
-
             const html = `
                 <tr>
                     ${columns.map(column => `
@@ -1053,7 +1058,6 @@
                     `).join('')}
                 </tr>
             `;
-
             thead.innerHTML = html;
         }
 
@@ -1164,22 +1168,6 @@
             }
 
             return `<td ${widthStyle}></td>`;
-        }
-
-        function updateItemField(index, field, value) {
-            if (!state.items[index]) return;
-            state.items[index][field] = value;
-            saveStateToLocalStorage();
-        }
-
-        function updateNumberField(index, field, value) {
-            if (!state.items[index]) return;
-
-            const fallback = field.includes('quant') ? -1 : 0;
-            state.items[index][field] = normalizeNumber(value, fallback);
-
-            saveStateToLocalStorage();
-            updateRowValidation(index);
         }
 
         function updateFlag(index, flag, checked) {
@@ -1361,7 +1349,6 @@
 
                     const fallback = field.includes('quant') ? -1 : 0;
                     const currentValue = state.items[index][field];
-
                     state.items[index][field] = applyNumericOperation(currentValue, expression, fallback);
                 }
             });
@@ -1595,7 +1582,6 @@
                         };
 
                         saveStateToLocalStorage();
-
                         alert(`Загружено ${categories.length + tags.length + usage.length + value.length} определений`);
                     } catch (error) {
                         alert(`Ошибка: ${error.message}`);
@@ -1654,7 +1640,6 @@
             });
 
             xml += '</types>';
-
             downloadTextFile(xml, 'types.xml', 'text/xml');
         }
 
