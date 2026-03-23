@@ -11,33 +11,55 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(17, 24, 39, 0.78);
+            --panel-solid: #111827;
+            --card: rgba(17, 24, 39, 0.62);
+            --card-solid: #0f172a;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --muted-2: #6b7280;
+            --border: rgba(148, 163, 184, 0.22);
+            --border-2: rgba(148, 163, 184, 0.35);
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            --accent: #2980b9;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background: #2c3e50;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(41, 128, 185, 0.35), transparent 38%),
+                radial-gradient(circle at 90% 20%, rgba(39, 174, 96, 0.22), transparent 35%),
+                var(--bg);
             padding: 20px;
             min-height: 100vh;
             overflow-x: hidden;
+            color: var(--text);
         }
 
         .container {
             max-width: 100%;
             min-height: calc(100vh - 40px);
             margin: 0 auto;
-            background: #ffffff;
+            background: var(--panel);
             border-radius: 6px;
             padding: 20px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
         }
 
         .header {
-            background: #34495e;
-            color: white;
+            background: rgba(17, 24, 39, 0.88);
+            color: var(--text);
             padding: 15px 18px;
             margin-bottom: 20px;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid var(--border);
         }
 
         .header h2 {
@@ -57,19 +79,20 @@
 
         .sidebar {
             width: 300px;
-            background: #ecf0f1;
+            background: rgba(17, 24, 39, 0.66);
             padding: 15px;
             border-radius: 5px;
             flex-shrink: 0;
-            border: 1px solid #d5dce0;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
         }
 
         .sidebar h3,
         .editor-section-title {
-            color: #2c3e50;
+            color: var(--text);
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #34495e;
+            border-bottom: 2px solid rgba(41, 128, 185, 0.65);
             font-size: 16px;
             font-weight: 700;
         }
@@ -77,13 +100,13 @@
         .editor {
             flex: 1;
             min-width: 0;
-            background: #ffffff;
+            background: transparent;
             border-radius: 5px;
         }
 
         .editor-card {
-            background: white;
-            border: 1px solid #d5dce0;
+            background: rgba(17, 24, 39, 0.55);
+            border: 1px solid var(--border);
             border-radius: 5px;
             padding: 15px;
         }
@@ -97,7 +120,7 @@
             font-size: 12px;
             font-weight: bold;
             margin-bottom: 4px;
-            color: #2c3e50;
+            color: var(--text);
         }
 
         .form-group input,
@@ -105,20 +128,20 @@
         .form-group textarea {
             width: 100%;
             padding: 6px 8px;
-            border: 1px solid #bdc3c7;
+            border: 1px solid var(--border);
             border-radius: 3px;
             font-size: 13px;
             font-family: Arial, sans-serif;
-            background: white;
-            color: #2c3e50;
+            background: rgba(2, 6, 23, 0.35);
+            color: var(--text);
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.12);
+            border-color: rgba(41, 128, 185, 0.9);
+            box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.20);
         }
 
         .form-group textarea {
@@ -147,7 +170,7 @@
         input[type="checkbox"] {
             width: 16px;
             height: 16px;
-            accent-color: #34495e;
+            accent-color: rgba(41, 128, 185, 0.9);
             cursor: pointer;
         }
 
@@ -212,11 +235,11 @@
         }
 
         .btn-gray {
-            background: #7f8c8d;
+            background: rgba(148, 163, 184, 0.22);
         }
 
         .btn-gray:hover {
-            background: #707b7c;
+            background: rgba(148, 163, 184, 0.35);
         }
 
         .btn-block {
@@ -227,7 +250,7 @@
             display: flex;
             gap: 5px;
             margin-bottom: 15px;
-            border-bottom: 1px solid #d0d7db;
+            border-bottom: 1px solid var(--border);
             padding-bottom: 10px;
         }
 
@@ -243,13 +266,14 @@
         }
 
         .tab-btn:hover {
-            background: #ecf0f1;
-            color: #2c3e50;
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text);
         }
 
         .tab-btn.active {
-            background: #34495e;
+            background: rgba(41, 128, 185, 0.75);
             color: white;
+            border: 1px solid rgba(41, 128, 185, 0.9);
         }
 
         .tab-pane {
@@ -263,25 +287,25 @@
         .card-container {
             max-height: 500px;
             overflow-y: auto;
-            border: 1px solid #bdc3c7;
+            border: 1px solid var(--border);
             border-radius: 4px;
             padding: 10px;
-            background: white;
+            background: rgba(2, 6, 23, 0.22);
             margin-bottom: 12px;
         }
 
         .ingredient-card,
         .case-card {
-            background: #ecf0f1;
+            background: rgba(17, 24, 39, 0.55);
             border-radius: 4px;
             padding: 12px;
             margin-bottom: 12px;
-            border: 1px solid #d0d7db;
+            border: 1px solid var(--border);
         }
 
         .ingredient-card h4,
         .result-item h5 {
-            color: #2c3e50;
+            color: var(--text);
             margin-bottom: 10px;
             font-size: 14px;
             display: flex;
@@ -291,7 +315,7 @@
         }
 
         .case-header {
-            background: #34495e;
+            background: rgba(17, 24, 39, 0.88);
             color: white;
             padding: 8px 10px;
             border-radius: 3px;
@@ -301,6 +325,7 @@
             align-items: center;
             font-size: 13px;
             gap: 10px;
+            border: 1px solid var(--border);
         }
 
         .mini-remove-btn {
@@ -320,20 +345,20 @@
         }
 
         .result-item {
-            background: white;
+            background: rgba(2, 6, 23, 0.22);
             border-radius: 4px;
             padding: 12px;
             margin-bottom: 10px;
-            border: 1px solid #d0d7db;
+            border: 1px solid var(--border);
         }
 
         .preview-title {
             font-size: 16px;
             font-weight: bold;
-            color: #2c3e50;
+            color: var(--text);
             margin-bottom: 15px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #34495e;
+            border-bottom: 2px solid rgba(41, 128, 185, 0.65);
         }
 
         .preview-block {
@@ -341,14 +366,14 @@
         }
 
         .preview-block h4 {
-            color: #2c3e50;
+            color: var(--text);
             margin-bottom: 8px;
             font-size: 14px;
         }
 
         .preview-ingredient,
         .preview-case {
-            background: #ecf0f1;
+            background: rgba(17, 24, 39, 0.55);
             border-radius: 4px;
             padding: 10px;
             margin-bottom: 8px;
@@ -367,11 +392,12 @@
         }
 
         .preview-class-item {
-            background: white;
+            background: rgba(2, 6, 23, 0.35);
             padding: 2px 8px;
             border-radius: 3px;
             font-size: 11px;
-            border: 1px solid #bdc3c7;
+            border: 1px solid var(--border);
+            color: var(--text);
         }
 
         .preview-param-grid {
@@ -387,12 +413,13 @@
         }
 
         .preview-result-item {
-            background: white;
+            background: rgba(2, 6, 23, 0.35);
             padding: 6px 8px;
             margin-bottom: 4px;
             border-radius: 3px;
             font-size: 11px;
-            border: 1px solid #d7dbdd;
+            border: 1px solid var(--border);
+            color: var(--text);
         }
 
         .preview-badge {
@@ -410,18 +437,19 @@
             gap: 10px;
             margin-top: 10px;
             padding-top: 10px;
-            border-top: 1px solid #bdc3c7;
+            border-top: 1px solid var(--border);
         }
 
         .preview-stats .stat-item {
-            background: #ecf0f1;
+            background: rgba(17, 24, 39, 0.55);
             padding: 5px 10px;
             border-radius: 3px;
             font-size: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
         }
 
         .code-output {
-            background: #2c3e50;
+            background: rgba(2, 6, 23, 0.55);
             color: white;
             padding: 15px;
             border-radius: 4px;
@@ -432,20 +460,22 @@
             overflow-y: auto;
             font-size: 12px;
             line-height: 1.4;
+            border: 1px solid rgba(148, 163, 184, 0.18);
         }
 
         .registration-code {
-            background: #2c3e50;
+            background: rgba(2, 6, 23, 0.55);
             color: white;
             padding: 10px;
             border-radius: 4px;
             margin-top: 10px;
             font-family: monospace;
             font-size: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
         }
 
         .comment {
-            color: #95a5a6;
+            color: var(--muted-2);
         }
 
         @media (max-width: 768px) {
@@ -468,6 +498,178 @@
             .header-spacer {
                 display: none;
             }
+        }
+
+        /* Light theme (restore original look) */
+        body {
+            background: #2c3e50;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            border: none;
+            backdrop-filter: none;
+        }
+
+        .header {
+            background: #34495e;
+            color: white;
+            border: none;
+        }
+
+        .sidebar {
+            background: #ecf0f1;
+            border: 1px solid #d5dce0;
+            backdrop-filter: none;
+        }
+
+        .sidebar h3,
+        .editor-section-title {
+            color: #2c3e50;
+            border-bottom: 2px solid #34495e;
+        }
+
+        .editor {
+            background: #ffffff;
+        }
+
+        .editor-card {
+            background: white;
+            border: 1px solid #d5dce0;
+        }
+
+        .form-group label {
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border: 1px solid #bdc3c7;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.12);
+        }
+
+        .tab-buttons {
+            border-bottom: 1px solid #d0d7db;
+        }
+
+        .tab-btn {
+            color: #7f8c8d;
+        }
+
+        .tab-btn:hover {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .tab-btn.active {
+            background: #34495e;
+            color: white;
+            border: none;
+        }
+
+        .card-container {
+            border: 1px solid #bdc3c7;
+            background: white;
+        }
+
+        .ingredient-card,
+        .case-card {
+            background: #ecf0f1;
+            border: 1px solid #d0d7db;
+        }
+
+        .ingredient-card h4,
+        .result-item h5 {
+            color: #2c3e50;
+        }
+
+        .case-header {
+            background: #34495e;
+            color: white;
+            border: none;
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #d0d7db;
+        }
+
+        .preview-title {
+            color: #2c3e50;
+            border-bottom: 2px solid #34495e;
+        }
+
+        .preview-block h4 {
+            color: #2c3e50;
+        }
+
+        .preview-ingredient,
+        .preview-case {
+            background: #ecf0f1;
+            border-left-color: #2980b9;
+        }
+
+        .preview-case {
+            border-left-color: #f39c12;
+        }
+
+        .preview-class-item {
+            background: white;
+            border: 1px solid #bdc3c7;
+            color: #2c3e50;
+        }
+
+        .preview-result-item {
+            background: white;
+            border: 1px solid #d7dbdd;
+            color: #2c3e50;
+        }
+
+        .preview-stats {
+            border-top: 1px solid #bdc3c7;
+        }
+
+        .preview-stats .stat-item {
+            background: #ecf0f1;
+        }
+
+        .code-output,
+        .registration-code {
+            background: #2c3e50;
+            color: white;
+            border: none;
+        }
+
+        .comment {
+            color: #95a5a6;
+        }
+
+        .btn-gray {
+            background: #7f8c8d;
+        }
+
+        .btn-gray:hover {
+            background: #707b7c;
+        }
+
+        input[type="checkbox"] {
+            accent-color: #34495e;
+        }
+
+        .preview-param strong {
+            color: #2980b9;
         }
     </style>
 </head>
@@ -1037,9 +1239,9 @@
                     code += `\t\t\t\tm_ResultSetQuantity[${resultIndex}] = ${result.setQuantity};\n`;
                     code += `\t\t\t\tm_ResultSetHealth[${resultIndex}] = ${result.setHealth};\n`;
                     code += `\t\t\t\tm_ResultInheritsHealth[${resultIndex}] = ${result.inheritsHealth};\n`;
-                    code += `\t\t\t\tm_ResultInheritsColor[${resultIndex}] = ${result.inheritsColor || -1};\n`;
+                    code += `\t\t\t\tm_ResultInheritsColor[${resultIndex}] = ${result.inheritsColor ?? -1};\n`;
                     code += `\t\t\t\tm_ResultToInventory[${resultIndex}] = ${result.toInventory};\n`;
-                    code += `\t\t\t\tm_ResultReplacesIngredient[${resultIndex}] = ${result.replacesIngredient || -1};\n\n`;
+                    code += `\t\t\t\tm_ResultReplacesIngredient[${resultIndex}] = ${result.replacesIngredient ?? -1};\n\n`;
                 });
 
                 code += `\t\t\t\tbreak;\n\t\t\t}\n\n`;
@@ -1176,17 +1378,49 @@
                         });
 
                         state.cases = [];
-                        const caseMatches = code.match(/case\s+\d+:\s*{([^}]+)}/g);
+                        const caseMatches = [...code.matchAll(/case\s+(\d+)\s*:\s*{\s*([\s\S]*?)\s*break;\s*}/g)];
 
-                        if (caseMatches) {
-                            caseMatches.forEach(block => {
-                                const caseResults = [];
-                                const resultMatches = [...block.matchAll(/AddResult\(\"([^\"]+)\"\)/g)];
+                        const parseResultInt = (source, index, field) => {
+                            const m = source.match(new RegExp(`m_${field}\\[${index}\\]\\s*=\\s*(-?\\d+)`));
+                            return m ? parseInt(m[1], 10) : null;
+                        };
 
-                                resultMatches.forEach(match => {
+                        const parseResultBool = (source, index, field) => {
+                            const m = source.match(new RegExp(`m_${field}\\[${index}\\]\\s*=\\s*(true|false)`));
+                            return m ? m[1] === 'true' : null;
+                        };
+
+                        if (caseMatches.length) {
+                            caseMatches.forEach((caseMatch) => {
+                                const caseBody = caseMatch[2] || '';
+                                const typeMatches = [...caseBody.matchAll(/AddResult\("([^"]*)"\)/g)].map(m => m[1]);
+
+                                const caseResults = typeMatches.map((type, resultIndex) => {
                                     const result = getResultTemplate();
-                                    result.type = match[1];
-                                    caseResults.push(result);
+                                    result.type = type;
+
+                                    const fullQty = parseResultBool(caseBody, resultIndex, 'ResultSetFullQuantity');
+                                    if (fullQty !== null) result.setFullQuantity = fullQty;
+
+                                    const q = parseResultInt(caseBody, resultIndex, 'ResultSetQuantity');
+                                    if (q !== null) result.setQuantity = q;
+
+                                    const h = parseResultInt(caseBody, resultIndex, 'ResultSetHealth');
+                                    if (h !== null) result.setHealth = h;
+
+                                    const ih = parseResultInt(caseBody, resultIndex, 'ResultInheritsHealth');
+                                    if (ih !== null) result.inheritsHealth = ih;
+
+                                    const ic = parseResultInt(caseBody, resultIndex, 'ResultInheritsColor');
+                                    if (ic !== null) result.inheritsColor = ic;
+
+                                    const inv = parseResultInt(caseBody, resultIndex, 'ResultToInventory');
+                                    if (inv !== null) result.toInventory = inv;
+
+                                    const rep = parseResultInt(caseBody, resultIndex, 'ResultReplacesIngredient');
+                                    if (rep !== null) result.replacesIngredient = rep;
+
+                                    return result;
                                 });
 
                                 if (caseResults.length) {
@@ -1194,18 +1428,45 @@
                                 }
                             });
                         } else {
-                            const spawnResultMatch = code.match(/void\s+Spawn_Result\(\)\s*{([^}]+)}/);
-                            if (spawnResultMatch) {
-                                const spawnContent = spawnResultMatch[1];
-                                const resultMatches = [...spawnContent.matchAll(/AddResult\(\"([^\"]+)\"\)/g)];
+                            // Fallback: если код не содержит ожидаемого формата `case N: { ... }`,
+                            // пытаемся вытащить содержимое Spawn_Result целиком и считаем все результаты за один вариант.
+                            const spawnResultMatch =
+                                code.match(/void\s+Spawn_Result\(\)\s*{\s*([\s\S]*?)\n\t\t}\n\t}\n};/) ||
+                                code.match(/void\s+Spawn_Result\(\)\s*{([\s\S]*?)}/);
 
-                                if (resultMatches.length) {
-                                    const caseResults = [];
-                                    resultMatches.forEach(match => {
+                            if (spawnResultMatch) {
+                                const spawnContent = spawnResultMatch[1] || '';
+                                const typeMatches = [...spawnContent.matchAll(/AddResult\("([^"]*)"\)/g)].map(m => m[1]);
+
+                                if (typeMatches.length) {
+                                    const caseResults = typeMatches.map((type, resultIndex) => {
                                         const result = getResultTemplate();
-                                        result.type = match[1];
-                                        caseResults.push(result);
+                                        result.type = type;
+
+                                        const fullQty = parseResultBool(spawnContent, resultIndex, 'ResultSetFullQuantity');
+                                        if (fullQty !== null) result.setFullQuantity = fullQty;
+
+                                        const q = parseResultInt(spawnContent, resultIndex, 'ResultSetQuantity');
+                                        if (q !== null) result.setQuantity = q;
+
+                                        const h = parseResultInt(spawnContent, resultIndex, 'ResultSetHealth');
+                                        if (h !== null) result.setHealth = h;
+
+                                        const ih = parseResultInt(spawnContent, resultIndex, 'ResultInheritsHealth');
+                                        if (ih !== null) result.inheritsHealth = ih;
+
+                                        const ic = parseResultInt(spawnContent, resultIndex, 'ResultInheritsColor');
+                                        if (ic !== null) result.inheritsColor = ic;
+
+                                        const inv = parseResultInt(spawnContent, resultIndex, 'ResultToInventory');
+                                        if (inv !== null) result.toInventory = inv;
+
+                                        const rep = parseResultInt(spawnContent, resultIndex, 'ResultReplacesIngredient');
+                                        if (rep !== null) result.replacesIngredient = rep;
+
+                                        return result;
                                     });
+
                                     state.cases.push({ results: caseResults });
                                 }
                             }
