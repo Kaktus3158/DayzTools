@@ -9,8 +9,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            scrollbar-width: thin;
-            scrollbar-color: #5f6b73 #dfe6e9;
         }
 
         body {
@@ -19,30 +17,6 @@
             padding: 20px;
             min-height: 100vh;
             overflow: hidden;
-        }
-
-        ::-webkit-scrollbar {
-            width: 14px;
-            height: 14px;
-            background: #dfe6e9;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #5f6b73;
-            border-radius: 8px;
-            border: 2px solid #dfe6e9;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4d5961;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #dfe6e9;
-        }
-
-        ::-webkit-scrollbar-corner {
-            background: #dfe6e9;
         }
 
         .container {
@@ -303,8 +277,7 @@
             border-bottom: 1px solid #bdc3c7;
             background: #ecf0f1;
             flex-shrink: 0;
-            padding-right: 38px;
-            margin-right: -25px;
+            padding-right: 17px;
         }
 
         .table-body {
@@ -772,7 +745,7 @@
             { id:'col15', title:'category', type:'text', field:'category', width:180 },
             { id:'col16', title:'usage', type:'text', field:'usage', width:180 },
             { id:'col17', title:'value', type:'text', field:'value', width:180 },
-            { id:'col18', title:'tag', type:'text', field:'tag', width:170 }
+            { id:'col18', title:'tag', type:'text', field:'tag', width:180 }
         ];
 
         const $ = (selector) => document.querySelector(selector);
