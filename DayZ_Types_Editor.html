@@ -105,883 +105,935 @@
 </div>
 <div class="validation-tooltip" id="validationTooltip" style="display:none"></div>
 
-<script>
-    (function(){
-        "use strict";
+<script type="module">
+    // ==================== Импорт Tauri API (будет работать только в Tauri-окружении) ====================
+    // В обычном браузере эти импорты вызовут ошибку, но мы предусмотрим fallback
+    let openDialog, saveDialog, readTextFile, writeTextFile;
+    try {
+        const tauriApi = await import('@tauri-apps/api');
+        openDialog = tauriApi.dialog.open;
+        saveDialog = tauriApi.dialog.save;
+        readTextFile = tauriApi.fs.readTextFile;
+        writeTextFile = tauriApi.fs.writeTextFile;
+    } catch (e) {
+        // Если не в Tauri, используем заглушки с браузерными методами
+        console.warn('Tauri API недоступно, используются браузерные методы.');
+        openDialog = null;
+        saveDialog = null;
+        readTextFile = null;
+        writeTextFile = null;
+    }
 
-        const STORAGE_KEY = 'dayzTypesEditorData_v2';
-        const DEFINITIONS_STORAGE_KEY = 'dayzTypesEditorDefinitions_v1';
-        const MAX_HISTORY = 50;
+    // ==================== Глобальные переменные и состояние ====================
+    const STORAGE_KEY = 'dayzTypesEditorData_v2';
+    const DEFINITIONS_STORAGE_KEY = 'dayzTypesEditorDefinitions_v1';
+    const MAX_HISTORY = 50;
 
-        const state = {
-            items: [],
-            selectedItems: new Set(),
-            currentSearchTerm: '',
-            lastValidValues: {},
-            definitions: {
-                categories: [],
-                tags: [],
-                usage: [],
-                value: []
-            },
-            currentModal: {
-                index: -1,
-                field: '',
-                inputElement: null,
-                allOptions: []
-            },
-            searchTimer: null,
-            rafId: null,
-            ticking: false
-        };
+    const state = {
+        items: [],
+        selectedItems: new Set(),
+        currentSearchTerm: '',
+        lastValidValues: {},
+        definitions: {
+            categories: [],
+            tags: [],
+            usage: [],
+            value: []
+        },
+        currentModal: {
+            index: -1,
+            field: '',
+            inputElement: null,
+            allOptions: []
+        },
+        searchTimer: null,
+        rafId: null,
+        ticking: false
+    };
 
-        let undoStack = [];
-        let redoStack = [];
+    let undoStack = [];
+    let redoStack = [];
 
-        // Сохранение снимка состояния в историю
-        function pushHistory() {
-            const snapshot = state.items.map(item => ({
-                ...item,
-                flags: { ...item.flags },
-                category: [...(item.category || [])],
-                usage: [...(item.usage || [])],
-                value: [...(item.value || [])],
-                tag: [...(item.tag || [])]
-            }));
-            undoStack.push(snapshot);
-            if (undoStack.length > MAX_HISTORY) undoStack.shift();
-            redoStack = [];
-            updateUndoRedoButtons();
+    const columns = [
+        { id:'col0', title:'', type:'checkbox', width:40 },
+        { id:'col1', title:'Имя', type:'name', field:'name', width:250 },
+        { id:'col2', title:'nominal', type:'number', field:'nominal', width:80 },
+        { id:'col3', title:'lifetime', type:'number', field:'lifetime', width:80 },
+        { id:'col4', title:'restock', type:'number', field:'restock', width:80 },
+        { id:'col5', title:'min', type:'number', field:'min', width:80 },
+        { id:'col6', title:'quantmin', type:'number', field:'quantmin', width:80 },
+        { id:'col7', title:'quantmax', type:'number', field:'quantmax', width:80 },
+        { id:'col8', title:'cost', type:'number', field:'cost', width:80 },
+        { id:'col9', title:'cargo', type:'flag', flag:'count_in_cargo', width:60 },
+        { id:'col10', title:'hoarder', type:'flag', flag:'count_in_hoarder', width:64 },
+        { id:'col11', title:'map', type:'flag', flag:'count_in_map', width:60 },
+        { id:'col12', title:'player', type:'flag', flag:'count_in_player', width:60 },
+        { id:'col13', title:'crafted', type:'flag', flag:'crafted', width:60 },
+        { id:'col14', title:'deloot', type:'flag', flag:'deloot', width:60 },
+        { id:'col15', title:'category', type:'text', field:'category', width:180 },
+        { id:'col16', title:'usage', type:'text', field:'usage', width:180 },
+        { id:'col17', title:'value', type:'text', field:'value', width:180 },
+        { id:'col18', title:'tag', type:'text', field:'tag', width:180 }
+    ];
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    // ==================== Вспомогательные функции ====================
+    const escapeHtml = (str) => String(str ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    const escapeXmlAttr = (str) => String(str ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+    const uniqueArray = (arr) => [...new Set((arr || []).filter(Boolean))];
+    const parseSpaceList = (text) => uniqueArray(String(text ?? '').split(/\s+/).map(v => v.trim()).filter(Boolean));
+    const arrayToSpaceList = (arr) => (arr && arr.length ? arr.join(' ') : '');
+
+    const normalizeNumber = (value, fallback = 0) => {
+        const parsed = Number.parseInt(value, 10);
+        return Number.isNaN(parsed) ? fallback : parsed;
+    };
+
+    const applyNumericOperation = (currentValue, expression, fallback = 0) => {
+        const raw = String(expression ?? '').trim();
+        if (!raw) return currentValue;
+        const current = normalizeNumber(currentValue, fallback);
+        if (/^\d+$/.test(raw)) return normalizeNumber(raw, fallback);
+        const percentMatch = raw.match(/^([+-])\s*(\d+(?:\.\d+)?)%$/);
+        if (percentMatch) {
+            const operator = percentMatch[1];
+            const percent = Number.parseFloat(percentMatch[2]);
+            if (Number.isNaN(percent)) return current;
+            const delta = current * (percent / 100);
+            return Math.trunc(operator === '+' ? current + delta : current - delta);
         }
+        const operator = raw.charAt(0);
+        const operand = Number.parseFloat(raw.slice(1).trim());
+        if (Number.isNaN(operand)) return current;
+        switch (operator) {
+            case '+': return Math.trunc(current + operand);
+            case '-': return Math.trunc(current - operand);
+            case '*': return Math.trunc(current * operand);
+            case '/': return operand === 0 ? current : Math.trunc(current / operand);
+            default: return current;
+        }
+    };
 
-        function restoreStateFromSnapshot(snapshot) {
-            state.items = snapshot.map(item => ({
-                ...item,
-                flags: { ...item.flags },
-                category: [...(item.category || [])],
-                usage: [...(item.usage || [])],
-                value: [...(item.value || [])],
-                tag: [...(item.tag || [])]
-            }));
+    const getItemTemplate = () => ({
+        id: crypto?.randomUUID ? crypto.randomUUID() : `item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        name: generateUniqueName('NewItem'),
+        nominal: 10,
+        lifetime: 14400,
+        restock: 0,
+        min: 5,
+        quantmin: -1,
+        quantmax: -1,
+        cost: 100,
+        flags: {
+            count_in_cargo: 0,
+            count_in_hoarder: 0,
+            count_in_map: 1,
+            count_in_player: 0,
+            crafted: 0,
+            deloot: 0
+        },
+        category: [],
+        usage: [],
+        value: [],
+        tag: []
+    });
+
+    function generateUniqueName(base) {
+        const existing = new Set(state.items.map(item => String(item.name || '').trim()));
+        if (!existing.has(base)) return base;
+        let counter = 1;
+        while (existing.has(`${base}_${counter}`)) counter++;
+        return `${base}_${counter}`;
+    }
+
+    // ==================== История (Undo/Redo) ====================
+    function pushHistory() {
+        const snapshot = state.items.map(item => ({
+            ...item,
+            flags: { ...item.flags },
+            category: [...(item.category || [])],
+            usage: [...(item.usage || [])],
+            value: [...(item.value || [])],
+            tag: [...(item.tag || [])]
+        }));
+        undoStack.push(snapshot);
+        if (undoStack.length > MAX_HISTORY) undoStack.shift();
+        redoStack = [];
+        updateUndoRedoButtons();
+    }
+
+    function restoreStateFromSnapshot(snapshot) {
+        state.items = snapshot.map(item => ({
+            ...item,
+            flags: { ...item.flags },
+            category: [...(item.category || [])],
+            usage: [...(item.usage || [])],
+            value: [...(item.value || [])],
+            tag: [...(item.tag || [])]
+        }));
+        state.selectedItems.clear();
+        state.currentSearchTerm = $('#searchInput').value.toLowerCase();
+        saveStateToLocalStorage();
+        renderTable();
+        updateUndoRedoButtons();
+    }
+
+    function undo() {
+        if (undoStack.length === 0) return;
+        const currentSnapshot = state.items.map(item => ({
+            ...item,
+            flags: { ...item.flags },
+            category: [...(item.category || [])],
+            usage: [...(item.usage || [])],
+            value: [...(item.value || [])],
+            tag: [...(item.tag || [])]
+        }));
+        redoStack.push(currentSnapshot);
+        const prevSnapshot = undoStack.pop();
+        restoreStateFromSnapshot(prevSnapshot);
+    }
+
+    function redo() {
+        if (redoStack.length === 0) return;
+        const currentSnapshot = state.items.map(item => ({
+            ...item,
+            flags: { ...item.flags },
+            category: [...(item.category || [])],
+            usage: [...(item.usage || [])],
+            value: [...(item.value || [])],
+            tag: [...(item.tag || [])]
+        }));
+        undoStack.push(currentSnapshot);
+        const nextSnapshot = redoStack.pop();
+        restoreStateFromSnapshot(nextSnapshot);
+    }
+
+    function updateUndoRedoButtons() {
+        const undoBtn = $('#undoBtn');
+        const redoBtn = $('#redoBtn');
+        if (undoBtn) undoBtn.disabled = undoStack.length === 0;
+        if (redoBtn) redoBtn.disabled = redoStack.length === 0;
+    }
+
+    // ==================== Валидация ====================
+    function getFieldKey(index, field) { return `${index}:${field}`; }
+    function rememberValidValue(index, field, value) { state.lastValidValues[getFieldKey(index, field)] = value; }
+    function getRememberedValidValue(index, field, fallback = '') {
+        const key = getFieldKey(index, field);
+        return key in state.lastValidValues ? state.lastValidValues[key] : fallback;
+    }
+
+    function isValidFieldValue(field, value) {
+        const raw = String(value ?? '').trim();
+        if (field === 'name') return raw !== '';
+        const num = Number.parseInt(raw, 10);
+        if (Number.isNaN(num)) return false;
+        if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) return num >= 0;
+        if (['quantmin', 'quantmax'].includes(field)) return num === -1 || num >= 0;
+        return true;
+    }
+
+    function getFieldValidationMessage(field) {
+        if (field === 'name') return 'Имя не может быть пустым';
+        if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) return `${field} должен быть 0 или больше`;
+        if (['quantmin', 'quantmax'].includes(field)) return `${field} должен быть -1 или 0 и больше`;
+        return 'Недопустимое значение';
+    }
+
+    function getDuplicateNames() {
+        const seen = new Map();
+        const duplicates = new Set();
+        state.items.forEach((item, index) => {
+            const name = String(item?.name || '').trim().toLowerCase();
+            if (!name) return;
+            if (seen.has(name)) {
+                duplicates.add(index);
+                duplicates.add(seen.get(name));
+            } else seen.set(name, index);
+        });
+        return duplicates;
+    }
+
+    function validateItem(item, index) {
+        const errors = [];
+        const duplicateIndices = getDuplicateNames();
+        const name = String(item?.name || '').trim();
+        if (!name) errors.push('Имя пустое');
+        if (duplicateIndices.has(index)) errors.push('Дублирующееся имя');
+        if (item.nominal < 0) errors.push('nominal < 0');
+        if (item.min < 0) errors.push('min < 0');
+        if (item.nominal >= 0 && item.min >= 0 && item.nominal < item.min) errors.push(`nominal (${item.nominal}) < min (${item.min})`);
+        if (item.lifetime < 0) errors.push('lifetime < 0');
+        if (item.restock < 0) errors.push('restock < 0');
+        if (item.cost < 0) errors.push('cost < 0');
+        if (item.quantmin >= 0 && item.quantmax >= 0 && item.quantmin > item.quantmax) errors.push(`quantmin (${item.quantmin}) > quantmax (${item.quantmax})`);
+        const flagNames = ['count_in_cargo','count_in_hoarder','count_in_map','count_in_player','crafted','deloot'];
+        for (const flagName of flagNames) {
+            if (![0, 1].includes(item.flags?.[flagName])) errors.push(`Флаг ${flagName} должен быть 0 или 1`);
+        }
+        return errors;
+    }
+
+    function showValidationTooltip(element, message) {
+        const tooltip = $('#validationTooltip');
+        if (!element || !tooltip) return;
+        const rect = element.getBoundingClientRect();
+        tooltip.textContent = message;
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${rect.left}px`;
+        tooltip.style.top = `${rect.bottom + 5}px`;
+        window.clearTimeout(showValidationTooltip.timerId);
+        showValidationTooltip.timerId = window.setTimeout(() => tooltip.style.display = 'none', 3000);
+    }
+
+    function validateField(element, index, field) {
+        const item = state.items[index];
+        if (!item || !element) return;
+        const errors = validateItem(item, index);
+        const row = element.closest('tr');
+        if (row) {
+            row.classList.toggle('validation-error', errors.length > 0);
+            row.title = errors.join('; ');
+        }
+        const fieldErrors = errors.filter(error => error.toLowerCase().includes(String(field).toLowerCase()) || (field === 'name' && error.toLowerCase().includes('имя')));
+        element.classList.toggle('invalid', fieldErrors.length > 0 || (field === 'name' && !String(item.name || '').trim()));
+        if (fieldErrors.length > 0) showValidationTooltip(element, fieldErrors[0]);
+    }
+
+    // ==================== Работа с localStorage ====================
+    function saveStateToLocalStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
+            localStorage.setItem(DEFINITIONS_STORAGE_KEY, JSON.stringify(state.definitions));
+        } catch (error) { console.warn('Не удалось сохранить состояние:', error); }
+    }
+
+    function loadStateFromLocalStorage() {
+        try {
+            const rawItems = localStorage.getItem(STORAGE_KEY);
+            const rawDefs = localStorage.getItem(DEFINITIONS_STORAGE_KEY);
+            if (rawItems) {
+                const parsedItems = JSON.parse(rawItems);
+                if (Array.isArray(parsedItems)) {
+                    state.items = parsedItems.map(item => ({
+                        ...getItemTemplate(),
+                        ...item,
+                        id: item.id || (crypto?.randomUUID ? crypto.randomUUID() : `item_${Date.now()}_${Math.random().toString(16).slice(2)}`),
+                        flags: { count_in_cargo:0, count_in_hoarder:0, count_in_map:1, count_in_player:0, crafted:0, deloot:0, ...(item.flags || {}) },
+                        category: uniqueArray(item.category || []),
+                        usage: uniqueArray(item.usage || []),
+                        value: uniqueArray(item.value || []),
+                        tag: uniqueArray(item.tag || [])
+                    }));
+                }
+            }
+            if (rawDefs) {
+                const parsedDefs = JSON.parse(rawDefs);
+                state.definitions = {
+                    categories: uniqueArray(parsedDefs?.categories || []),
+                    tags: uniqueArray(parsedDefs?.tags || []),
+                    usage: uniqueArray(parsedDefs?.usage || []),
+                    value: uniqueArray(parsedDefs?.value || [])
+                };
+            }
+            pushHistory(); // начальное состояние
+        } catch (error) { console.warn('Не удалось восстановить состояние:', error); }
+    }
+
+    // ==================== Рендеринг таблицы ====================
+    function renderHeader() {
+        const thead = $('#tableHeaderRow');
+        thead.innerHTML = `<tr>${columns.map(col => `<th style="width:${col.width}px;">${col.type === 'checkbox' ? '<input type="checkbox" id="selectAllCheckbox">' : escapeHtml(col.title)}</th>`).join('')}</tr>`;
+    }
+
+    function renderTable() {
+        const tbody = $('#tableBodyRows');
+        const html = state.items.map((item, index) => {
+            const isVisible = !state.currentSearchTerm || itemMatchesSearch(item, state.currentSearchTerm);
+            const isSelected = state.selectedItems.has(index);
+            const errors = validateItem(item, index);
+            rememberValidValue(index, 'name', item.name);
+            ['nominal','lifetime','restock','min','quantmin','quantmax','cost'].forEach(f => rememberValidValue(index, f, item[f]));
+            return `<tr data-index="${index}" class="${isSelected ? 'selected' : ''} ${!isVisible ? 'hidden-by-search' : ''} ${errors.length ? 'validation-error' : ''}" title="${escapeHtml(errors.join('; '))}">${columns.map(col => renderCell(item, index, col, errors)).join('')}</tr>`;
+        }).join('');
+        tbody.innerHTML = html;
+        updateSelectAllCheckbox();
+        syncTableHeaderScrollbarSpacing();
+    }
+
+    function renderCell(item, index, column, errors) {
+        const widthStyle = `style="width:${column.width}px"`;
+        if (column.type === 'checkbox') return `<td class="checkbox-cell" ${widthStyle}><input type="checkbox" class="item-checkbox" data-index="${index}" ${state.selectedItems.has(index) ? 'checked' : ''}></td>`;
+        if (column.type === 'name') {
+            const invalid = !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя'));
+            return `<td ${widthStyle}><input type="text" class="name-input ${invalid ? 'invalid' : ''}" data-index="${index}" data-field="name" value="${escapeHtml(item.name)}"></td>`;
+        }
+        if (column.type === 'number') {
+            const fieldErrors = errors.some(e => e.toLowerCase().includes(column.field.toLowerCase()));
+            return `<td ${widthStyle}><input type="number" class="number-input ${fieldErrors ? 'invalid' : ''}" data-index="${index}" data-field="${column.field}" value="${escapeHtml(item[column.field])}"></td>`;
+        }
+        if (column.type === 'flag') {
+            return `<td class="flag-cell" ${widthStyle}><input type="checkbox" class="flag-checkbox" data-index="${index}" data-flag="${column.flag}" ${item.flags?.[column.flag] ? 'checked' : ''}></td>`;
+        }
+        if (column.type === 'text') {
+            const value = arrayToSpaceList(item[column.field]);
+            return `<td ${widthStyle}><div class="field-with-button"><input type="text" id="field-${index}-${column.field}" class="text-input" data-index="${index}" data-field="${column.field}" value="${escapeHtml(value)}"><button type="button" class="open-modal-btn" data-index="${index}" data-field="${column.field}">▼</button></div></td>`;
+        }
+        return `<td ${widthStyle}></td>`;
+    }
+
+    function updateItemField(index, field, value) {
+        if (!state.items[index]) return;
+        state.items[index][field] = value;
+        saveStateToLocalStorage();
+    }
+
+    function updateNumberField(index, field, value) {
+        if (!state.items[index]) return;
+        const fallback = field.includes('quant') ? -1 : 0;
+        state.items[index][field] = normalizeNumber(value, fallback);
+        saveStateToLocalStorage();
+        updateRowValidation(index);
+    }
+
+    function updateFlag(index, flag, checked) {
+        if (!state.items[index]) return;
+        state.items[index].flags[flag] = checked ? 1 : 0;
+        saveStateToLocalStorage();
+        updateRowValidation(index);
+    }
+
+    function updateTextField(index, field, value) {
+        if (!state.items[index]) return;
+        state.items[index][field] = parseSpaceList(value);
+        saveStateToLocalStorage();
+        if (state.currentSearchTerm) applySearchFilter();
+    }
+
+    function updateRowValidation(index) {
+        const row = $(`#tableBodyRows tr[data-index="${index}"]`);
+        const item = state.items[index];
+        if (!row || !item) return;
+        const errors = validateItem(item, index);
+        row.classList.toggle('validation-error', errors.length > 0);
+        row.title = errors.join('; ');
+        const nameInput = row.querySelector('.name-input');
+        if (nameInput) nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя')));
+        row.querySelectorAll('.number-input').forEach(input => {
+            const field = input.dataset.field;
+            input.classList.toggle('invalid', errors.some(e => e.toLowerCase().includes(String(field).toLowerCase())));
+        });
+    }
+
+    function itemMatchesSearch(item, searchTerm) {
+        if (!searchTerm) return true;
+        const st = String(searchTerm).toLowerCase();
+        if (String(item.name).toLowerCase().includes(st)) return true;
+        if (['nominal','lifetime','restock','min','quantmin','quantmax','cost'].some(f => String(item[f]).includes(st))) return true;
+        if (Object.values(item.flags).some(v => String(v).includes(st))) return true;
+        for (const f of ['category','usage','value','tag']) {
+            if ((item[f] || []).some(v => String(v).toLowerCase().includes(st))) return true;
+        }
+        return false;
+    }
+
+    function applySearchFilter() {
+        $$('#tableBodyRows tr[data-index]').forEach(row => {
+            const index = Number.parseInt(row.dataset.index, 10);
+            row.classList.toggle('hidden-by-search', !itemMatchesSearch(state.items[index], state.currentSearchTerm));
+        });
+        updateSelectAllCheckbox();
+        syncTableHeaderScrollbarSpacing();
+    }
+
+    function updateClearButton() { $('#clearSearchBtn').disabled = !$('#searchInput').value; }
+
+    function filterItemsDebounced() {
+        clearTimeout(state.searchTimer);
+        state.searchTimer = setTimeout(() => {
+            state.currentSearchTerm = $('#searchInput').value.toLowerCase();
+            applySearchFilter();
+            updateClearButton();
+        }, 120);
+    }
+
+    function clearSearch() {
+        state.currentSearchTerm = '';
+        $('#searchInput').value = '';
+        applySearchFilter();
+        updateClearButton();
+    }
+
+    function toggleItemSelection(index) {
+        if (state.selectedItems.has(index)) state.selectedItems.delete(index);
+        else state.selectedItems.add(index);
+        const row = $(`#tableBodyRows tr[data-index="${index}"]`);
+        if (row) {
+            row.classList.toggle('selected', state.selectedItems.has(index));
+            const cb = row.querySelector('.item-checkbox');
+            if (cb) cb.checked = state.selectedItems.has(index);
+        }
+        updateSelectAllCheckbox();
+    }
+
+    function toggleSelectVisible() {
+        const selectAll = $('#selectAllCheckbox');
+        $$('#tableBodyRows tr[data-index]:not(.hidden-by-search)').forEach(row => {
+            const index = Number.parseInt(row.dataset.index, 10);
+            if (selectAll.checked) { state.selectedItems.add(index); row.classList.add('selected'); }
+            else { state.selectedItems.delete(index); row.classList.remove('selected'); }
+            const cb = row.querySelector('.item-checkbox');
+            if (cb) cb.checked = selectAll.checked;
+        });
+        updateSelectAllCheckbox();
+    }
+
+    function updateSelectAllCheckbox() {
+        const cb = $('#selectAllCheckbox');
+        if (!cb) return;
+        const visibleRows = $$('#tableBodyRows tr[data-index]:not(.hidden-by-search)');
+        if (!visibleRows.length) { cb.checked = false; cb.indeterminate = false; return; }
+        let selected = 0;
+        visibleRows.forEach(r => { if (state.selectedItems.has(Number(r.dataset.index))) selected++; });
+        cb.checked = selected === visibleRows.length;
+        cb.indeterminate = selected > 0 && selected < visibleRows.length;
+    }
+
+    // ==================== Действия ====================
+    function applyMassEdit() {
+        if (!state.selectedItems.size) { alert('Выберите предметы'); return; }
+        const values = {
+            nominal: $('#massNominal').value,
+            lifetime: $('#massLifetime').value,
+            restock: $('#massRestock').value,
+            min: $('#massMin').value,
+            quantmin: $('#massQuantmin').value,
+            quantmax: $('#massQuantmax').value,
+            cost: $('#massCost').value
+        };
+        if (!Object.values(values).some(v => v.trim())) { alert('Заполните хотя бы одно поле'); return; }
+
+        pushHistory();
+        const indices = [...state.selectedItems];
+        indices.forEach(index => {
+            for (const [field, expression] of Object.entries(values)) {
+                if (!expression.trim()) continue;
+                const fallback = field.includes('quant') ? -1 : 0;
+                const currentValue = state.items[index][field];
+                const raw = expression.trim();
+                const isRelative = /^[+\-*/]/.test(raw); // проверка на относительную операцию
+                let newValue = applyNumericOperation(currentValue, raw, fallback);
+                // Защита от обнуления только для относительных операций
+                if (isRelative && (field === 'nominal' || field === 'min') && currentValue > 0) {
+                    newValue = Math.max(1, newValue);
+                }
+                state.items[index][field] = newValue;
+            }
+        });
+
+        state.selectedItems.clear();
+        saveStateToLocalStorage();
+        renderTable();
+        alert(`Применено к ${indices.length} предметам`);
+    }
+
+    function deleteSelected() {
+        if (!state.selectedItems.size) { alert('Выберите предметы'); return; }
+        if (!confirm(`Удалить ${state.selectedItems.size} предметов?`)) return;
+        pushHistory();
+        [...state.selectedItems].sort((a,b)=>b-a).forEach(idx => state.items.splice(idx,1));
+        state.selectedItems.clear();
+        saveStateToLocalStorage();
+        renderTable();
+    }
+
+    function addItem() {
+        pushHistory();
+        state.items.push(getItemTemplate());
+        saveStateToLocalStorage();
+        renderTable();
+        setTimeout(() => $('#tableBody').scrollTop = $('#tableBody').scrollHeight, 50);
+    }
+
+    function clearAll() {
+        if (!state.items.length) return;
+        if (!confirm(`Очистить все ${state.items.length} предметов?`)) return;
+        pushHistory();
+        state.items = [];
+        state.selectedItems.clear();
+        state.currentSearchTerm = '';
+        $('#searchInput').value = '';
+        updateClearButton();
+        saveStateToLocalStorage();
+        renderTable();
+    }
+
+    async function importXML() {
+        try {
+            let content;
+            if (openDialog && readTextFile) {
+                const selected = await openDialog({
+                    filters: [{ name: 'XML', extensions: ['xml'] }],
+                    multiple: false
+                });
+                if (!selected) return;
+                content = await readTextFile(selected);
+            } else {
+                // Fallback для браузера
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.xml';
+                const file = await new Promise(resolve => {
+                    input.onchange = e => resolve(e.target.files[0]);
+                    input.click();
+                });
+                if (!file) return;
+                content = await file.text();
+            }
+
+            const doc = new DOMParser().parseFromString(content, 'text/xml');
+            if (doc.querySelector('parsererror')) throw new Error('Невалидный XML');
+            const imported = [];
+            for (const tn of doc.getElementsByTagName('type')) {
+                const item = getItemTemplate();
+                item.name = tn.getAttribute('name') || generateUniqueName('Unknown');
+                ['nominal','lifetime','restock','min','quantmin','quantmax','cost'].forEach(tag => {
+                    const el = tn.getElementsByTagName(tag)[0];
+                    if (el) item[tag] = normalizeNumber(el.textContent, tag.includes('quant') ? -1 : 0);
+                });
+                const flagsNode = tn.getElementsByTagName('flags')[0];
+                if (flagsNode) {
+                    ['count_in_cargo','count_in_hoarder','count_in_map','count_in_player','crafted','deloot'].forEach(fn => {
+                        item.flags[fn] = normalizeNumber(flagsNode.getAttribute(fn) ?? '0', 0) === 1 ? 1 : 0;
+                    });
+                }
+                ['category','usage','value','tag'].forEach(field => {
+                    item[field] = uniqueArray([...tn.getElementsByTagName(field)].map(n => n.getAttribute('name')).filter(Boolean));
+                });
+                imported.push(item);
+            }
+            pushHistory();
+            state.items = imported;
             state.selectedItems.clear();
             state.currentSearchTerm = $('#searchInput').value.toLowerCase();
             saveStateToLocalStorage();
             renderTable();
-            updateUndoRedoButtons();
-        }
+            alert(`Загружено ${imported.length} предметов`);
+        } catch (err) { alert(`Ошибка: ${err.message}`); console.error(err); }
+    }
 
-        function undo() {
-            if (undoStack.length === 0) return;
-            const currentSnapshot = state.items.map(item => ({
-                ...item,
-                flags: { ...item.flags },
-                category: [...(item.category || [])],
-                usage: [...(item.usage || [])],
-                value: [...(item.value || [])],
-                tag: [...(item.tag || [])]
-            }));
-            redoStack.push(currentSnapshot);
-            const prevSnapshot = undoStack.pop();
-            restoreStateFromSnapshot(prevSnapshot);
-        }
+    async function exportXML() {
+        if (!state.items.length) { alert('Нечего сохранять'); return; }
+        const totalErrors = state.items.reduce((s, item, i) => s + validateItem(item, i).length, 0);
+        if (totalErrors && !confirm(`Обнаружено ${totalErrors} предупреждений.\nВсё равно сохранить?`)) return;
 
-        function redo() {
-            if (redoStack.length === 0) return;
-            const currentSnapshot = state.items.map(item => ({
-                ...item,
-                flags: { ...item.flags },
-                category: [...(item.category || [])],
-                usage: [...(item.usage || [])],
-                value: [...(item.value || [])],
-                tag: [...(item.tag || [])]
-            }));
-            undoStack.push(currentSnapshot);
-            const nextSnapshot = redoStack.pop();
-            restoreStateFromSnapshot(nextSnapshot);
-        }
-
-        function updateUndoRedoButtons() {
-            const undoBtn = $('#undoBtn');
-            const redoBtn = $('#redoBtn');
-            if (undoBtn) undoBtn.disabled = undoStack.length === 0;
-            if (redoBtn) redoBtn.disabled = redoStack.length === 0;
-        }
-
-        const columns = [
-            { id:'col0', title:'', type:'checkbox', width:40 },
-            { id:'col1', title:'Имя', type:'name', field:'name', width:250 },
-            { id:'col2', title:'nominal', type:'number', field:'nominal', width:80 },
-            { id:'col3', title:'lifetime', type:'number', field:'lifetime', width:80 },
-            { id:'col4', title:'restock', type:'number', field:'restock', width:80 },
-            { id:'col5', title:'min', type:'number', field:'min', width:80 },
-            { id:'col6', title:'quantmin', type:'number', field:'quantmin', width:80 },
-            { id:'col7', title:'quantmax', type:'number', field:'quantmax', width:80 },
-            { id:'col8', title:'cost', type:'number', field:'cost', width:80 },
-            { id:'col9', title:'cargo', type:'flag', flag:'count_in_cargo', width:60 },
-            { id:'col10', title:'hoarder', type:'flag', flag:'count_in_hoarder', width:64 },
-            { id:'col11', title:'map', type:'flag', flag:'count_in_map', width:60 },
-            { id:'col12', title:'player', type:'flag', flag:'count_in_player', width:60 },
-            { id:'col13', title:'crafted', type:'flag', flag:'crafted', width:60 },
-            { id:'col14', title:'deloot', type:'flag', flag:'deloot', width:60 },
-            { id:'col15', title:'category', type:'text', field:'category', width:180 },
-            { id:'col16', title:'usage', type:'text', field:'usage', width:180 },
-            { id:'col17', title:'value', type:'text', field:'value', width:180 },
-            { id:'col18', title:'tag', type:'text', field:'tag', width:180 }
-        ];
-
-        const $ = (selector) => document.querySelector(selector);
-        const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
-        const escapeHtml = (str) => String(str ?? '')
-            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-        const escapeXmlAttr = (str) => String(str ?? '')
-            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
-        const uniqueArray = (arr) => [...new Set((arr || []).filter(Boolean))];
-        const parseSpaceList = (text) => uniqueArray(String(text ?? '').split(/\s+/).map(v => v.trim()).filter(Boolean));
-        const arrayToSpaceList = (arr) => (arr && arr.length ? arr.join(' ') : '');
-
-        const normalizeNumber = (value, fallback = 0) => {
-            const parsed = Number.parseInt(value, 10);
-            return Number.isNaN(parsed) ? fallback : parsed;
-        };
-
-        const applyNumericOperation = (currentValue, expression, fallback = 0) => {
-            const raw = String(expression ?? '').trim();
-            if (!raw) return currentValue;
-            const current = normalizeNumber(currentValue, fallback);
-            if (/^\d+$/.test(raw)) return normalizeNumber(raw, fallback);
-            const percentMatch = raw.match(/^([+-])\s*(\d+(?:\.\d+)?)%$/);
-            if (percentMatch) {
-                const operator = percentMatch[1];
-                const percent = Number.parseFloat(percentMatch[2]);
-                if (Number.isNaN(percent)) return current;
-                const delta = current * (percent / 100);
-                return Math.trunc(operator === '+' ? current + delta : current - delta);
-            }
-            const operator = raw.charAt(0);
-            const operand = Number.parseFloat(raw.slice(1).trim());
-            if (Number.isNaN(operand)) return current;
-            switch (operator) {
-                case '+': return Math.trunc(current + operand);
-                case '-': return Math.trunc(current - operand);
-                case '*': return Math.trunc(current * operand);
-                case '/': return operand === 0 ? current : Math.trunc(current / operand);
-                default: return current;
-            }
-        };
-
-        const getItemTemplate = () => ({
-            id: crypto?.randomUUID ? crypto.randomUUID() : `item_${Date.now()}_${Math.random().toString(16).slice(2)}`,
-            name: generateUniqueName('NewItem'),
-            nominal: 10,
-            lifetime: 14400,
-            restock: 0,
-            min: 5,
-            quantmin: -1,
-            quantmax: -1,
-            cost: 100,
-            flags: {
-                count_in_cargo: 0,
-                count_in_hoarder: 0,
-                count_in_map: 1,
-                count_in_player: 0,
-                crafted: 0,
-                deloot: 0
-            },
-            category: [],
-            usage: [],
-            value: [],
-            tag: []
+        let xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<types>\n';
+        state.items.forEach(item => {
+            xml += `\t<type name="${escapeXmlAttr(item.name)}">\n`;
+            xml += `\t\t<nominal>${item.nominal}</nominal>\n\t\t<lifetime>${item.lifetime}</lifetime>\n\t\t<restock>${item.restock}</restock>\n\t\t<min>${item.min}</min>\n\t\t<quantmin>${item.quantmin}</quantmin>\n\t\t<quantmax>${item.quantmax}</quantmax>\n\t\t<cost>${item.cost}</cost>\n`;
+            xml += `\t\t<flags count_in_cargo="${item.flags.count_in_cargo}" count_in_hoarder="${item.flags.count_in_hoarder}" count_in_map="${item.flags.count_in_map}" count_in_player="${item.flags.count_in_player}" crafted="${item.flags.crafted}" deloot="${item.flags.deloot}" />\n`;
+            ['category','usage','value','tag'].forEach(f => {
+                uniqueArray(item[f]).forEach(v => xml += `\t\t<${f} name="${escapeXmlAttr(v)}" />\n`);
+            });
+            xml += '\t</type>\n';
         });
+        xml += '</types>';
 
-        function generateUniqueName(base) {
-            const existing = new Set(state.items.map(item => String(item.name || '').trim()));
-            if (!existing.has(base)) return base;
-            let counter = 1;
-            while (existing.has(`${base}_${counter}`)) counter++;
-            return `${base}_${counter}`;
-        }
-
-        function getFieldKey(index, field) { return `${index}:${field}`; }
-        function rememberValidValue(index, field, value) { state.lastValidValues[getFieldKey(index, field)] = value; }
-        function getRememberedValidValue(index, field, fallback = '') {
-            const key = getFieldKey(index, field);
-            return key in state.lastValidValues ? state.lastValidValues[key] : fallback;
-        }
-
-        function isValidFieldValue(field, value) {
-            const raw = String(value ?? '').trim();
-            if (field === 'name') return raw !== '';
-            const num = Number.parseInt(raw, 10);
-            if (Number.isNaN(num)) return false;
-            if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) return num >= 0;
-            if (['quantmin', 'quantmax'].includes(field)) return num === -1 || num >= 0;
-            return true;
-        }
-
-        function getFieldValidationMessage(field) {
-            if (field === 'name') return 'Имя не может быть пустым';
-            if (['nominal', 'lifetime', 'restock', 'min', 'cost'].includes(field)) return `${field} должен быть 0 или больше`;
-            if (['quantmin', 'quantmax'].includes(field)) return `${field} должен быть -1 или 0 и больше`;
-            return 'Недопустимое значение';
-        }
-
-        function getDuplicateNames() {
-            const seen = new Map();
-            const duplicates = new Set();
-            state.items.forEach((item, index) => {
-                const name = String(item?.name || '').trim().toLowerCase();
-                if (!name) return;
-                if (seen.has(name)) {
-                    duplicates.add(index);
-                    duplicates.add(seen.get(name));
-                } else seen.set(name, index);
-            });
-            return duplicates;
-        }
-
-        function validateItem(item, index) {
-            const errors = [];
-            const duplicateIndices = getDuplicateNames();
-            const name = String(item?.name || '').trim();
-            if (!name) errors.push('Имя пустое');
-            if (duplicateIndices.has(index)) errors.push('Дублирующееся имя');
-            if (item.nominal < 0) errors.push('nominal < 0');
-            if (item.min < 0) errors.push('min < 0');
-            if (item.nominal >= 0 && item.min >= 0 && item.nominal < item.min) errors.push(`nominal (${item.nominal}) < min (${item.min})`);
-            if (item.lifetime < 0) errors.push('lifetime < 0');
-            if (item.restock < 0) errors.push('restock < 0');
-            if (item.cost < 0) errors.push('cost < 0');
-            if (item.quantmin >= 0 && item.quantmax >= 0 && item.quantmin > item.quantmax) errors.push(`quantmin (${item.quantmin}) > quantmax (${item.quantmax})`);
-            const flagNames = ['count_in_cargo','count_in_hoarder','count_in_map','count_in_player','crafted','deloot'];
-            for (const flagName of flagNames) {
-                if (![0, 1].includes(item.flags?.[flagName])) errors.push(`Флаг ${flagName} должен быть 0 или 1`);
+        try {
+            if (saveDialog && writeTextFile) {
+                const filePath = await saveDialog({
+                    filters: [{ name: 'XML', extensions: ['xml'] }],
+                    defaultPath: 'types.xml'
+                });
+                if (!filePath) return;
+                await writeTextFile(filePath, xml);
+                alert(`Файл сохранён: ${filePath}`);
+            } else {
+                // Fallback для браузера
+                const blob = new Blob([xml], { type: 'text/xml' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'types.xml';
+                a.click();
+                URL.revokeObjectURL(a.href);
+                alert('Файл сохранён (браузерная загрузка)');
             }
-            return errors;
-        }
+        } catch (err) { alert(`Ошибка сохранения: ${err.message}`); console.error(err); }
+    }
 
-        function showValidationTooltip(element, message) {
-            const tooltip = $('#validationTooltip');
-            if (!element || !tooltip) return;
-            const rect = element.getBoundingClientRect();
-            tooltip.textContent = message;
-            tooltip.style.display = 'block';
-            tooltip.style.left = `${rect.left}px`;
-            tooltip.style.top = `${rect.bottom + 5}px`;
-            window.clearTimeout(showValidationTooltip.timerId);
-            showValidationTooltip.timerId = window.setTimeout(() => tooltip.style.display = 'none', 3000);
-        }
-
-        function validateField(element, index, field) {
-            const item = state.items[index];
-            if (!item || !element) return;
-            const errors = validateItem(item, index);
-            const row = element.closest('tr');
-            if (row) {
-                row.classList.toggle('validation-error', errors.length > 0);
-                row.title = errors.join('; ');
-            }
-            const fieldErrors = errors.filter(error => error.toLowerCase().includes(String(field).toLowerCase()) || (field === 'name' && error.toLowerCase().includes('имя')));
-            element.classList.toggle('invalid', fieldErrors.length > 0 || (field === 'name' && !String(item.name || '').trim()));
-            if (fieldErrors.length > 0) showValidationTooltip(element, fieldErrors[0]);
-        }
-
-        function saveStateToLocalStorage() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
-                localStorage.setItem(DEFINITIONS_STORAGE_KEY, JSON.stringify(state.definitions));
-            } catch (error) { console.warn('Не удалось сохранить состояние:', error); }
-        }
-
-        function loadStateFromLocalStorage() {
-            try {
-                const rawItems = localStorage.getItem(STORAGE_KEY);
-                const rawDefs = localStorage.getItem(DEFINITIONS_STORAGE_KEY);
-                if (rawItems) {
-                    const parsedItems = JSON.parse(rawItems);
-                    if (Array.isArray(parsedItems)) {
-                        state.items = parsedItems.map(item => ({
-                            ...getItemTemplate(),
-                            ...item,
-                            id: item.id || (crypto?.randomUUID ? crypto.randomUUID() : `item_${Date.now()}_${Math.random().toString(16).slice(2)}`),
-                            flags: { count_in_cargo:0, count_in_hoarder:0, count_in_map:1, count_in_player:0, crafted:0, deloot:0, ...(item.flags || {}) },
-                            category: uniqueArray(item.category || []),
-                            usage: uniqueArray(item.usage || []),
-                            value: uniqueArray(item.value || []),
-                            tag: uniqueArray(item.tag || [])
-                        }));
-                    }
-                }
-                if (rawDefs) {
-                    const parsedDefs = JSON.parse(rawDefs);
-                    state.definitions = {
-                        categories: uniqueArray(parsedDefs?.categories || []),
-                        tags: uniqueArray(parsedDefs?.tags || []),
-                        usage: uniqueArray(parsedDefs?.usage || []),
-                        value: uniqueArray(parsedDefs?.value || [])
-                    };
-                }
-                pushHistory(); // начальное состояние
-            } catch (error) { console.warn('Не удалось восстановить состояние:', error); }
-        }
-
-        function renderHeader() {
-            const thead = $('#tableHeaderRow');
-            thead.innerHTML = `<tr>${columns.map(col => `<th style="width:${col.width}px;">${col.type === 'checkbox' ? '<input type="checkbox" id="selectAllCheckbox">' : escapeHtml(col.title)}</th>`).join('')}</tr>`;
-        }
-
-        function renderTable() {
-            const tbody = $('#tableBodyRows');
-            const html = state.items.map((item, index) => {
-                const isVisible = !state.currentSearchTerm || itemMatchesSearch(item, state.currentSearchTerm);
-                const isSelected = state.selectedItems.has(index);
-                const errors = validateItem(item, index);
-                rememberValidValue(index, 'name', item.name);
-                ['nominal','lifetime','restock','min','quantmin','quantmax','cost'].forEach(f => rememberValidValue(index, f, item[f]));
-                return `<tr data-index="${index}" class="${isSelected ? 'selected' : ''} ${!isVisible ? 'hidden-by-search' : ''} ${errors.length ? 'validation-error' : ''}" title="${escapeHtml(errors.join('; '))}">${columns.map(col => renderCell(item, index, col, errors)).join('')}</tr>`;
-            }).join('');
-            tbody.innerHTML = html;
-            updateSelectAllCheckbox();
-            syncTableHeaderScrollbarSpacing();
-        }
-
-        function renderCell(item, index, column, errors) {
-            const widthStyle = `style="width:${column.width}px"`;
-            if (column.type === 'checkbox') return `<td class="checkbox-cell" ${widthStyle}><input type="checkbox" class="item-checkbox" data-index="${index}" ${state.selectedItems.has(index) ? 'checked' : ''}></td>`;
-            if (column.type === 'name') {
-                const invalid = !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя'));
-                return `<td ${widthStyle}><input type="text" class="name-input ${invalid ? 'invalid' : ''}" data-index="${index}" data-field="name" value="${escapeHtml(item.name)}"></td>`;
-            }
-            if (column.type === 'number') {
-                const fieldErrors = errors.some(e => e.toLowerCase().includes(column.field.toLowerCase()));
-                return `<td ${widthStyle}><input type="number" class="number-input ${fieldErrors ? 'invalid' : ''}" data-index="${index}" data-field="${column.field}" value="${escapeHtml(item[column.field])}"></td>`;
-            }
-            if (column.type === 'flag') {
-                return `<td class="flag-cell" ${widthStyle}><input type="checkbox" class="flag-checkbox" data-index="${index}" data-flag="${column.flag}" ${item.flags?.[column.flag] ? 'checked' : ''}></td>`;
-            }
-            if (column.type === 'text') {
-                const value = arrayToSpaceList(item[column.field]);
-                return `<td ${widthStyle}><div class="field-with-button"><input type="text" id="field-${index}-${column.field}" class="text-input" data-index="${index}" data-field="${column.field}" value="${escapeHtml(value)}"><button type="button" class="open-modal-btn" data-index="${index}" data-field="${column.field}">▼</button></div></td>`;
-            }
-            return `<td ${widthStyle}></td>`;
-        }
-
-        function updateItemField(index, field, value) {
-            if (!state.items[index]) return;
-            state.items[index][field] = value;
-            saveStateToLocalStorage();
-        }
-
-        function updateNumberField(index, field, value) {
-            if (!state.items[index]) return;
-            const fallback = field.includes('quant') ? -1 : 0;
-            state.items[index][field] = normalizeNumber(value, fallback);
-            saveStateToLocalStorage();
-            updateRowValidation(index);
-        }
-
-        function updateFlag(index, flag, checked) {
-            if (!state.items[index]) return;
-            state.items[index].flags[flag] = checked ? 1 : 0;
-            saveStateToLocalStorage();
-            updateRowValidation(index);
-        }
-
-        function updateTextField(index, field, value) {
-            if (!state.items[index]) return;
-            state.items[index][field] = parseSpaceList(value);
-            saveStateToLocalStorage();
-            if (state.currentSearchTerm) applySearchFilter();
-        }
-
-        function updateRowValidation(index) {
-            const row = $(`#tableBodyRows tr[data-index="${index}"]`);
-            const item = state.items[index];
-            if (!row || !item) return;
-            const errors = validateItem(item, index);
-            row.classList.toggle('validation-error', errors.length > 0);
-            row.title = errors.join('; ');
-            const nameInput = row.querySelector('.name-input');
-            if (nameInput) nameInput.classList.toggle('invalid', !String(item.name || '').trim() || errors.some(e => e.toLowerCase().includes('имя')));
-            row.querySelectorAll('.number-input').forEach(input => {
-                const field = input.dataset.field;
-                input.classList.toggle('invalid', errors.some(e => e.toLowerCase().includes(String(field).toLowerCase())));
-            });
-        }
-
-        function itemMatchesSearch(item, searchTerm) {
-            if (!searchTerm) return true;
-            const st = String(searchTerm).toLowerCase();
-            if (String(item.name).toLowerCase().includes(st)) return true;
-            if (['nominal','lifetime','restock','min','quantmin','quantmax','cost'].some(f => String(item[f]).includes(st))) return true;
-            if (Object.values(item.flags).some(v => String(v).includes(st))) return true;
-            for (const f of ['category','usage','value','tag']) {
-                if ((item[f] || []).some(v => String(v).toLowerCase().includes(st))) return true;
-            }
-            return false;
-        }
-
-        function applySearchFilter() {
-            $$('#tableBodyRows tr[data-index]').forEach(row => {
-                const index = Number.parseInt(row.dataset.index, 10);
-                row.classList.toggle('hidden-by-search', !itemMatchesSearch(state.items[index], state.currentSearchTerm));
-            });
-            updateSelectAllCheckbox();
-            syncTableHeaderScrollbarSpacing();
-        }
-
-        function updateClearButton() { $('#clearSearchBtn').disabled = !$('#searchInput').value; }
-
-        function filterItemsDebounced() {
-            clearTimeout(state.searchTimer);
-            state.searchTimer = setTimeout(() => {
-                state.currentSearchTerm = $('#searchInput').value.toLowerCase();
-                applySearchFilter();
-                updateClearButton();
-            }, 120);
-        }
-
-        function clearSearch() {
-            state.currentSearchTerm = '';
-            $('#searchInput').value = '';
-            applySearchFilter();
-            updateClearButton();
-        }
-
-        function toggleItemSelection(index) {
-            if (state.selectedItems.has(index)) state.selectedItems.delete(index);
-            else state.selectedItems.add(index);
-            const row = $(`#tableBodyRows tr[data-index="${index}"]`);
-            if (row) {
-                row.classList.toggle('selected', state.selectedItems.has(index));
-                const cb = row.querySelector('.item-checkbox');
-                if (cb) cb.checked = state.selectedItems.has(index);
-            }
-            updateSelectAllCheckbox();
-        }
-
-        function toggleSelectVisible() {
-            const selectAll = $('#selectAllCheckbox');
-            $$('#tableBodyRows tr[data-index]:not(.hidden-by-search)').forEach(row => {
-                const index = Number.parseInt(row.dataset.index, 10);
-                if (selectAll.checked) { state.selectedItems.add(index); row.classList.add('selected'); }
-                else { state.selectedItems.delete(index); row.classList.remove('selected'); }
-                const cb = row.querySelector('.item-checkbox');
-                if (cb) cb.checked = selectAll.checked;
-            });
-            updateSelectAllCheckbox();
-        }
-
-        function updateSelectAllCheckbox() {
-            const cb = $('#selectAllCheckbox');
-            if (!cb) return;
-            const visibleRows = $$('#tableBodyRows tr[data-index]:not(.hidden-by-search)');
-            if (!visibleRows.length) { cb.checked = false; cb.indeterminate = false; return; }
-            let selected = 0;
-            visibleRows.forEach(r => { if (state.selectedItems.has(Number(r.dataset.index))) selected++; });
-            cb.checked = selected === visibleRows.length;
-            cb.indeterminate = selected > 0 && selected < visibleRows.length;
-        }
-
-        // ========== Массовое редактирование с защитой nominal/min ==========
-        function applyMassEdit() {
-            if (!state.selectedItems.size) { alert('Выберите предметы'); return; }
-            const values = {
-                nominal: $('#massNominal').value,
-                lifetime: $('#massLifetime').value,
-                restock: $('#massRestock').value,
-                min: $('#massMin').value,
-                quantmin: $('#massQuantmin').value,
-                quantmax: $('#massQuantmax').value,
-                cost: $('#massCost').value
-            };
-            if (!Object.values(values).some(v => v.trim())) { alert('Заполните хотя бы одно поле'); return; }
-
-            pushHistory();
-            const indices = [...state.selectedItems];
-            indices.forEach(index => {
-                for (const [field, expression] of Object.entries(values)) {
-                    if (!expression.trim()) continue;
-                    const fallback = field.includes('quant') ? -1 : 0;
-                    const currentValue = state.items[index][field];
-                    let newValue = applyNumericOperation(currentValue, expression, fallback);
-                    // Защита от обнуления для nominal и min, если исходное было > 0
-                    if ((field === 'nominal' || field === 'min') && currentValue > 0) {
-                        newValue = Math.max(1, newValue);
-                    }
-                    state.items[index][field] = newValue;
-                }
-            });
-
-            state.selectedItems.clear();
-            saveStateToLocalStorage();
-            renderTable();
-            alert(`Применено к ${indices.length} предметам`);
-        }
-
-        function deleteSelected() {
-            if (!state.selectedItems.size) { alert('Выберите предметы'); return; }
-            if (!confirm(`Удалить ${state.selectedItems.size} предметов?`)) return;
-            pushHistory();
-            [...state.selectedItems].sort((a,b)=>b-a).forEach(idx => state.items.splice(idx,1));
-            state.selectedItems.clear();
-            saveStateToLocalStorage();
-            renderTable();
-        }
-
-        function addItem() {
-            pushHistory();
-            state.items.push(getItemTemplate());
-            saveStateToLocalStorage();
-            renderTable();
-            setTimeout(() => $('#tableBody').scrollTop = $('#tableBody').scrollHeight, 50);
-        }
-
-        function clearAll() {
-            if (!state.items.length) return;
-            if (!confirm(`Очистить все ${state.items.length} предметов?`)) return;
-            pushHistory();
-            state.items = [];
-            state.selectedItems.clear();
-            state.currentSearchTerm = '';
-            $('#searchInput').value = '';
-            updateClearButton();
-            saveStateToLocalStorage();
-            renderTable();
-        }
-
-        function importXML() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.xml';
-            input.addEventListener('change', e => {
-                const file = e.target.files[0];
+    async function loadDefinitionsFromFile() {
+        try {
+            let content;
+            if (openDialog && readTextFile) {
+                const selected = await openDialog({
+                    filters: [{ name: 'XML', extensions: ['xml'] }],
+                    multiple: false
+                });
+                if (!selected) return;
+                content = await readTextFile(selected);
+            } else {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.xml';
+                const file = await new Promise(resolve => {
+                    input.onchange = e => resolve(e.target.files[0]);
+                    input.click();
+                });
                 if (!file) return;
-                const reader = new FileReader();
-                reader.onload = le => {
-                    try {
-                        const doc = new DOMParser().parseFromString(le.target.result, 'text/xml');
-                        if (doc.querySelector('parsererror')) throw new Error('Невалидный XML');
-                        const imported = [];
-                        for (const tn of doc.getElementsByTagName('type')) {
-                            const item = getItemTemplate();
-                            item.name = tn.getAttribute('name') || generateUniqueName('Unknown');
-                            ['nominal','lifetime','restock','min','quantmin','quantmax','cost'].forEach(tag => {
-                                const el = tn.getElementsByTagName(tag)[0];
-                                if (el) item[tag] = normalizeNumber(el.textContent, tag.includes('quant') ? -1 : 0);
-                            });
-                            const flagsNode = tn.getElementsByTagName('flags')[0];
-                            if (flagsNode) {
-                                ['count_in_cargo','count_in_hoarder','count_in_map','count_in_player','crafted','deloot'].forEach(fn => {
-                                    item.flags[fn] = normalizeNumber(flagsNode.getAttribute(fn) ?? '0', 0) === 1 ? 1 : 0;
-                                });
-                            }
-                            ['category','usage','value','tag'].forEach(field => {
-                                item[field] = uniqueArray([...tn.getElementsByTagName(field)].map(n => n.getAttribute('name')).filter(Boolean));
-                            });
-                            imported.push(item);
-                        }
-                        pushHistory();
-                        state.items = imported;
-                        state.selectedItems.clear();
-                        state.currentSearchTerm = $('#searchInput').value.toLowerCase();
-                        saveStateToLocalStorage();
-                        renderTable();
-                        alert(`Загружено ${imported.length} предметов`);
-                    } catch (err) { alert(`Ошибка: ${err.message}`); }
-                };
-                reader.readAsText(file);
-            });
-            input.click();
-        }
+                content = await file.text();
+            }
 
-        // Обработчики ввода (blur сохраняет историю при изменении)
-        function handleTableBlur(event) {
-            const target = event.target;
-            if (target.classList.contains('name-input')) {
-                const index = Number(target.dataset.index);
-                const field = 'name';
-                const newValue = target.value;
-                const oldValid = getRememberedValidValue(index, field, state.items[index]?.name || 'NewItem');
-                if (!isValidFieldValue(field, newValue)) {
-                    target.value = oldValid;
-                    state.items[index][field] = oldValid;
-                    showValidationTooltip(target, getFieldValidationMessage(field));
-                } else {
-                    if (state.items[index][field] !== newValue) {
-                        pushHistory();
-                        state.items[index][field] = newValue;
-                        rememberValidValue(index, field, newValue);
-                    }
-                }
-                validateField(target, index, field);
+            const xml = new DOMParser().parseFromString(content, 'text/xml');
+            if (xml.querySelector('parsererror')) throw new Error('Невалидный XML');
+            state.definitions = {
+                categories: uniqueArray([...xml.getElementsByTagName('category')].map(n => n.getAttribute('name'))),
+                tags: uniqueArray([...xml.getElementsByTagName('tag')].map(n => n.getAttribute('name'))),
+                usage: uniqueArray([...xml.getElementsByTagName('usage')].map(n => n.getAttribute('name'))),
+                value: uniqueArray([...xml.getElementsByTagName('value')].map(n => n.getAttribute('name')))
+            };
+            saveStateToLocalStorage();
+            alert(`Загружено определений: категорий ${state.definitions.categories.length}, тегов ${state.definitions.tags.length}, usage ${state.definitions.usage.length}, value ${state.definitions.value.length}`);
+        } catch (err) { alert(`Ошибка: ${err.message}`); console.error(err); }
+    }
+
+    // ==================== Модальное окно ====================
+    function openModal(index, field) {
+        const item = state.items[index];
+        if (!item) return;
+        let title = '', options = [];
+        switch (field) {
+            case 'category': title = 'Выберите категории'; options = state.definitions.categories; break;
+            case 'usage': title = 'Выберите usage'; options = state.definitions.usage; break;
+            case 'value': title = 'Выберите value'; options = state.definitions.value; break;
+            case 'tag': title = 'Выберите теги'; options = state.definitions.tags; break;
+            default: return;
+        }
+        state.currentModal = { index, field, inputElement: $(`#field-${index}-${field}`), allOptions: uniqueArray(options) };
+        $('#modalTitle').textContent = title;
+        const current = state.currentModal.inputElement ? parseSpaceList(state.currentModal.inputElement.value) : [];
+        renderModalList(state.currentModal.allOptions, current);
+        updateSelectedValuesDisplay(current);
+        $('#modalCustomValue').value = '';
+        $('#valueModal').classList.add('active');
+    }
+
+    function renderModalList(options, selected) {
+        const list = $('#modalList');
+        if (!options.length) { list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Загрузите файл определений</div>'; return; }
+        list.innerHTML = options.map(opt => `<div class="modal-item"><input type="checkbox" class="value-checkbox" value="${escapeHtml(opt)}" ${selected.includes(opt)?'checked':''}><span>${escapeHtml(opt)}</span></div>`).join('');
+    }
+    function getSelectedValuesFromCheckboxes() { return uniqueArray($$('.value-checkbox:checked').map(cb => cb.value)); }
+    function updateSelectedValuesDisplay(values) {
+        const cont = $('#selectedValuesList');
+        cont.innerHTML = values.length ? values.map(v => `<span class="selected-value-tag">${escapeHtml(v)}</span>`).join('') : '<span class="selected-value-placeholder">ничего не выбрано</span>';
+    }
+    function clearAllSelections() { $$('.value-checkbox').forEach(cb => cb.checked = false); updateSelectedValuesDisplay([]); }
+    function addCustomValue() {
+        const inp = $('#modalCustomValue');
+        const val = inp.value.trim();
+        if (!val) return;
+        const existing = $$('.value-checkbox').find(cb => cb.value === val);
+        if (existing) existing.checked = true;
+        else {
+            state.currentModal.allOptions = uniqueArray([...state.currentModal.allOptions, val]);
+            renderModalList(state.currentModal.allOptions, uniqueArray([...getSelectedValuesFromCheckboxes(), val]));
+        }
+        updateSelectedValuesDisplay(getSelectedValuesFromCheckboxes());
+        inp.value = '';
+        inp.focus();
+    }
+    function saveModalValues() {
+        const selected = uniqueArray(getSelectedValuesFromCheckboxes());
+        if (state.currentModal.inputElement) {
+            const oldVal = state.items[state.currentModal.index][state.currentModal.field] || [];
+            if (JSON.stringify(oldVal) !== JSON.stringify(selected)) {
+                pushHistory();
+                state.currentModal.inputElement.value = selected.join(' ');
+                state.items[state.currentModal.index][state.currentModal.field] = selected;
                 saveStateToLocalStorage();
-            }
-            else if (target.classList.contains('number-input')) {
-                const index = Number(target.dataset.index);
-                const field = target.dataset.field;
-                const raw = target.value;
-                const fallback = field.includes('quant') ? -1 : 0;
-                const oldValid = getRememberedValidValue(index, field, state.items[index]?.[field] ?? fallback);
-                if (!isValidFieldValue(field, raw)) {
-                    target.value = oldValid;
-                    state.items[index][field] = normalizeNumber(oldValid, fallback);
-                    showValidationTooltip(target, getFieldValidationMessage(field));
-                } else {
-                    const normalized = normalizeNumber(raw, fallback);
-                    if (state.items[index][field] !== normalized) {
-                        pushHistory();
-                        state.items[index][field] = normalized;
-                        target.value = normalized;
-                        rememberValidValue(index, field, normalized);
-                    }
-                }
-                validateField(target, index, field);
-                saveStateToLocalStorage();
-            }
-            else if (target.classList.contains('text-input')) {
-                const index = Number(target.dataset.index);
-                const field = target.dataset.field;
-                const newArr = parseSpaceList(target.value);
-                const oldArr = state.items[index][field] || [];
-                if (JSON.stringify(oldArr) !== JSON.stringify(newArr)) {
-                    pushHistory();
-                    state.items[index][field] = newArr;
-                    if (state.currentSearchTerm) applySearchFilter();
-                    saveStateToLocalStorage();
-                }
-            }
-        }
-
-        function handleTableChange(event) {
-            const t = event.target;
-            if (t.id === 'selectAllCheckbox') { toggleSelectVisible(); return; }
-            if (t.classList.contains('item-checkbox')) { toggleItemSelection(Number(t.dataset.index)); return; }
-            if (t.classList.contains('flag-checkbox')) {
-                const index = Number(t.dataset.index);
-                const flag = t.dataset.flag;
-                const newVal = t.checked ? 1 : 0;
-                if (state.items[index].flags[flag] !== newVal) {
-                    pushHistory();
-                    updateFlag(index, flag, t.checked);
-                }
-                return;
-            }
-            if (t.classList.contains('value-checkbox')) {
-                updateSelectedValuesDisplay(getSelectedValuesFromCheckboxes());
-            }
-        }
-
-        function handleTableInput(event) {
-            const t = event.target;
-            if (t.classList.contains('name-input')) {
-                const index = Number(t.dataset.index);
-                state.items[index].name = t.value;
-                updateRowValidation(index);
                 if (state.currentSearchTerm) applySearchFilter();
             }
-            if (t.id === 'searchInput') filterItemsDebounced();
         }
+        closeModal();
+    }
+    function closeModal() { $('#valueModal').classList.remove('active'); }
 
-        // Модальное окно
-        function openModal(index, field) {
-            const item = state.items[index];
-            if (!item) return;
-            let title = '', options = [];
-            switch (field) {
-                case 'category': title = 'Выберите категории'; options = state.definitions.categories; break;
-                case 'usage': title = 'Выберите usage'; options = state.definitions.usage; break;
-                case 'value': title = 'Выберите value'; options = state.definitions.value; break;
-                case 'tag': title = 'Выберите теги'; options = state.definitions.tags; break;
-                default: return;
-            }
-            state.currentModal = { index, field, inputElement: $(`#field-${index}-${field}`), allOptions: uniqueArray(options) };
-            $('#modalTitle').textContent = title;
-            const current = state.currentModal.inputElement ? parseSpaceList(state.currentModal.inputElement.value) : [];
-            renderModalList(state.currentModal.allOptions, current);
-            updateSelectedValuesDisplay(current);
-            $('#modalCustomValue').value = '';
-            $('#valueModal').classList.add('active');
-        }
+    // ==================== Скроллинг таблицы ====================
+    function getScrollbarWidth(el) { return Math.ceil(el.offsetWidth - el.clientWidth); }
+    function syncTableHeaderScrollbarSpacing() {
+        const body = $('#tableBody'), head = $('#tableHeader');
+        if (body && head) head.style.paddingRight = `${getScrollbarWidth(body)}px`;
+    }
 
-        function renderModalList(options, selected) {
-            const list = $('#modalList');
-            if (!options.length) { list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Загрузите файл определений</div>'; return; }
-            list.innerHTML = options.map(opt => `<div class="modal-item"><input type="checkbox" class="value-checkbox" value="${escapeHtml(opt)}" ${selected.includes(opt)?'checked':''}><span>${escapeHtml(opt)}</span></div>`).join('');
-        }
-        function getSelectedValuesFromCheckboxes() { return uniqueArray($$('.value-checkbox:checked').map(cb => cb.value)); }
-        function updateSelectedValuesDisplay(values) {
-            const cont = $('#selectedValuesList');
-            cont.innerHTML = values.length ? values.map(v => `<span class="selected-value-tag">${escapeHtml(v)}</span>`).join('') : '<span class="selected-value-placeholder">ничего не выбрано</span>';
-        }
-        function clearAllSelections() { $$('.value-checkbox').forEach(cb => cb.checked = false); updateSelectedValuesDisplay([]); }
-        function addCustomValue() {
-            const inp = $('#modalCustomValue');
-            const val = inp.value.trim();
-            if (!val) return;
-            const existing = $$('.value-checkbox').find(cb => cb.value === val);
-            if (existing) existing.checked = true;
-            else {
-                state.currentModal.allOptions = uniqueArray([...state.currentModal.allOptions, val]);
-                renderModalList(state.currentModal.allOptions, uniqueArray([...getSelectedValuesFromCheckboxes(), val]));
-            }
-            updateSelectedValuesDisplay(getSelectedValuesFromCheckboxes());
-            inp.value = '';
-            inp.focus();
-        }
-        function saveModalValues() {
-            const selected = uniqueArray(getSelectedValuesFromCheckboxes());
-            if (state.currentModal.inputElement) {
-                const oldVal = state.items[state.currentModal.index][state.currentModal.field] || [];
-                if (JSON.stringify(oldVal) !== JSON.stringify(selected)) {
-                    pushHistory();
-                    state.currentModal.inputElement.value = selected.join(' ');
-                    state.items[state.currentModal.index][state.currentModal.field] = selected;
-                    saveStateToLocalStorage();
-                    if (state.currentSearchTerm) applySearchFilter();
-                }
-            }
-            closeModal();
-        }
-        function closeModal() { $('#valueModal').classList.remove('active'); }
-
-        function downloadTextFile(content, filename, mime = 'text/plain') {
-            const blob = new Blob([content], { type: mime });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(a.href);
-        }
-
-        function loadDefinitionsFromFile() {
-            const inp = document.createElement('input');
-            inp.type = 'file';
-            inp.accept = '.xml';
-            inp.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = le => {
-                    try {
-                        const xml = new DOMParser().parseFromString(le.target.result, 'text/xml');
-                        if (xml.querySelector('parsererror')) throw new Error('Невалидный XML');
-                        state.definitions = {
-                            categories: uniqueArray([...xml.getElementsByTagName('category')].map(n => n.getAttribute('name'))),
-                            tags: uniqueArray([...xml.getElementsByTagName('tag')].map(n => n.getAttribute('name'))),
-                            usage: uniqueArray([...xml.getElementsByTagName('usage')].map(n => n.getAttribute('name'))),
-                            value: uniqueArray([...xml.getElementsByTagName('value')].map(n => n.getAttribute('name')))
-                        };
-                        saveStateToLocalStorage();
-                        alert(`Загружено определений: категорий ${state.definitions.categories.length}, тегов ${state.definitions.tags.length}, usage ${state.definitions.usage.length}, value ${state.definitions.value.length}`);
-                    } catch (err) { alert(`Ошибка: ${err.message}`); }
-                };
-                reader.readAsText(file);
-            });
-            inp.click();
-        }
-
-        function exportXML() {
-            if (!state.items.length) { alert('Нечего сохранять'); return; }
-            const totalErrors = state.items.reduce((s, item, i) => s + validateItem(item, i).length, 0);
-            if (totalErrors && !confirm(`Обнаружено ${totalErrors} предупреждений.\nВсё равно сохранить?`)) return;
-            let xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<types>\n';
-            state.items.forEach(item => {
-                xml += `\t<type name="${escapeXmlAttr(item.name)}">\n`;
-                xml += `\t\t<nominal>${item.nominal}</nominal>\n\t\t<lifetime>${item.lifetime}</lifetime>\n\t\t<restock>${item.restock}</restock>\n\t\t<min>${item.min}</min>\n\t\t<quantmin>${item.quantmin}</quantmin>\n\t\t<quantmax>${item.quantmax}</quantmax>\n\t\t<cost>${item.cost}</cost>\n`;
-                xml += `\t\t<flags count_in_cargo="${item.flags.count_in_cargo}" count_in_hoarder="${item.flags.count_in_hoarder}" count_in_map="${item.flags.count_in_map}" count_in_player="${item.flags.count_in_player}" crafted="${item.flags.crafted}" deloot="${item.flags.deloot}" />\n`;
-                ['category','usage','value','tag'].forEach(f => {
-                    uniqueArray(item[f]).forEach(v => xml += `\t\t<${f} name="${escapeXmlAttr(v)}" />\n`);
-                });
-                xml += '\t</type>\n';
-            });
-            xml += '</types>';
-            downloadTextFile(xml, 'types.xml', 'text/xml');
-        }
-
-        function getScrollbarWidth(el) { return Math.ceil(el.offsetWidth - el.clientWidth); }
-        function syncTableHeaderScrollbarSpacing() {
-            const body = $('#tableBody'), head = $('#tableHeader');
-            if (body && head) head.style.paddingRight = `${getScrollbarWidth(body)}px`;
-        }
-
-        function setupScrollSync() {
-            const body = $('#tableBody'), head = $('#tableHeader');
-            if (!body || !head) return;
-            const sync = () => head.scrollLeft = body.scrollLeft;
-            body.addEventListener('scroll', () => {
-                if (state.ticking) return;
-                state.rafId = requestAnimationFrame(() => { sync(); state.ticking = false; });
-                state.ticking = true;
-            });
-            const syncAll = () => { sync(); syncTableHeaderScrollbarSpacing(); };
-            window.addEventListener('resize', syncAll);
-            syncAll();
-        }
-
-        function setupKeyboardShortcuts() {
-            document.addEventListener('keydown', e => {
-                const modalActive = $('#valueModal').classList.contains('active');
-                if (e.ctrlKey && e.key.toLowerCase() === 's') { e.preventDefault(); exportXML(); return; }
-                if (e.key === 'Escape' && modalActive) { closeModal(); return; }
-                if (e.key === 'Enter' && modalActive) {
-                    if (e.target.id === 'modalCustomValue') { e.preventDefault(); addCustomValue(); return; }
-                    if (e.target.tagName !== 'BUTTON') { e.preventDefault(); saveModalValues(); }
-                }
-                if (e.key === 'Delete' && !e.target.matches('input,textarea,select') && state.selectedItems.size) deleteSelected();
-                if (e.ctrlKey && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
-                if (e.ctrlKey && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) { e.preventDefault(); redo(); }
-            });
-        }
-
-        function handleDocumentClick(e) {
-            const t = e.target;
-            if (!t.closest('#validationTooltip')) $('#validationTooltip').style.display = 'none';
-            if (t.id === 'clearSearchBtn') clearSearch();
-            else if (t.id === 'loadDefinitionsBtn') loadDefinitionsFromFile();
-            else if (t.id === 'applyMassEditBtn') applyMassEdit();
-            else if (t.id === 'deleteSelectedBtn') deleteSelected();
-            else if (t.id === 'addItemBtn') addItem();
-            else if (t.id === 'clearAllBtn') clearAll();
-            else if (t.id === 'exportBtn') exportXML();
-            else if (t.id === 'importBtn') importXML();
-            else if (t.id === 'undoBtn') undo();
-            else if (t.id === 'redoBtn') redo();
-            else if (t.classList.contains('open-modal-btn')) openModal(Number(t.dataset.index), t.dataset.field);
-            else if (t.id === 'modalCloseBtn' || t.id === 'cancelModalBtn') closeModal();
-            else if (t.id === 'clearAllSelectionsBtn') clearAllSelections();
-            else if (t.id === 'addCustomValueBtn') addCustomValue();
-            else if (t.id === 'saveModalBtn') saveModalValues();
-            else if (t.id === 'valueModal') closeModal();
-        }
-
-        function bindEvents() {
-            document.addEventListener('click', handleDocumentClick);
-            document.addEventListener('input', handleTableInput);
-            document.addEventListener('change', handleTableChange);
-            document.addEventListener('focusout', handleTableBlur);
-        }
-
-        function init() {
-            loadStateFromLocalStorage();
-            renderHeader();
-            renderTable();
-            setupScrollSync();
-            setupKeyboardShortcuts();
-            bindEvents();
-            updateClearButton();
-            if ($('#searchInput').value) {
-                state.currentSearchTerm = $('#searchInput').value.toLowerCase();
-                applySearchFilter();
-            }
-        }
-
-        window.addEventListener('load', init);
-        window.addEventListener('beforeunload', () => {
-            if (state.rafId) cancelAnimationFrame(state.rafId);
-            saveStateToLocalStorage();
+    function setupScrollSync() {
+        const body = $('#tableBody'), head = $('#tableHeader');
+        if (!body || !head) return;
+        const sync = () => head.scrollLeft = body.scrollLeft;
+        body.addEventListener('scroll', () => {
+            if (state.ticking) return;
+            state.rafId = requestAnimationFrame(() => { sync(); state.ticking = false; });
+            state.ticking = true;
         });
-    })();
+        const syncAll = () => { sync(); syncTableHeaderScrollbarSpacing(); };
+        window.addEventListener('resize', syncAll);
+        syncAll();
+    }
+
+    // ==================== Обработчики событий ====================
+    function handleTableBlur(event) {
+        const target = event.target;
+        if (target.classList.contains('name-input')) {
+            const index = Number(target.dataset.index);
+            const field = 'name';
+            const newValue = target.value;
+            const oldValid = getRememberedValidValue(index, field, state.items[index]?.name || 'NewItem');
+            if (!isValidFieldValue(field, newValue)) {
+                target.value = oldValid;
+                state.items[index][field] = oldValid;
+                showValidationTooltip(target, getFieldValidationMessage(field));
+            } else {
+                if (state.items[index][field] !== newValue) {
+                    pushHistory();
+                    state.items[index][field] = newValue;
+                    rememberValidValue(index, field, newValue);
+                }
+            }
+            validateField(target, index, field);
+            saveStateToLocalStorage();
+        }
+        else if (target.classList.contains('number-input')) {
+            const index = Number(target.dataset.index);
+            const field = target.dataset.field;
+            const raw = target.value;
+            const fallback = field.includes('quant') ? -1 : 0;
+            const oldValid = getRememberedValidValue(index, field, state.items[index]?.[field] ?? fallback);
+            if (!isValidFieldValue(field, raw)) {
+                target.value = oldValid;
+                state.items[index][field] = normalizeNumber(oldValid, fallback);
+                showValidationTooltip(target, getFieldValidationMessage(field));
+            } else {
+                const normalized = normalizeNumber(raw, fallback);
+                if (state.items[index][field] !== normalized) {
+                    pushHistory();
+                    state.items[index][field] = normalized;
+                    target.value = normalized;
+                    rememberValidValue(index, field, normalized);
+                }
+            }
+            validateField(target, index, field);
+            saveStateToLocalStorage();
+        }
+        else if (target.classList.contains('text-input')) {
+            const index = Number(target.dataset.index);
+            const field = target.dataset.field;
+            const newArr = parseSpaceList(target.value);
+            const oldArr = state.items[index][field] || [];
+            if (JSON.stringify(oldArr) !== JSON.stringify(newArr)) {
+                pushHistory();
+                state.items[index][field] = newArr;
+                if (state.currentSearchTerm) applySearchFilter();
+                saveStateToLocalStorage();
+            }
+        }
+    }
+
+    function handleTableChange(event) {
+        const t = event.target;
+        if (t.id === 'selectAllCheckbox') { toggleSelectVisible(); return; }
+        if (t.classList.contains('item-checkbox')) { toggleItemSelection(Number(t.dataset.index)); return; }
+        if (t.classList.contains('flag-checkbox')) {
+            const index = Number(t.dataset.index);
+            const flag = t.dataset.flag;
+            const newVal = t.checked ? 1 : 0;
+            if (state.items[index].flags[flag] !== newVal) {
+                pushHistory();
+                updateFlag(index, flag, t.checked);
+            }
+            return;
+        }
+        if (t.classList.contains('value-checkbox')) {
+            updateSelectedValuesDisplay(getSelectedValuesFromCheckboxes());
+        }
+    }
+
+    function handleTableInput(event) {
+        const t = event.target;
+        if (t.classList.contains('name-input')) {
+            const index = Number(t.dataset.index);
+            state.items[index].name = t.value;
+            updateRowValidation(index);
+            if (state.currentSearchTerm) applySearchFilter();
+        }
+        if (t.id === 'searchInput') filterItemsDebounced();
+    }
+
+    function handleDocumentClick(e) {
+        const t = e.target;
+        if (!t.closest('#validationTooltip')) $('#validationTooltip').style.display = 'none';
+        if (t.id === 'clearSearchBtn') clearSearch();
+        else if (t.id === 'loadDefinitionsBtn') loadDefinitionsFromFile();
+        else if (t.id === 'applyMassEditBtn') applyMassEdit();
+        else if (t.id === 'deleteSelectedBtn') deleteSelected();
+        else if (t.id === 'addItemBtn') addItem();
+        else if (t.id === 'clearAllBtn') clearAll();
+        else if (t.id === 'exportBtn') exportXML();
+        else if (t.id === 'importBtn') importXML();
+        else if (t.id === 'undoBtn') undo();
+        else if (t.id === 'redoBtn') redo();
+        else if (t.classList.contains('open-modal-btn')) openModal(Number(t.dataset.index), t.dataset.field);
+        else if (t.id === 'modalCloseBtn' || t.id === 'cancelModalBtn') closeModal();
+        else if (t.id === 'clearAllSelectionsBtn') clearAllSelections();
+        else if (t.id === 'addCustomValueBtn') addCustomValue();
+        else if (t.id === 'saveModalBtn') saveModalValues();
+        else if (t.id === 'valueModal') closeModal();
+    }
+
+    function setupKeyboardShortcuts() {
+        document.addEventListener('keydown', e => {
+            const modalActive = $('#valueModal').classList.contains('active');
+            if (e.ctrlKey && e.key.toLowerCase() === 's') { e.preventDefault(); exportXML(); return; }
+            if (e.key === 'Escape' && modalActive) { closeModal(); return; }
+            if (e.key === 'Enter' && modalActive) {
+                if (e.target.id === 'modalCustomValue') { e.preventDefault(); addCustomValue(); return; }
+                if (e.target.tagName !== 'BUTTON') { e.preventDefault(); saveModalValues(); }
+            }
+            if (e.key === 'Delete' && !e.target.matches('input,textarea,select') && state.selectedItems.size) deleteSelected();
+            if (e.ctrlKey && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+            if (e.ctrlKey && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) { e.preventDefault(); redo(); }
+        });
+    }
+
+    function bindEvents() {
+        document.addEventListener('click', handleDocumentClick);
+        document.addEventListener('input', handleTableInput);
+        document.addEventListener('change', handleTableChange);
+        document.addEventListener('focusout', handleTableBlur);
+    }
+
+    // ==================== Инициализация ====================
+    function init() {
+        loadStateFromLocalStorage();
+        renderHeader();
+        renderTable();
+        setupScrollSync();
+        setupKeyboardShortcuts();
+        bindEvents();
+        updateClearButton();
+        if ($('#searchInput').value) {
+            state.currentSearchTerm = $('#searchInput').value.toLowerCase();
+            applySearchFilter();
+        }
+    }
+
+    window.addEventListener('load', init);
+    window.addEventListener('beforeunload', () => {
+        if (state.rafId) cancelAnimationFrame(state.rafId);
+        saveStateToLocalStorage();
+    });
 </script>
 </body>
 </html>
