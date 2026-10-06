@@ -464,14 +464,19 @@
         // Find the item in state.items
         const itemIndex = state.items.findIndex(item => item.name === change.name);
         if (itemIndex === -1) return;
-        // Restore the field to baseline value
-        if (change.field === 'NOMINAL') state.items[itemIndex].nominal = change.from;
-        else if (change.field === 'LIFETIME') state.items[itemIndex].lifetime = change.from;
-        else if (change.field === 'RESTOCK') state.items[itemIndex].restock = change.from;
-        else if (change.field === 'MIN') state.items[itemIndex].min = change.from;
-        else if (change.field === 'QUANTMIN') state.items[itemIndex].quantmin = change.from;
-        else if (change.field === 'QUANTMAX') state.items[itemIndex].quantmax = change.from;
-        else if (change.field === 'COST') state.items[itemIndex].cost = change.from;
+        // Restore the field to baseline value (fields are lowercase)
+        if (change.field === 'nominal') state.items[itemIndex].nominal = change.from;
+        else if (change.field === 'lifetime') state.items[itemIndex].lifetime = change.from;
+        else if (change.field === 'restock') state.items[itemIndex].restock = change.from;
+        else if (change.field === 'min') state.items[itemIndex].min = change.from;
+        else if (change.field === 'quantmin') state.items[itemIndex].quantmin = change.from;
+        else if (change.field === 'quantmax') state.items[itemIndex].quantmax = change.from;
+        else if (change.field === 'cost') state.items[itemIndex].cost = change.from;
+        else if (change.field === 'category') state.items[itemIndex].category = change.from ? change.from.split(' ') : [];
+        else if (change.field === 'usage') state.items[itemIndex].usage = change.from ? change.from.split(' ') : [];
+        else if (change.field === 'value') state.items[itemIndex].value = change.from ? change.from.split(' ') : [];
+        else if (change.field === 'tag') state.items[itemIndex].tag = change.from ? change.from.split(' ') : [];
+        else return;
         // Re-render and refresh modal
         renderTable();
         showChanges();
