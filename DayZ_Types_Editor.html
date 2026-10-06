@@ -536,6 +536,11 @@
         showChanges();
     }
 
+    // Make functions accessible from inline onclick handlers
+    window.restoreSingleChange = restoreSingleChange;
+    window.restoreAllChanges = restoreAllChanges;
+    window.restoreSelectedChanges = restoreSelectedChanges;
+
     function restoreAllChanges() {
         if (!confirm('Восстановить все изменения к исходному состоянию?')) return;
         state.items = snapshotItems(state.baseline);
