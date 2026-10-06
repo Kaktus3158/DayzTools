@@ -447,13 +447,11 @@
             $('#changesCount').textContent = changes.length ? 'Изменений: ' + changes.length : '';
             const modal = $('#changesModal');
             modal.classList.add('active');
-            // Add click handlers for restore
+            // Add click handlers for restore - click anywhere on the row
             list.querySelectorAll('.changes-item').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('changes-restore')) {
-                        const idx = parseInt(this.dataset.index);
-                        restoreSingleChange(idx);
-                    }
+                el.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index);
+                    restoreSingleChange(idx);
                 });
             });
         } catch(e) { alert('Error: ' + e.message); console.error(e); }
