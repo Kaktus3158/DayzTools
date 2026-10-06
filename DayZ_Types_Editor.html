@@ -463,7 +463,7 @@
                     '<span class="changes-name">' + escapeHtml(c.name) + '</span>' +
                     '<span class="changes-field">' + escapeHtml(c.field) + '</span>' +
                     '<span class="changes-values"><s style="color:#e74c3c">' + escapeHtml(String(c.from)) + '</s> → <b style="color:#27ae60">' + escapeHtml(String(c.to)) + '</b></span>' +
-                    '<span class="changes-restore" title="Восстановить">↩</span>' +
+                    '<button class="btn btn-green" style="padding:4px 10px;font-size:11px;white-space:nowrap;" onclick="event.stopPropagation();restoreSingleChange(' + origIdx + ')">Восстановить</button>' +
                     '</div>';
                 }).join('');
                 $('#restoreAllBtn').style.display = 'block';
@@ -473,14 +473,7 @@
             $('#changesCount').textContent = currentChanges.length ? countText : '';
             const modal = $('#changesModal');
             modal.classList.add('active');
-            // Add click handlers for restore
-            list.querySelectorAll('.changes-item').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('changes-checkbox')) return;
-                    const idx = parseInt(this.dataset.index);
-                    restoreSingleChange(idx);
-                });
-            });
+            // Remove row click handler - only button triggers restore
             // Add checkbox change handlers
             list.querySelectorAll('.changes-checkbox').forEach(cb => {
                 cb.addEventListener('change', function() {
