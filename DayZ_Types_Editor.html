@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DayZ Types Editor</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:#2c3e50;padding:20px;min-height:100vh;overflow:hidden}.container{max-width:100%;height:calc(100vh - 40px);margin:0 auto;background:#fff;border-radius:6px;padding:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18)}.header{background:#34495e;color:#fff;padding:15px 18px;margin-bottom:20px;border-radius:5px;display:flex;align-items:center;flex-shrink:0}.header h2{font-size:1.5em;margin:0;font-weight:700}.main-content{display:flex;gap:20px;flex:1;min-height:0;overflow:hidden}.sidebar{width:300px;background:#ecf0f1;padding:15px;border-radius:5px;overflow-y:auto;flex-shrink:0;border:1px solid #d5dce0}.editor-section-title,.sidebar h3{color:#2c3e50;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #34495e;font-size:16px;font-weight:700}.editor{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}.editor-card{background:#fff;border:1px solid #d5dce0;border-radius:5px;padding:15px;display:flex;flex-direction:column;flex:1;min-height:0}.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:700;margin-bottom:4px;color:#2c3e50}.sidebar input[type=number],.sidebar input[type=text],.sidebar select{width:100%;padding:6px 8px;border:1px solid #bdc3c7;border-radius:3px;font-size:13px;height:32px;background:#fff;color:#2c3e50;font-family:Arial,sans-serif}.sidebar input[type=number]:focus,.sidebar input[type=text]:focus,.sidebar select:focus{outline:0;border-color:#3498db;box-shadow:0 0 0 2px rgba(52,152,219,.12)}.sidebar input[type=number]{-moz-appearance:textfield}.sidebar input[type=number]::-webkit-inner-spin-button,.sidebar input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.search-wrapper{display:flex;gap:5px;margin-bottom:15px}.search-wrapper input{flex:1}.btn{border:none;border-radius:3px;cursor:pointer;font-size:13px;padding:9px 12px;color:#fff;transition:background .2s ease,transform .1s ease}.btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(0)}.btn-green{background:#27ae60}.btn-green:hover{background:#229954}.btn-orange{background:#f39c12}.btn-orange:hover{background:#e67e22}.btn-blue{background:#2980b9}.btn-blue:hover{background:#1f618d}.btn-red{background:#e74c3c}.btn-red:hover{background:#c0392b}.mass-edit-panel{margin-bottom:15px}.action-buttons,.mass-edit-buttons{display:flex;gap:8px;margin-top:10px}.action-buttons button,.mass-edit-buttons button{flex:1}.import-export-section{margin-top:15px}.import-export-section .btn{width:100%;margin-bottom:6px}.mass-edit-help{margin-bottom:15px;padding:10px;background:#fff;border:1px solid #d0d7db;border-radius:3px}.mass-edit-help-title{color:#2c3e50;font-size:11px;font-weight:700;margin-bottom:8px;text-transform:uppercase}.mass-edit-help-list{display:flex;flex-direction:column;gap:4px;font-size:11px;color:#5f6b73;line-height:1.4}.mass-edit-help-list strong{color:#2c3e50}.table-container{display:flex;flex-direction:column;border:1px solid #c4ccd1;border-radius:4px;background:#fff;flex:1;overflow:hidden}.table-header{overflow:hidden;border-bottom:1px solid #c4ccd1;background:#e3e9ec;flex-shrink:0;padding-right:0}.table-body{overflow-x:auto;overflow-y:auto;flex:1}table{border-collapse:collapse;font-size:12px;table-layout:fixed;width:100%;min-width:2000px}th{background:#e3e9ec;color:#2c3e50;padding:8px 4px;font-weight:600;white-space:nowrap;text-align:center;border-right:1px solid #c4ccd1;border-bottom:1px solid #c4ccd1;font-size:11px;text-transform:uppercase}td{padding:4px 2px;border-bottom:1px solid #c4ccd1;border-right:1px solid #c4ccd1;text-align:center;overflow:hidden;background:#fff;color:#2c3e50}tr:hover td{background:#eef3f5}tr.selected td{background:#dfeaf1}tr.hidden-by-search{display:none}tr.validation-error td{border-bottom:2px solid rgba(231,76,60,.7)}.checkbox-cell{text-align:center}.checkbox-cell input{width:14px;height:14px;accent-color:#34495e}.name-input,.number-input,.text-input{width:100%;padding:6px 4px;border:1px solid #c9d1d4;border-radius:2px;font-size:11px;height:28px;background:#fff;color:#2c3e50;font-family:Arial,sans-serif}.name-input:focus,.number-input:focus,.text-input:focus{outline:0;border-color:#3498db;box-shadow:0 0 0 2px rgba(52,152,219,.12)}.name-input.invalid,.number-input.invalid{border-color:#e74c3c;box-shadow:0 0 0 2px rgba(231,76,60,.12)}.number-input{text-align:center;-moz-appearance:textfield}.number-input::-webkit-inner-spin-button,.number-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.text-input{text-align:left}.name-input{text-align:left}.flag-cell{text-align:center}.flag-checkbox{width:14px;height:14px;accent-color:#34495e}.field-with-button{display:flex;gap:2px;width:100%}.field-with-button input{flex:1;min-width:0;border-radius:2px 0 0 2px}.field-with-button button{width:24px;background:#ecf0f1;border:1px solid #c9d1d4;border-left:none;border-radius:0 2px 2px 0;cursor:pointer;color:#2c3e50;font-size:11px}.field-with-button button:hover{background:#dfe6e9}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000}.modal.active{display:flex;justify-content:center;align-items:center}.modal-content{background:#fff;border-radius:6px;width:500px;max-width:90%;max-height:80vh;overflow-y:auto;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,.25)}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #d0d7db}.modal-header h3{font-size:16px;color:#2c3e50}.modal-close{background:0 0;border:none;font-size:22px;cursor:pointer;color:#7f8c8d}.modal-close:hover{color:#e74c3c}.selected-values{margin-bottom:15px;padding:10px;background:#f4f6f7;border:1px solid #d0d7db;border-radius:3px}.selected-values-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.selected-values-header span{color:#7f8c8d;font-size:12px;text-transform:uppercase}.clear-all-btn{background:0 0;border:1px solid #c9d1d4;color:#2c3e50;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:11px}.clear-all-btn:hover{background:#fcebea;border-color:#e74c3c;color:#c0392b}.selected-values-list{display:flex;flex-wrap:wrap;gap:5px;min-height:28px}.selected-value-tag{display:inline-block;background:#ecf0f1;padding:4px 10px;border-radius:3px;border:1px solid #d0d7db;color:#2c3e50;font-size:11px}.selected-value-placeholder{color:#95a5a6;font-style:italic;font-size:11px;padding:4px 0}.modal-list{max-height:300px;overflow-y:auto;border:1px solid #d0d7db;border-radius:3px;margin-bottom:15px;background:#fff}.modal-item{padding:8px 10px;border-bottom:1px solid #d0d7db;cursor:pointer;font-size:12px;color:#2c3e50;transition:background .2s;display:flex;align-items:center;gap:8px}.modal-item:hover{background:#f4f7f8}.modal-custom{display:flex;gap:5px;margin-bottom:15px}.modal-custom input{flex:1}.modal-buttons{display:flex;gap:10px}.modal-buttons button{flex:1}.validation-tooltip{position:fixed;background:#fcebea;border:1px solid #e74c3c;color:#c0392b;padding:6px 12px;border-radius:3px;font-size:11px;z-index:2000;pointer-events:none;font-family:Arial,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);max-width:300px}@media (max-width:1200px){.main-content{flex-direction:column}.sidebar{width:100%}}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:#2c3e50;padding:20px;min-height:100vh;overflow:hidden}.container{max-width:100%;height:calc(100vh - 40px);margin:0 auto;background:#fff;border-radius:6px;padding:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18)}.header{background:#34495e;color:#fff;padding:15px 18px;margin-bottom:20px;border-radius:5px;display:flex;align-items:center;flex-shrink:0}.header h2{font-size:1.5em;margin:0;font-weight:700}.main-content{display:flex;gap:20px;flex:1;min-height:0;overflow:hidden}.sidebar{width:300px;background:#ecf0f1;padding:15px;border-radius:5px;overflow-y:auto;flex-shrink:0;border:1px solid #d5dce0}.editor-section-title,.sidebar h3{color:#2c3e50;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #34495e;font-size:16px;font-weight:700}.editor{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}.editor-card{background:#fff;border:1px solid #d5dce0;border-radius:5px;padding:15px;display:flex;flex-direction:column;flex:1;min-height:0}.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:700;margin-bottom:4px;color:#2c3e50}.sidebar input[type=number],.sidebar input[type=text],.sidebar select{width:100%;padding:6px 8px;border:1px solid #bdc3c7;border-radius:3px;font-size:13px;height:32px;background:#fff;color:#2c3e50;font-family:Arial,sans-serif}.sidebar input[type=number]:focus,.sidebar input[type=text]:focus,.sidebar select:focus{outline:0;border-color:#3498db;box-shadow:0 0 0 2px rgba(52,152,219,.12)}.sidebar input[type=number]{-moz-appearance:textfield}.sidebar input[type=number]::-webkit-inner-spin-button,.sidebar input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.search-wrapper{display:flex;gap:5px;margin-bottom:15px}.search-wrapper input{flex:1}.btn{border:none;border-radius:3px;cursor:pointer;font-size:13px;padding:9px 12px;color:#fff;transition:background .2s ease,transform .1s ease}.btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(0)}.btn-green{background:#27ae60}.btn-green:hover{background:#229954}.btn-orange{background:#f39c12}.btn-orange:hover{background:#e67e22}.btn-blue{background:#2980b9}.btn-blue:hover{background:#1f618d}.btn-red{background:#e74c3c}.btn-red:hover{background:#c0392b}.mass-edit-panel{margin-bottom:15px}.action-buttons,.mass-edit-buttons{display:flex;gap:8px;margin-top:10px}.action-buttons button,.mass-edit-buttons button{flex:1}.import-export-section{margin-top:15px}.import-export-section .btn{width:100%;margin-bottom:6px}.mass-edit-help{margin-bottom:15px;padding:10px;background:#fff;border:1px solid #d0d7db;border-radius:3px}.mass-edit-help-title{color:#2c3e50;font-size:11px;font-weight:700;margin-bottom:8px;text-transform:uppercase}.mass-edit-help-list{display:flex;flex-direction:column;gap:4px;font-size:11px;color:#5f6b73;line-height:1.4}.mass-edit-help-list strong{color:#2c3e50}.table-container{display:flex;flex-direction:column;border:1px solid #c4ccd1;border-radius:4px;background:#fff;flex:1;overflow:hidden}.table-header{overflow:hidden;border-bottom:1px solid #c4ccd1;background:#e3e9ec;flex-shrink:0;padding-right:0}.table-body{overflow-x:auto;overflow-y:auto;flex:1}table{border-collapse:collapse;font-size:12px;table-layout:fixed;width:100%;min-width:2000px}th{background:#e3e9ec;color:#2c3e50;padding:8px 4px;font-weight:600;white-space:nowrap;text-align:center;border-right:1px solid #c4ccd1;border-bottom:1px solid #c4ccd1;font-size:11px;text-transform:uppercase}td{padding:4px 2px;border-bottom:1px solid #c4ccd1;border-right:1px solid #c4ccd1;text-align:center;overflow:hidden;background:#fff;color:#2c3e50}tr:hover td{background:#eef3f5}tr.selected td{background:#a7cce0;border-left:3px solid #3498db}tr.selected td .name-input,tr.selected td .number-input,tr.selected td .text-input{background:#a7cce0}tr.selected td .field-with-button button{background:#a7cce0}tr.selected td .field-with-button button:hover{background:#8fbdd4}tr.hidden-by-search{display:none}tr.validation-error td{border-bottom:2px solid rgba(231,76,60,.7)}.checkbox-cell{text-align:center}.checkbox-cell input{width:14px;height:14px;accent-color:#34495e}.name-input,.number-input,.text-input{width:100%;padding:6px 4px;border:1px solid #c9d1d4;border-radius:2px;font-size:11px;height:28px;background:#fff;color:#2c3e50;font-family:Arial,sans-serif}.name-input:focus,.number-input:focus,.text-input:focus{outline:0;border-color:#3498db;box-shadow:0 0 0 2px rgba(52,152,219,.12)}.name-input.invalid,.number-input.invalid{border-color:#e74c3c;box-shadow:0 0 0 2px rgba(231,76,60,.12)}.number-input{text-align:center;-moz-appearance:textfield}.number-input::-webkit-inner-spin-button,.number-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.text-input{text-align:left}.name-input{text-align:left}.flag-cell{text-align:center}.flag-checkbox{width:14px;height:14px;accent-color:#34495e}.field-with-button{display:flex;gap:2px;width:100%}.field-with-button input{flex:1;min-width:0;border-radius:2px 0 0 2px}.field-with-button button{width:24px;background:#ecf0f1;border:1px solid #c9d1d4;border-left:none;border-radius:0 2px 2px 0;cursor:pointer;color:#2c3e50;font-size:11px}.field-with-button button:hover{background:#dfe6e9}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000}.modal.active{display:flex;justify-content:center;align-items:center}.modal-content{background:#fff;border-radius:6px;width:500px;max-width:90%;max-height:80vh;overflow-y:auto;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,.25)}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #d0d7db}.modal-header h3{font-size:16px;color:#2c3e50}.modal-close{background:0 0;border:none;font-size:22px;cursor:pointer;color:#7f8c8d}.modal-close:hover{color:#e74c3c}.selected-values{margin-bottom:15px;padding:10px;background:#f4f6f7;border:1px solid #d0d7db;border-radius:3px}.selected-values-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.selected-values-header span{color:#7f8c8d;font-size:12px;text-transform:uppercase}.clear-all-btn{background:0 0;border:1px solid #c9d1d4;color:#2c3e50;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:11px}.clear-all-btn:hover{background:#fcebea;border-color:#e74c3c;color:#c0392b}.selected-values-list{display:flex;flex-wrap:wrap;gap:5px;min-height:28px}.selected-value-tag{display:inline-block;background:#ecf0f1;padding:4px 10px;border-radius:3px;border:1px solid #d0d7db;color:#2c3e50;font-size:11px}.selected-value-placeholder{color:#95a5a6;font-style:italic;font-size:11px;padding:4px 0}.modal-list{max-height:300px;overflow-y:auto;border:1px solid #d0d7db;border-radius:3px;margin-bottom:15px;background:#fff}.modal-item{padding:8px 10px;border-bottom:1px solid #d0d7db;cursor:pointer;font-size:12px;color:#2c3e50;transition:background .2s;display:flex;align-items:center;gap:8px}.modal-item:hover{background:#f4f7f8}.changes-item{cursor:default}.changes-name{min-width:180px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.changes-field{min-width:90px;color:#7f8c8d;font-size:11px;text-transform:uppercase}.changes-values{flex:1;font-size:12px}.modal-custom{display:flex;gap:5px;margin-bottom:15px}.modal-custom input{flex:1}.modal-buttons{display:flex;gap:10px}.modal-buttons button{flex:1}.validation-tooltip{position:fixed;background:#fcebea;border:1px solid #e74c3c;color:#c0392b;padding:6px 12px;border-radius:3px;font-size:11px;z-index:2000;pointer-events:none;font-family:Arial,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);max-width:300px}@media (max-width:1200px){.main-content{flex-direction:column}.sidebar{width:100%}}
     </style>
 </head>
 <body>
@@ -51,8 +51,7 @@
                 <button class="btn btn-orange" id="clearAllBtn" title="Очистить все предметы">Очистить</button>
             </div>
             <div class="action-buttons" style="margin-top:5px;">
-                <button class="btn" id="undoBtn" title="Отменить последнее действие" style="background:#7f8c8d;" disabled>↩ Undo</button>
-                <button class="btn" id="redoBtn" title="Повторить отменённое действие" style="background:#7f8c8d;" disabled>↪ Redo</button>
+                <button class="btn btn-blue" id="showChangesBtn" title="Показать отличия от загруженного файла" style="width:100%;">Изменения</button>
             </div>
             <div class="import-export-section">
                 <button class="btn btn-blue" id="exportBtn" title="Сохранить types.xml">Сохранить</button>
@@ -105,34 +104,33 @@
 </div>
 <div class="validation-tooltip" id="validationTooltip" style="display:none"></div>
 
-<script type="module">
-    // ==================== Импорт Tauri API (будет работать только в Tauri-окружении) ====================
-    // В обычном браузере эти импорты вызовут ошибку, но мы предусмотрим fallback
-    let openDialog, saveDialog, readTextFile, writeTextFile;
-    try {
-        const tauriApi = await import('@tauri-apps/api');
-        openDialog = tauriApi.dialog.open;
-        saveDialog = tauriApi.dialog.save;
-        readTextFile = tauriApi.fs.readTextFile;
-        writeTextFile = tauriApi.fs.writeTextFile;
-    } catch (e) {
-        // Если не в Tauri, используем заглушки с браузерными методами
-        console.warn('Tauri API недоступно, используются браузерные методы.');
-        openDialog = null;
-        saveDialog = null;
-        readTextFile = null;
-        writeTextFile = null;
-    }
+<!-- Модальное окно "Изменения" -->
+<div class="modal" id="changesModal">
+    <div class="modal-content" style="width:640px;">
+        <div class="modal-header">
+            <h3>Изменения</h3>
+            <button class="modal-close" id="changesCloseBtn" title="Закрыть">×</button>
+        </div>
+        <div class="selected-values">
+            <span id="changesCount" style="color:#7f8c8d;font-size:12px;"></span>
+        </div>
+        <div class="modal-list" id="changesList"></div>
+        <div class="modal-buttons">
+            <button class="btn btn-red" id="changesCloseModalBtn" title="Закрыть">Закрыть</button>
+        </div>
+    </div>
+</div>
 
+<script type="module">
     // ==================== Глобальные переменные и состояние ====================
     const STORAGE_KEY = 'dayzTypesEditorData_v2';
     const DEFINITIONS_STORAGE_KEY = 'dayzTypesEditorDefinitions_v1';
-    const MAX_HISTORY = 50;
 
     const state = {
         items: [],
         selectedItems: new Set(),
         currentSearchTerm: '',
+        baseline: [],
         lastValidValues: {},
         definitions: {
             categories: [],
@@ -151,8 +149,7 @@
         ticking: false
     };
 
-    let undoStack = [];
-    let redoStack = [];
+    let duplicateIndicesCache = null;
 
     const columns = [
         { id:'col0', title:'', type:'checkbox', width:40 },
@@ -250,74 +247,6 @@
         return `${base}_${counter}`;
     }
 
-    // ==================== История (Undo/Redo) ====================
-    function pushHistory() {
-        const snapshot = state.items.map(item => ({
-            ...item,
-            flags: { ...item.flags },
-            category: [...(item.category || [])],
-            usage: [...(item.usage || [])],
-            value: [...(item.value || [])],
-            tag: [...(item.tag || [])]
-        }));
-        undoStack.push(snapshot);
-        if (undoStack.length > MAX_HISTORY) undoStack.shift();
-        redoStack = [];
-        updateUndoRedoButtons();
-    }
-
-    function restoreStateFromSnapshot(snapshot) {
-        state.items = snapshot.map(item => ({
-            ...item,
-            flags: { ...item.flags },
-            category: [...(item.category || [])],
-            usage: [...(item.usage || [])],
-            value: [...(item.value || [])],
-            tag: [...(item.tag || [])]
-        }));
-        state.selectedItems.clear();
-        state.currentSearchTerm = $('#searchInput').value.toLowerCase();
-        saveStateToLocalStorage();
-        renderTable();
-        updateUndoRedoButtons();
-    }
-
-    function undo() {
-        if (undoStack.length === 0) return;
-        const currentSnapshot = state.items.map(item => ({
-            ...item,
-            flags: { ...item.flags },
-            category: [...(item.category || [])],
-            usage: [...(item.usage || [])],
-            value: [...(item.value || [])],
-            tag: [...(item.tag || [])]
-        }));
-        redoStack.push(currentSnapshot);
-        const prevSnapshot = undoStack.pop();
-        restoreStateFromSnapshot(prevSnapshot);
-    }
-
-    function redo() {
-        if (redoStack.length === 0) return;
-        const currentSnapshot = state.items.map(item => ({
-            ...item,
-            flags: { ...item.flags },
-            category: [...(item.category || [])],
-            usage: [...(item.usage || [])],
-            value: [...(item.value || [])],
-            tag: [...(item.tag || [])]
-        }));
-        undoStack.push(currentSnapshot);
-        const nextSnapshot = redoStack.pop();
-        restoreStateFromSnapshot(nextSnapshot);
-    }
-
-    function updateUndoRedoButtons() {
-        const undoBtn = $('#undoBtn');
-        const redoBtn = $('#redoBtn');
-        if (undoBtn) undoBtn.disabled = undoStack.length === 0;
-        if (redoBtn) redoBtn.disabled = redoStack.length === 0;
-    }
 
     // ==================== Валидация ====================
     function getFieldKey(index, field) { return `${index}:${field}`; }
@@ -344,7 +273,8 @@
         return 'Недопустимое значение';
     }
 
-    function getDuplicateNames() {
+    function collectDuplicateNameIndices() {
+        if (duplicateIndicesCache) return duplicateIndicesCache;
         const seen = new Map();
         const duplicates = new Set();
         state.items.forEach((item, index) => {
@@ -355,12 +285,13 @@
                 duplicates.add(seen.get(name));
             } else seen.set(name, index);
         });
+        duplicateIndicesCache = duplicates;
         return duplicates;
     }
 
-    function validateItem(item, index) {
+    function validateItem(item, index, duplicateIndices) {
         const errors = [];
-        const duplicateIndices = getDuplicateNames();
+        if (!duplicateIndices) duplicateIndices = collectDuplicateNameIndices();
         const name = String(item?.name || '').trim();
         if (!name) errors.push('Имя пустое');
         if (duplicateIndices.has(index)) errors.push('Дублирующееся имя');
@@ -440,9 +371,82 @@
                     value: uniqueArray(parsedDefs?.value || [])
                 };
             }
-            pushHistory(); // начальное состояние
+            setBaseline();
         } catch (error) { console.warn('Не удалось восстановить состояние:', error); }
     }
+
+    function snapshotItems(items) {
+        return items.map(item => ({
+            ...item,
+            flags: { ...item.flags },
+            category: [...(item.category || [])],
+            usage: [...(item.usage || [])],
+            value: [...(item.value || [])],
+            tag: [...(item.tag || [])]
+        }));
+    }
+    function setBaseline() { state.baseline = snapshotItems(state.items); }
+
+    const FIELD_LABELS = {
+        name: 'Имя', nominal: 'nominal', lifetime: 'lifetime', restock: 'restock',
+        min: 'min', quantmin: 'quantmin', quantmax: 'quantmax', cost: 'cost'
+    };
+    const FLAG_LABELS = {
+        count_in_cargo: 'cargo', count_in_hoarder: 'hoarder', count_in_map: 'map',
+        count_in_player: 'player', crafted: 'crafted', deloot: 'deloot'
+    };
+
+    function collectChanges() {
+        const baselineById = new Map();
+        (state.baseline || []).forEach(item => baselineById.set(item.id, item));
+        const changes = [];
+
+        state.items.forEach(item => {
+            const base = baselineById.get(item.id);
+            if (!base) { changes.push({ name: item.name, field: 'предмет', from: '\u2014', to: 'добавлен' }); return; }
+            for (const f of ['name','nominal','lifetime','restock','min','quantmin','quantmax','cost']) {
+                if (String(item[f]) !== String(base[f])) {
+                    changes.push({ name: base.name, field: FIELD_LABELS[f], from: base[f], to: item[f] });
+                }
+            }
+            for (const flag of Object.keys(FLAG_LABELS)) {
+                const bv = base.flags?.[flag] ?? 0, cv = item.flags?.[flag] ?? 0;
+                if (bv !== cv) changes.push({ name: base.name, field: FLAG_LABELS[flag], from: bv, to: cv });
+            }
+            for (const f of ['category','usage','value','tag']) {
+                const bv = (base[f] || []).join(' '), cv = (item[f] || []).join(' ');
+                if (bv !== cv) changes.push({ name: base.name, field: f, from: bv || '\u2014', to: cv || '\u2014' });
+            }
+        });
+
+        const currentIds = new Set(state.items.map(i => i.id));
+        (state.baseline || []).forEach(item => {
+            if (!currentIds.has(item.id)) changes.push({ name: item.name, field: 'предмет', from: 'удалён', to: '\u2014' });
+        });
+        return changes;
+    }
+
+    function showChanges() {
+        try {
+            const changes = collectChanges();
+            const list = $('#changesList');
+            if (!changes.length) {
+                list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Изменений нет</div>';
+            } else {
+                list.innerHTML = changes.map(c =>
+                    '<div class="modal-item changes-item">' +
+                    '<span class="changes-name">' + escapeHtml(c.name) + '</span>' +
+                    '<span class="changes-field">' + escapeHtml(c.field) + '</span>' +
+                    '<span class="changes-values"><s style="color:#e74c3c">' + escapeHtml(String(c.from)) + '</s> → <b style="color:#27ae60">' + escapeHtml(String(c.to)) + '</b></span>' +
+                    '</div>').join('');
+            }
+            $('#changesCount').textContent = changes.length ? 'Изменений: ' + changes.length : '';
+            const modal = $('#changesModal');
+            modal.classList.add('active');
+        } catch(e) { alert('Error: ' + e.message); console.error(e); }
+    }
+
+    function closeChangesModal() { $('#changesModal').classList.remove('active'); }
 
     // ==================== Рендеринг таблицы ====================
     function renderHeader() {
@@ -451,11 +455,12 @@
     }
 
     function renderTable() {
+        const duplicateIndices = collectDuplicateNameIndices();
         const tbody = $('#tableBodyRows');
         const html = state.items.map((item, index) => {
             const isVisible = !state.currentSearchTerm || itemMatchesSearch(item, state.currentSearchTerm);
             const isSelected = state.selectedItems.has(index);
-            const errors = validateItem(item, index);
+            const errors = validateItem(item, index, duplicateIndices);
             rememberValidValue(index, 'name', item.name);
             ['nominal','lifetime','restock','min','quantmin','quantmax','cost'].forEach(f => rememberValidValue(index, f, item[f]));
             return `<tr data-index="${index}" class="${isSelected ? 'selected' : ''} ${!isVisible ? 'hidden-by-search' : ''} ${errors.length ? 'validation-error' : ''}" title="${escapeHtml(errors.join('; '))}">${columns.map(col => renderCell(item, index, col, errors)).join('')}</tr>`;
@@ -486,32 +491,11 @@
         return `<td ${widthStyle}></td>`;
     }
 
-    function updateItemField(index, field, value) {
-        if (!state.items[index]) return;
-        state.items[index][field] = value;
-        saveStateToLocalStorage();
-    }
-
-    function updateNumberField(index, field, value) {
-        if (!state.items[index]) return;
-        const fallback = field.includes('quant') ? -1 : 0;
-        state.items[index][field] = normalizeNumber(value, fallback);
-        saveStateToLocalStorage();
-        updateRowValidation(index);
-    }
-
     function updateFlag(index, flag, checked) {
         if (!state.items[index]) return;
         state.items[index].flags[flag] = checked ? 1 : 0;
         saveStateToLocalStorage();
         updateRowValidation(index);
-    }
-
-    function updateTextField(index, field, value) {
-        if (!state.items[index]) return;
-        state.items[index][field] = parseSpaceList(value);
-        saveStateToLocalStorage();
-        if (state.currentSearchTerm) applySearchFilter();
     }
 
     function updateRowValidation(index) {
@@ -580,6 +564,15 @@
         updateSelectAllCheckbox();
     }
 
+    function handleTableRowClick(event) {
+        const row = event.target.closest('#tableBodyRows tr[data-index]');
+        if (!row) return;
+        if (event.target.closest('input, button, select, textarea, a, label')) return;
+        const index = Number.parseInt(row.dataset.index, 10);
+        if (!Number.isInteger(index)) return;
+        toggleItemSelection(index);
+    }
+
     function toggleSelectVisible() {
         const selectAll = $('#selectAllCheckbox');
         $$('#tableBodyRows tr[data-index]:not(.hidden-by-search)').forEach(row => {
@@ -617,7 +610,6 @@
         };
         if (!Object.values(values).some(v => v.trim())) { alert('Заполните хотя бы одно поле'); return; }
 
-        pushHistory();
         const indices = [...state.selectedItems];
         indices.forEach(index => {
             for (const [field, expression] of Object.entries(values)) {
@@ -644,7 +636,6 @@
     function deleteSelected() {
         if (!state.selectedItems.size) { alert('Выберите предметы'); return; }
         if (!confirm(`Удалить ${state.selectedItems.size} предметов?`)) return;
-        pushHistory();
         [...state.selectedItems].sort((a,b)=>b-a).forEach(idx => state.items.splice(idx,1));
         state.selectedItems.clear();
         saveStateToLocalStorage();
@@ -652,7 +643,6 @@
     }
 
     function addItem() {
-        pushHistory();
         state.items.push(getItemTemplate());
         saveStateToLocalStorage();
         renderTable();
@@ -662,7 +652,6 @@
     function clearAll() {
         if (!state.items.length) return;
         if (!confirm(`Очистить все ${state.items.length} предметов?`)) return;
-        pushHistory();
         state.items = [];
         state.selectedItems.clear();
         state.currentSearchTerm = '';
@@ -674,26 +663,15 @@
 
     async function importXML() {
         try {
-            let content;
-            if (openDialog && readTextFile) {
-                const selected = await openDialog({
-                    filters: [{ name: 'XML', extensions: ['xml'] }],
-                    multiple: false
-                });
-                if (!selected) return;
-                content = await readTextFile(selected);
-            } else {
-                // Fallback для браузера
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.xml';
-                const file = await new Promise(resolve => {
-                    input.onchange = e => resolve(e.target.files[0]);
-                    input.click();
-                });
-                if (!file) return;
-                content = await file.text();
-            }
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xml';
+            const file = await new Promise(resolve => {
+                input.onchange = e => resolve(e.target.files[0]);
+                input.click();
+            });
+            if (!file) return;
+            const content = await file.text();
 
             const doc = new DOMParser().parseFromString(content, 'text/xml');
             if (doc.querySelector('parsererror')) throw new Error('Невалидный XML');
@@ -715,11 +693,11 @@
                     item[field] = uniqueArray([...tn.getElementsByTagName(field)].map(n => n.getAttribute('name')).filter(Boolean));
                 });
                 imported.push(item);
-            }
-            pushHistory();
+            }
             state.items = imported;
             state.selectedItems.clear();
             state.currentSearchTerm = $('#searchInput').value.toLowerCase();
+            setBaseline();
             saveStateToLocalStorage();
             renderTable();
             alert(`Загружено ${imported.length} предметов`);
@@ -744,48 +722,27 @@
         xml += '</types>';
 
         try {
-            if (saveDialog && writeTextFile) {
-                const filePath = await saveDialog({
-                    filters: [{ name: 'XML', extensions: ['xml'] }],
-                    defaultPath: 'types.xml'
-                });
-                if (!filePath) return;
-                await writeTextFile(filePath, xml);
-                alert(`Файл сохранён: ${filePath}`);
-            } else {
-                // Fallback для браузера
-                const blob = new Blob([xml], { type: 'text/xml' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'types.xml';
-                a.click();
-                URL.revokeObjectURL(a.href);
-                alert('Файл сохранён (браузерная загрузка)');
-            }
+            const blob = new Blob([xml], { type: 'text/xml' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'types.xml';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            alert('Файл сохранён (браузерная загрузка)');
         } catch (err) { alert(`Ошибка сохранения: ${err.message}`); console.error(err); }
     }
 
     async function loadDefinitionsFromFile() {
         try {
-            let content;
-            if (openDialog && readTextFile) {
-                const selected = await openDialog({
-                    filters: [{ name: 'XML', extensions: ['xml'] }],
-                    multiple: false
-                });
-                if (!selected) return;
-                content = await readTextFile(selected);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.xml';
-                const file = await new Promise(resolve => {
-                    input.onchange = e => resolve(e.target.files[0]);
-                    input.click();
-                });
-                if (!file) return;
-                content = await file.text();
-            }
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xml';
+            const file = await new Promise(resolve => {
+                input.onchange = e => resolve(e.target.files[0]);
+                input.click();
+            });
+            if (!file) return;
+            const content = await file.text();
 
             const xml = new DOMParser().parseFromString(content, 'text/xml');
             if (xml.querySelector('parsererror')) throw new Error('Невалидный XML');
@@ -851,7 +808,6 @@
         if (state.currentModal.inputElement) {
             const oldVal = state.items[state.currentModal.index][state.currentModal.field] || [];
             if (JSON.stringify(oldVal) !== JSON.stringify(selected)) {
-                pushHistory();
                 state.currentModal.inputElement.value = selected.join(' ');
                 state.items[state.currentModal.index][state.currentModal.field] = selected;
                 saveStateToLocalStorage();
@@ -897,7 +853,6 @@
                 showValidationTooltip(target, getFieldValidationMessage(field));
             } else {
                 if (state.items[index][field] !== newValue) {
-                    pushHistory();
                     state.items[index][field] = newValue;
                     rememberValidValue(index, field, newValue);
                 }
@@ -918,7 +873,6 @@
             } else {
                 const normalized = normalizeNumber(raw, fallback);
                 if (state.items[index][field] !== normalized) {
-                    pushHistory();
                     state.items[index][field] = normalized;
                     target.value = normalized;
                     rememberValidValue(index, field, normalized);
@@ -933,7 +887,6 @@
             const newArr = parseSpaceList(target.value);
             const oldArr = state.items[index][field] || [];
             if (JSON.stringify(oldArr) !== JSON.stringify(newArr)) {
-                pushHistory();
                 state.items[index][field] = newArr;
                 if (state.currentSearchTerm) applySearchFilter();
                 saveStateToLocalStorage();
@@ -950,7 +903,6 @@
             const flag = t.dataset.flag;
             const newVal = t.checked ? 1 : 0;
             if (state.items[index].flags[flag] !== newVal) {
-                pushHistory();
                 updateFlag(index, flag, t.checked);
             }
             return;
@@ -964,9 +916,9 @@
         const t = event.target;
         if (t.classList.contains('name-input')) {
             const index = Number(t.dataset.index);
-            state.items[index].name = t.value;
             updateRowValidation(index);
             if (state.currentSearchTerm) applySearchFilter();
+            return;
         }
         if (t.id === 'searchInput') filterItemsDebounced();
     }
@@ -982,8 +934,10 @@
         else if (t.id === 'clearAllBtn') clearAll();
         else if (t.id === 'exportBtn') exportXML();
         else if (t.id === 'importBtn') importXML();
-        else if (t.id === 'undoBtn') undo();
-        else if (t.id === 'redoBtn') redo();
+        else if (t.id === 'showChangesBtn') showChanges();
+        else if (t.id === 'changesCloseBtn') closeChangesModal();
+        else if (t.id === 'changesCloseModalBtn') closeChangesModal();
+        else if (t.id === 'changesModal') closeChangesModal();
         else if (t.classList.contains('open-modal-btn')) openModal(Number(t.dataset.index), t.dataset.field);
         else if (t.id === 'modalCloseBtn' || t.id === 'cancelModalBtn') closeModal();
         else if (t.id === 'clearAllSelectionsBtn') clearAllSelections();
@@ -1002,13 +956,20 @@
                 if (e.target.tagName !== 'BUTTON') { e.preventDefault(); saveModalValues(); }
             }
             if (e.key === 'Delete' && !e.target.matches('input,textarea,select') && state.selectedItems.size) deleteSelected();
-            if (e.ctrlKey && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
-            if (e.ctrlKey && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) { e.preventDefault(); redo(); }
+            if (e.key === 'Escape' && $('#changesModal').classList.contains('active')) { closeChangesModal(); return; }
         });
     }
 
     function bindEvents() {
         document.addEventListener('click', handleDocumentClick);
+        document.addEventListener('click', handleTableRowClick);
+        $('#showChangesBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            showChanges();
+        });
+        $('#changesCloseBtn').addEventListener('click', closeChangesModal);
+        $('#changesCloseModalBtn').addEventListener('click', closeChangesModal);
+        $('#changesModal').addEventListener('click', function(e) { if (e.target === this) closeChangesModal(); });
         document.addEventListener('input', handleTableInput);
         document.addEventListener('change', handleTableChange);
         document.addEventListener('focusout', handleTableBlur);
