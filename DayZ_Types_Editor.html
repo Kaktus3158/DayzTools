@@ -106,7 +106,7 @@
 
 <!-- Модальное окно "Изменения" -->
 <div class="modal" id="changesModal">
-    <div class="modal-content" style="width:640px;">
+    <div class="modal-content" style="width:800px;">
         <div class="modal-header">
             <h3>Изменения</h3>
             <button class="modal-close" id="changesCloseBtn" title="Закрыть">×</button>
@@ -116,9 +116,11 @@
         </div>
         <div class="selected-values">
             <span id="changesCount" style="color:#7f8c8d;font-size:12px;"></span>
+            <span id="changesSelected" style="color:#27ae60;font-size:12px;margin-left:10px;display:none;"></span>
         </div>
         <div class="modal-list" id="changesList"></div>
         <div class="modal-buttons">
+            <button class="btn btn-green" id="restoreSelectedBtn" title="Восстановить выбранные" style="display:none;">Восстановить выбранные</button>
             <button class="btn btn-green" id="restoreAllBtn" title="Восстановить все изменения" style="display:none;">Восстановить всё</button>
             <button class="btn btn-red" id="changesCloseModalBtn" title="Закрыть">Закрыть</button>
         </div>
@@ -444,13 +446,20 @@
                     c.field.toLowerCase().includes(searchTerm))
                 : currentChanges;
 
+            // Track selected changes
+            if (!window.selectedChanges) window.selectedChanges = new Set();
+
             if (!currentChanges.length) {
                 list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Изменений нет</div>';
                 $('#restoreAllBtn').style.display = 'none';
+                $('#restoreSelectedBtn').style.display = 'none';
+                $('#changesSelected').style.display = 'none';
             } else {
                 list.innerHTML = filtered.map((c, i) => {
                     const origIdx = currentChanges.indexOf(c);
-                    return '<div class="modal-item changes-item" data-index="' + origIdx + '" title="Нажмите, чтобы восстановить это поле">' +
+                    const isChecked = window.selectedChanges.has(origIdx) ? 'checked' : '';
+                    return '<div class="modal-item changes-item" data-index="' + origIdx + '">' +
+                    '<input type="checkbox" class="changes-checkbox" data-idx="' + origIdx + '" ' + isChecked + ' onclick="event.stopPropagation();">' +
                     '<span class="changes-name">' + escapeHtml(c.name) + '</span>' +
                     '<span class="changes-field">' + escapeHtml(c.field) + '</span>' +
                     '<span class="changes-values"><s style="color:#e74c3c">' + escapeHtml(String(c.from)) + '</s> → <b style="color:#27ae60">' + escapeHtml(String(c.to)) + '</b></span>' +
@@ -458,6 +467,7 @@
                     '</div>';
                 }).join('');
                 $('#restoreAllBtn').style.display = 'block';
+                updateSelectedBtn();
             }
             const countText = filtered.length + ' из ' + currentChanges.length;
             $('#changesCount').textContent = currentChanges.length ? countText : '';
@@ -465,12 +475,45 @@
             modal.classList.add('active');
             // Add click handlers for restore
             list.querySelectorAll('.changes-item').forEach(el => {
-                el.addEventListener('click', function() {
+                el.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('changes-checkbox')) return;
                     const idx = parseInt(this.dataset.index);
                     restoreSingleChange(idx);
                 });
             });
+            // Add checkbox change handlers
+            list.querySelectorAll('.changes-checkbox').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const idx = parseInt(this.dataset.idx);
+                    if (this.checked) {
+                        window.selectedChanges.add(idx);
+                    } else {
+                        window.selectedChanges.delete(idx);
+                    }
+                    updateSelectedBtn();
+                });
+            });
         } catch(e) { alert('Error: ' + e.message); console.error(e); }
+    }
+
+    function updateSelectedBtn() {
+        const count = window.selectedChanges?.size || 0;
+        if (count > 0) {
+            $('#restoreSelectedBtn').style.display = 'block';
+            $('#changesSelected').textContent = 'Выбрано: ' + count;
+            $('#changesSelected').style.display = 'inline';
+        } else {
+            $('#restoreSelectedBtn').style.display = 'none';
+            $('#changesSelected').style.display = 'none';
+        }
+    }
+
+    function restoreSelectedChanges() {
+        if (!window.selectedChanges || window.selectedChanges.size === 0) return;
+        // Restore in reverse order to maintain indices
+        const indices = [...window.selectedChanges].sort((a, b) => b - a);
+        indices.forEach(idx => restoreSingleChange(idx));
+        window.selectedChanges.clear();
     }
 
     function restoreSingleChange(index) {
@@ -1023,6 +1066,7 @@
         document.addEventListener('click', handleDocumentClick);
         document.addEventListener('click', handleTableRowClick);
         $('#restoreAllBtn').addEventListener('click', restoreAllChanges);
+        $('#restoreSelectedBtn').addEventListener('click', restoreSelectedChanges);
         $('#changesSearchInput').addEventListener('input', showChanges);
         $('#changesCloseBtn').addEventListener('click', closeChangesModal);
         $('#changesCloseModalBtn').addEventListener('click', closeChangesModal);
