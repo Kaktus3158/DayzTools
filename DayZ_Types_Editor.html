@@ -111,6 +111,9 @@
             <h3>Изменения</h3>
             <button class="modal-close" id="changesCloseBtn" title="Закрыть">×</button>
         </div>
+        <div class="changes-search-wrapper">
+            <input type="text" id="changesSearchInput" placeholder="Поиск по имени или полю...">
+        </div>
         <div class="selected-values">
             <span id="changesCount" style="color:#7f8c8d;font-size:12px;"></span>
         </div>
@@ -427,27 +430,40 @@
         return changes;
     }
 
+    // Store changes for filtering
+    let currentChanges = [];
+
     function showChanges() {
         try {
-            const changes = collectChanges();
+            currentChanges = collectChanges();
             const list = $('#changesList');
-            if (!changes.length) {
+            const searchTerm = ($('#changesSearchInput')?.value || '').toLowerCase();
+            const filtered = searchTerm
+                ? currentChanges.filter(c =>
+                    c.name.toLowerCase().includes(searchTerm) ||
+                    c.field.toLowerCase().includes(searchTerm))
+                : currentChanges;
+
+            if (!currentChanges.length) {
                 list.innerHTML = '<div class="modal-item" style="justify-content:center;color:#7a5c3a;">Изменений нет</div>';
                 $('#restoreAllBtn').style.display = 'none';
             } else {
-                list.innerHTML = changes.map((c, i) =>
-                    '<div class="modal-item changes-item" data-index="' + i + '" title="Нажмите, чтобы восстановить это поле">' +
+                list.innerHTML = filtered.map((c, i) => {
+                    const origIdx = currentChanges.indexOf(c);
+                    return '<div class="modal-item changes-item" data-index="' + origIdx + '" title="Нажмите, чтобы восстановить это поле">' +
                     '<span class="changes-name">' + escapeHtml(c.name) + '</span>' +
                     '<span class="changes-field">' + escapeHtml(c.field) + '</span>' +
                     '<span class="changes-values"><s style="color:#e74c3c">' + escapeHtml(String(c.from)) + '</s> → <b style="color:#27ae60">' + escapeHtml(String(c.to)) + '</b></span>' +
                     '<span class="changes-restore" title="Восстановить">↩</span>' +
-                    '</div>').join('');
+                    '</div>';
+                }).join('');
                 $('#restoreAllBtn').style.display = 'block';
             }
-            $('#changesCount').textContent = changes.length ? 'Изменений: ' + changes.length : '';
+            const countText = filtered.length + ' из ' + currentChanges.length;
+            $('#changesCount').textContent = currentChanges.length ? countText : '';
             const modal = $('#changesModal');
             modal.classList.add('active');
-            // Add click handlers for restore - click anywhere on the row
+            // Add click handlers for restore
             list.querySelectorAll('.changes-item').forEach(el => {
                 el.addEventListener('click', function() {
                     const idx = parseInt(this.dataset.index);
@@ -1006,11 +1022,8 @@
     function bindEvents() {
         document.addEventListener('click', handleDocumentClick);
         document.addEventListener('click', handleTableRowClick);
-        $('#showChangesBtn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            showChanges();
-        });
         $('#restoreAllBtn').addEventListener('click', restoreAllChanges);
+        $('#changesSearchInput').addEventListener('input', showChanges);
         $('#changesCloseBtn').addEventListener('click', closeChangesModal);
         $('#changesCloseModalBtn').addEventListener('click', closeChangesModal);
         $('#changesModal').addEventListener('click', function(e) { if (e.target === this) closeChangesModal(); });
