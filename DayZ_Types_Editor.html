@@ -31,7 +31,6 @@
                 <div class="form-group"><label>cost:</label><input type="text" id="massCost" placeholder="число или формула"></div>
                 <div class="mass-edit-buttons">
                     <button class="btn btn-blue" id="applyMassEditBtn" title="Применить массовое редактирование к выбранным строкам">Применить</button>
-                    <button class="btn btn-red" id="deleteSelectedBtn" title="Удалить выбранные строки">Удалить</button>
                 </div>
             </div>
             <div class="mass-edit-help">
@@ -48,14 +47,17 @@
             </div>
             <div class="action-buttons">
                 <button class="btn btn-green" id="addItemBtn" title="Добавить новый предмет">Добавить</button>
+                <button class="btn btn-red" id="deleteSelectedBtn" title="Удалить выбранные строки">Удалить</button>
+            </div>
+            <div class="action-buttons" style="margin-top:5px;">
                 <button class="btn btn-orange" id="clearAllBtn" title="Очистить все предметы">Очистить</button>
             </div>
             <div class="action-buttons" style="margin-top:5px;">
                 <button class="btn btn-blue" id="showChangesBtn" title="Показать отличия от загруженного файла" style="width:100%;">Изменения</button>
             </div>
             <div class="import-export-section">
-                <button class="btn btn-blue" id="exportBtn" title="Сохранить types.xml">Сохранить</button>
-                <button class="btn btn-orange" id="importBtn" title="Загрузить types.xml">Загрузить</button>
+                <button class="btn btn-orange" id="importBtn" title="Импорт types.xml">Импорт</button>
+                <button class="btn btn-blue" id="exportBtn" title="Экспорт types.xml">Экспорт</button>
                 <button class="btn btn-blue" id="loadDefinitionsBtn" title="Загрузить cfglimitsdefinition.xml">Загрузить определения</button>
             </div>
         </div>
