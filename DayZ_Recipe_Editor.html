@@ -32,7 +32,7 @@
                 radial-gradient(circle at 10% 0%, rgba(41, 128, 185, 0.35), transparent 38%),
                 radial-gradient(circle at 90% 20%, rgba(39, 174, 96, 0.22), transparent 35%),
                 var(--bg);
-            padding: 20px;
+            padding: 10px;
             min-height: 100vh;
             overflow-x: hidden;
             color: var(--text);
@@ -40,11 +40,11 @@
 
         .container {
             max-width: 100%;
-            min-height: calc(100vh - 40px);
+            min-height: calc(100vh - 20px);
             margin: 0 auto;
             background: var(--panel);
             border-radius: 6px;
-            padding: 20px;
+            padding: 12px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             backdrop-filter: blur(10px);
@@ -53,8 +53,8 @@
         .header {
             background: rgba(17, 24, 39, 0.88);
             color: var(--text);
-            padding: 15px 18px;
-            margin-bottom: 20px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
@@ -74,13 +74,13 @@
 
         .main-content {
             display: flex;
-            gap: 20px;
+            gap: 12px;
         }
 
         .sidebar {
-            width: 300px;
+            width: 260px;
             background: rgba(17, 24, 39, 0.66);
-            padding: 15px;
+            padding: 12px;
             border-radius: 5px;
             flex-shrink: 0;
             border: 1px solid var(--border);
@@ -90,8 +90,8 @@
         .sidebar h3,
         .editor-section-title {
             color: var(--text);
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 2px solid rgba(41, 128, 185, 0.65);
             font-size: 16px;
             font-weight: 700;
@@ -108,7 +108,7 @@
             background: rgba(17, 24, 39, 0.55);
             border: 1px solid var(--border);
             border-radius: 5px;
-            padding: 15px;
+            padding: 12px;
         }
 
         .form-group {
@@ -285,7 +285,7 @@
         }
 
         .card-container {
-            max-height: 500px;
+            max-height: 620px;
             overflow-y: auto;
             border: 1px solid var(--border);
             border-radius: 4px;
@@ -456,7 +456,7 @@
             margin-top: 15px;
             font-family: monospace;
             white-space: pre-wrap;
-            max-height: 300px;
+            max-height: 420px;
             overflow-y: auto;
             font-size: 12px;
             line-height: 1.4;
@@ -747,7 +747,7 @@
                     
                     <div id="previewTab" class="tab-pane">
                         <div class="editor-section-title" style="margin-bottom:10px;">Предпросмотр</div>
-                        <div class="card-container" style="max-height: 500px;" id="previewContainer"></div>
+                        <div class="card-container" style="max-height: 620px;" id="previewContainer"></div>
                     </div>
                     
                     <div id="codeTab" class="tab-pane">
@@ -771,6 +771,49 @@
             cases: [],
             activeTab: 'ingredients'
         };
+
+        const STORAGE_KEY = 'dayzRecipeEditorData_v1';
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    ingredients: state.ingredients,
+                    cases: state.cases,
+                    form: getFormValues()
+                }));
+            } catch (e) {
+                console.error('saveState', e);
+            }
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return false;
+                const data = JSON.parse(raw);
+                if (!data || typeof data !== 'object') return false;
+
+                state.ingredients = Array.isArray(data.ingredients)
+                    ? data.ingredients.map(ing => ({ ...getIngredientTemplate(), ...ing }))
+                    : [];
+                state.cases = Array.isArray(data.cases)
+                    ? data.cases.map(c => ({
+                        results: (c && Array.isArray(c.results) ? c.results : [])
+                            .map(r => ({ ...getResultTemplate(), ...r }))
+                    }))
+                    : [];
+
+                const f = data.form || {};
+                $('#className').value = f.className || '';
+                $('#recipeName').value = f.recipeName || '';
+                $('#isInstaRecipe').value = f.isInstaRecipe === 'false' ? 'false' : 'true';
+                $('#animationLength').value = f.animationLength || '1';
+                return true;
+            } catch (e) {
+                console.error('loadState', e);
+                return false;
+            }
+        }
 
         const $ = (selector) => document.querySelector(selector);
         const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -830,7 +873,10 @@
             $('#animationLength').value = '1';
         }
 
-        function clearRecipe() {
+        function clearRecipe(skipConfirm) {
+            if (!skipConfirm && (state.ingredients.length || state.cases.length)) {
+                if (!confirm('Очистить текущий рецепт? Несохранённые данные будут потеряны.')) return;
+            }
             state.ingredients = [];
             state.cases = [];
             setFormDefaults();
@@ -840,6 +886,9 @@
         }
 
         function createNewRecipe() {
+            if (state.ingredients.length || state.cases.length) {
+                if (!confirm('Начать новый рецепт? Текущий рецепт будет очищен.')) return;
+            }
             state.ingredients = [];
             state.cases = [getCaseTemplate()];
             setFormDefaults();
@@ -1095,6 +1144,9 @@
             `;
 
             container.innerHTML = html;
+
+            // автосохранение: updatePreview — единственная точка, через которую проходят все изменения
+            saveState();
         }
 
         function showTab(tabName) {
@@ -1175,6 +1227,37 @@
             updatePreview();
         }
 
+        const VALID_CLASS_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+        function validateRecipeInputs(className, recipeName) {
+            const errors = [];
+            if (!VALID_CLASS_NAME_RE.test(className)) {
+                errors.push(`Имя класса "${className}" некорректно: допустимы буквы, цифры и _, не может начинаться с цифры.`);
+            }
+            if (recipeName.includes('"') || recipeName.includes('\\') || /[\r\n]/.test(recipeName)) {
+                errors.push('Название рецепта не должно содержать кавычки, обратный слэш и переводы строк.');
+            }
+            state.ingredients.forEach((ing, index) => {
+                const classes = parseClassList(ing.classList);
+                if (!classes.length) {
+                    errors.push(`Ингредиент #${index + 1}: не указан ни один класс предмета.`);
+                }
+                classes.forEach(cls => {
+                    if (!VALID_CLASS_NAME_RE.test(cls)) {
+                        errors.push(`Ингредиент #${index + 1}: некорректный класс "${cls}".`);
+                    }
+                });
+            });
+            state.cases.forEach((caseItem, caseIndex) => {
+                caseItem.results.forEach((result, resultIndex) => {
+                    if (!VALID_CLASS_NAME_RE.test(result.type)) {
+                        errors.push(`Вариант #${caseIndex + 1}, результат #${resultIndex + 1}: некорректный или пустой тип "${result.type}".`);
+                    }
+                });
+            });
+            return errors;
+        }
+
         function generateCode() {
             if (!state.ingredients.length) {
                 alert('Добавьте ингредиенты!');
@@ -1192,6 +1275,12 @@
             const isInstaRecipe = form.isInstaRecipe;
             const animationLength = form.animationLength;
 
+            const validationErrors = validateRecipeInputs(className, recipeName);
+            if (validationErrors.length) {
+                alert('Проверьте данные:\n\n' + validationErrors.slice(0, 10).join('\n'));
+                return;
+            }
+
             let code = `class ${className} extends RecipeBase\n{\n\toverride void Init()\n\t{\n`;
             code += `\t\tm_Name = "${recipeName}";\n`;
             code += `\t\tm_IsInstaRecipe = ${isInstaRecipe};\n`;
@@ -1200,7 +1289,7 @@
             state.ingredients.forEach((ing, index) => {
                 const classes = parseClassList(ing.classList);
 
-                code += `\t\t//ИНГРИДИЕНТ №${index}\n`;
+                code += `\t\t// ИНГРЕДИЕНТ №${index + 1}\n`;
                 classes.forEach(cls => {
                     code += `\t\tInsertIngredient(${index},"${cls}");\n`;
                 });
@@ -1221,7 +1310,6 @@
             code += `\toverride void Do(ItemBase ingredients[], PlayerBase player,array<ItemBase> results, float specialty_weight)\n\t{\n\t\tDebug.Log("Recipe Do method called","recipes");\n\t}\n\n`;
             code += `\toverride void PerformRecipe(ItemBase item1, ItemBase item2, PlayerBase player)\n\t{\n\t\tsuper.PerformRecipe(item1, item2, player);\n\t}\n\n`;
             code += `\toverride void SpawnItems(ItemBase ingredients[], PlayerBase player, array<ItemBase> spawned_objects/*out*/)\n\t{\n`;
-            code += `\t\tint ing_count = m_NumberOfResults;\n`;
             code += `\t\tm_NumberOfResults = 0;\n`;
             code += `\t\tSpawn_Result();\n`;
             code += `\t\tsuper.SpawnItems(ingredients, player, spawned_objects);\n\t}\n\n`;
@@ -1258,9 +1346,24 @@
             showTab('code');
         }
 
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.top = '-1000px';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(ta);
+            return ok;
+        }
+
         function copyCode() {
             const code = $('#codeOutput').textContent;
-            if (code === '// Нажмите "Сгенерировать код"' || code === '// Рецепт очищен') {
+            if (code === '// Нажмите "Сгенерировать код"') {
                 alert('Сначала сгенерируйте код!');
                 return;
             }
@@ -1268,9 +1371,16 @@
             const registrationCode = `// RegisterRecipe(new ${$('#className').value || 'MyCustomRecipe'});`;
             const fullCode = code + '\n\n' + registrationCode;
 
-            navigator.clipboard.writeText(fullCode).then(() => {
-                alert('Код скопирован!');
-            });
+            const onSuccess = () => alert('Код скопирован!');
+            const onFailure = () => alert('Не удалось скопировать автоматически. Скопируйте код вручную.');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fullCode)
+                    .then(onSuccess)
+                    .catch(() => { if (fallbackCopy(fullCode)) onSuccess(); else onFailure(); });
+            } else {
+                if (fallbackCopy(fullCode)) onSuccess(); else onFailure();
+            }
         }
 
         function exportRecipe() {
@@ -1364,7 +1474,7 @@
                             const setHealthMatch = code.match(new RegExp(`m_IngredientSetHealth\\[${index}\\]\\s*=\\s*(-?\\d+)`));
                             if (setHealthMatch) value.setHealth = parseInt(setHealthMatch[1], 10);
 
-                            const addQMatch = code.match(new RegExp(`m_IngredientAddQuantity\\[${index}\\]\\s*=\\s(-?\\d+)`));
+                            const addQMatch = code.match(new RegExp(`m_IngredientAddQuantity\\[${index}\\]\\s*=\\s*(-?\\d+)`));
                             if (addQMatch) value.addQuantity = parseInt(addQMatch[1], 10);
 
                             const destroyMatch = code.match(new RegExp(`m_IngredientDestroy\\[${index}\\]\\s*=\\s*(true|false)`));
@@ -1562,7 +1672,11 @@
         }
 
         window.addEventListener('load', () => {
-            clearRecipe();
+            if (!loadState()) {
+                clearRecipe(true);
+            } else {
+                renderAll();
+            }
             bindEvents();
         });
     </script>
